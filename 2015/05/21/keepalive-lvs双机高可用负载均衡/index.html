@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>keepalive+lvs双机高可用负载均衡 | zaza的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言
+此文档用于后端服务器在LVS的案例，基于Centos5.7测试通过。
+
+一、下载# 建议安装稳定版本1.2.1
+wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz
+二、安装LVS管理工具yum -y install ipvsadm.`uname -m`">
+<meta property="og:type" content="article">
+<meta property="og:title" content="keepalive+lvs双机高可用负载均衡">
+<meta property="og:url" content="http://zazayaya.github.io/2015/05/21/keepalive-lvs双机高可用负载均衡/index.html">
+<meta property="og:site_name" content="zaza的博客">
+<meta property="og:description" content="前言
+此文档用于后端服务器在LVS的案例，基于Centos5.7测试通过。
+
+一、下载# 建议安装稳定版本1.2.1
+wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz
+二、安装LVS管理工具yum -y install ipvsadm.`uname -m`">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="keepalive+lvs双机高可用负载均衡">
+<meta name="twitter:description" content="前言
+此文档用于后端服务器在LVS的案例，基于Centos5.7测试通过。
+
+一、下载# 建议安装稳定版本1.2.1
+wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz
+二、安装LVS管理工具yum -y install ipvsadm.`uname -m`">
+  
+    <link rel="alternative" href="/atom.xml" title="zaza的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">zaza的博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">zaza&#39;s blog</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="zazayaya.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-keepalive-lvs双机高可用负载均衡" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/21/keepalive-lvs双机高可用负载均衡/" class="article-date">
+  <time datetime="2015-05-21T07:46:33.000Z" itemprop="datePublished">2015-05-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/负载均衡/">负载均衡</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      keepalive+lvs双机高可用负载均衡
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言">前言</h1><blockquote>
+<p>此文档用于后端服务器在LVS的案例，基于Centos5.7测试通过。</p>
+</blockquote>
+<h1 id="一、下载">一、下载</h1><pre><code><span class="preprocessor"># 建议安装稳定版本1.2.1</span>
+wget http:<span class="comment">//www.keepalived.org/software/keepalived-1.2.1.tar.gz</span>
+</code></pre><h1 id="二、安装LVS管理工具">二、安装LVS管理工具</h1><pre><code>yum -y <span class="operator"><span class="keyword">install</span> ipvsadm.<span class="string">`uname -m`</span></span>
+</code></pre><a id="more"></a>
+<h1 id="三、编译安装">三、编译安装</h1><pre><code># 依赖包
+yum -y install popt-devel.`uname -m` openssl-devel.`uname -m` libnl-devel.`uname -m`
+
+# 处理Use IPVS <span class="string">Framework       :</span> No问题
+# 仍然报错则需要升级kernel，因为kernel和kernel-headers不匹配，注意：此方法需要重启服务器
+yum -y install kernel-headers kernel-devel
+# 查看是否匹配，软链接不存在的话，则有问题
+ll <span class="regexp">/lib/</span>modules<span class="regexp">/$(uname -r)/</span>build
+
+# 不重启线上服务安装对应版本kernel-devel，rpm -e可以删除指定包，不会删除依赖包：
+# rpm -qa|grep kernel
+# rpm -e kernel-devel-<span class="number">2.6</span>.32-<span class="number">573.7</span>.1.el6.x86_64  # 版本过高
+# 下载<span class="regexp">/lib/</span>modules<span class="regexp">/$(uname -r)/</span>build对应的版本并安装
+# rpm -ivh kernel-devel-<span class="number">2.6</span>.32-<span class="number">279.</span>el6.x86_64.rpm
+
+# 安装
+tar xzf keepalived-<span class="number">1.2</span>.1.tar.gz 
+cd keepalived-<span class="number">1.2</span>.1
+.<span class="regexp">/configure --prefix=/</span>usr<span class="regexp">/local/</span>keepalived --with-kernel-dir=<span class="regexp">/lib/</span>modules<span class="regexp">/$(uname -r)/</span>build
+make &amp;&amp; make install
+install -o root -g root -m <span class="number">500</span> <span class="regexp">/usr/</span>local<span class="regexp">/keepalived/</span>etc<span class="regexp">/rc.d/</span>init.d<span class="regexp">/keepalived /</span>etc<span class="regexp">/init.d/</span>keepalived
+install -o root -g root -m <span class="number">644</span> <span class="regexp">/usr/</span>local<span class="regexp">/keepalived/</span>etc<span class="regexp">/sysconfig/</span>keepalived <span class="regexp">/etc/</span>sysconfig/keepalived
+install -o root -g root -d -m <span class="number">755</span> <span class="regexp">/etc/</span>keepalived
+ln -s <span class="regexp">/usr/</span>local<span class="regexp">/keepalived/</span>sbin<span class="regexp">/keepalived /</span>usr<span class="regexp">/sbin/</span>
+
+# 配置文件参考：<span class="regexp">/usr/</span>local<span class="regexp">/keepalived/</span>etc/keepalived目录下
+</code></pre><h1 id="四、修改防火墙">四、修改防火墙</h1><pre><code><span class="comment"># 官方建议关闭防火墙，但是通常LVS主机都配置了防火墙，所以需要配置以下访问权限，防止脑裂</span>
+<span class="title">iptables</span> -A INPUT -i eth0 -d <span class="number">224.0.0.0</span>/<span class="number">8</span> -j ACCEPT
+iptables -A INPUT -i eth0 -p vrrp -j ACCEPT
+</code></pre><h1 id="五、配置双机高可用负载均衡">五、配置双机高可用负载均衡</h1><h2 id="1、技术选择">1、技术选择</h2><pre><code><span class="preprocessor"># 配置virtual_server有三种方式，只有借助iptable的mark才能用于双机高可用案例</span>
+virtual_server IP port
+virtual_server fwmark <span class="keyword">int</span>  <span class="preprocessor"># 使用此方法(firewall mark)</span>
+virtual_server <span class="keyword">group</span> <span class="keyword">string</span>
+</code></pre><h2 id="2、通过防火墙为每个包打标签">2、通过防火墙为每个包打标签</h2><pre><code># 主上面(<span class="keyword">MAC</span>为备的<span class="keyword">MAC</span>，标记为3)
+# iptables -t mangle -I PREROUTING -<span class="keyword">d</span> <span class="label">$VIP</span> -p tcp -<span class="keyword">m</span> tcp --dport <span class="label">$VPORT</span> -<span class="keyword">m</span> <span class="keyword">mac</span> \ ! --<span class="keyword">mac</span>-source <span class="label">$MAC_Director2</span> -j <span class="keyword">MARK</span> --<span class="keyword">set</span>-<span class="keyword">mark</span> 0x3
+iptables -t mangle -I PREROUTING -<span class="keyword">d</span> 192.168.100.60 -p tcp -<span class="keyword">m</span> tcp --dport 80 -<span class="keyword">m</span> <span class="keyword">mac</span> ! --<span class="keyword">mac</span>-source 48:5B:39:12:52:11 -j <span class="keyword">MARK</span> --<span class="keyword">set</span>-<span class="keyword">mark</span> 0x3
+
+# 防火墙mangle链实例
+#   # Generated <span class="keyword">by</span> iptables-<span class="keyword">save</span> v1.3.5 <span class="keyword">on</span> Fri May 22 14:27:21 2015
+#   *mangle
+#   :PREROUTING ACCEPT [8501667:1563640067]
+#   :<span class="keyword">INPUT</span> ACCEPT [8501361:1563623487]
+#   :FORWARD ACCEPT [0:0]
+#   :OUTPUT ACCEPT [9047544:1223155323]
+#   :POSTROUTING ACCEPT [9047544:1223155323]
+#   -A PREROUTING -<span class="keyword">d</span> 192.168.100.60 -p tcp -<span class="keyword">m</span> tcp --dport 80 -<span class="keyword">m</span> <span class="keyword">mac</span> ! --<span class="keyword">mac</span>-source 48:5B:39:12:52:11 -j <span class="keyword">MARK</span> --<span class="keyword">set</span>-<span class="keyword">mark</span> 0x3
+#   COMMIT
+#   # Completed <span class="keyword">on</span> Fri May 22 14:27:21 2015
+#   # Generated <span class="keyword">by</span> iptables-<span class="keyword">save</span> v1.3.5 <span class="keyword">on</span> Fri May 22 14:27:21 2015
+
+# 备上面(<span class="keyword">MAC</span>为主的<span class="keyword">MAC</span>，标记为4)
+# iptables -t mangle -I PREROUTING -<span class="keyword">d</span> <span class="label">$VIP</span> -p tcp -<span class="keyword">m</span> tcp --dport <span class="label">$VPORT</span> -<span class="keyword">m</span> <span class="keyword">mac</span> \ ! --<span class="keyword">mac</span>-source <span class="label">$MAC_Director1</span> -j <span class="keyword">MARK</span> --<span class="keyword">set</span>-<span class="keyword">mark</span> 0x4
+iptables -t mangle -I PREROUTING -<span class="keyword">d</span> 192.168.100.60 -p tcp -<span class="keyword">m</span> tcp --dport 80 -<span class="keyword">m</span> <span class="keyword">mac</span> ! --<span class="keyword">mac</span>-source 00:21:5E:70:AB:C6 -j <span class="keyword">MARK</span> --<span class="keyword">set</span>-<span class="keyword">mark</span> 0x4
+</code></pre><h2 id="3、master配置文件">3、master配置文件</h2><pre><code><span class="comment"># /etc/keepalived/keepalived.conf</span>
+! Configuration File <span class="keyword">for</span> keepalived
+
+global_defs {
+   <span class="comment"># diff router_id</span>
+   router_id LVS_1
+}
+
+vrrp_sync_group G1 { 
+   <span class="keyword">group</span> { 
+        VI_1 
+   } 
+}
+
+vrrp_instance VI_1 {
+    <span class="comment"># diff state</span>
+    <span class="keyword">state</span> MASTER
+    interface eth1
+    <span class="comment"># 同一网段包含多组vrrp_instance(或者keepalived)则需要修改virtual_router_id值,且唯一</span>
+    virtual_router_id <span class="number">51</span>
+    <span class="comment"># MASTER bigger priority</span>
+    priority <span class="number">150</span>
+    advert_int <span class="number">1</span>
+    authentication {
+        auth_type PASS
+        auth_pass pMP8NsHBsCdF
+    }
+    virtual_ipaddress {
+        <span class="number">192.168</span>.<span class="number">100.60</span>
+    }
+
+    notify_master <span class="string">"/oper/script/check_lvs.sh master"</span>
+    notify_backup <span class="string">"/oper/script/check_lvs.sh backup"</span>
+}
+<span class="comment"># fwmark int</span>
+virtual_server fwmark <span class="number">3</span> <span class="number">80</span> {
+    delay_loop <span class="number">6</span>
+    lb_algo wlc
+    lb_kind DR
+    nat_mask <span class="number">255.255</span>.<span class="number">255.224</span>
+    persistence_timeout <span class="number">50</span>
+    protocol TCP
+
+    real_server <span class="number">192.168</span>.<span class="number">100.47</span> <span class="number">80</span> {
+        weight <span class="number">1</span>
+        TCP_CHECK {
+            connect_port <span class="number">80</span>
+            connect_timeout <span class="number">3</span>
+            nb_get_retry <span class="number">3</span>
+            delay_before_retry <span class="number">3</span>
+        }
+    }
+
+    real_server <span class="number">192.168</span>.<span class="number">100.59</span> <span class="number">80</span> {
+        weight <span class="number">1</span>
+        TCP_CHECK {
+            connect_port <span class="number">80</span>
+            connect_timeout <span class="number">3</span>
+            nb_get_retry <span class="number">3</span>
+            delay_before_retry <span class="number">3</span>
+        }
+    }
+}
+</code></pre><h2 id="4、backup配置文件">4、backup配置文件</h2><pre><code><span class="comment"># /etc/keepalived/keepalived.conf</span>
+! Configuration File <span class="keyword">for</span> keepalived
+
+global_defs {
+   <span class="comment"># diff router_id</span>
+   router_id LVS_2
+}
+
+vrrp_sync_group G1 { 
+   <span class="keyword">group</span> { 
+        VI_1 
+   } 
+}
+
+vrrp_instance VI_1 {
+    <span class="comment"># diff state</span>
+    <span class="keyword">state</span> BACKUP
+    interface eth1
+    <span class="comment"># 同一网段包含多组vrrp_instance(或者keepalived)则需要修改virtual_router_id值,且唯一</span>
+    virtual_router_id <span class="number">51</span>
+    <span class="comment"># MASTER bigger priority</span>
+    priority <span class="number">100</span>
+    advert_int <span class="number">1</span>
+    authentication {
+        auth_type PASS
+        auth_pass pMP8NsHBsCdF
+    }
+    virtual_ipaddress {
+        <span class="number">192.168</span>.<span class="number">100.60</span>
+    }
+
+    notify_master <span class="string">"/oper/script/check_lvs.sh master"</span>
+    notify_backup <span class="string">"/oper/script/check_lvs.sh backup"</span>
+}
+
+virtual_server fwmark <span class="number">4</span> <span class="number">80</span> {
+    delay_loop <span class="number">6</span>
+    lb_algo wlc
+    lb_kind DR
+    nat_mask <span class="number">255.255</span>.<span class="number">255.224</span>
+    persistence_timeout <span class="number">50</span>
+    protocol TCP
+
+    real_server <span class="number">192.168</span>.<span class="number">100.47</span> <span class="number">80</span> {
+        weight <span class="number">1</span>
+        TCP_CHECK {
+            connect_port <span class="number">80</span>
+            connect_timeout <span class="number">3</span>
+            nb_get_retry <span class="number">3</span>
+            delay_before_retry <span class="number">3</span>
+        }
+    }
+
+    real_server <span class="number">192.168</span>.<span class="number">100.59</span> <span class="number">80</span> {
+        weight <span class="number">1</span>
+        TCP_CHECK {
+            connect_port <span class="number">80</span>
+            connect_timeout <span class="number">3</span>
+            nb_get_retry <span class="number">3</span>
+            delay_before_retry <span class="number">3</span>
+        }
+    }
+}
+</code></pre><h1 id="五、启动">五、启动</h1><pre><code><span class="preprocessor"># 运行ipvsadm，解决keepalive启动报错(IPVS: Can't initialize ipvs: Protocol not available)</span>
+ipvsadm
+/etc/init.d/keepalived start
+<span class="preprocessor"># 启动keepalived，默认主从均配置好ipvsadm路由策略，通过下面命令查看(只是VIP接管问题)</span>
+ipvsadm
+<span class="preprocessor"># ActiveConn是活动连接数,也就是tcp连接状态的ESTABLISHED;InActConn是指除了ESTABLISHED以外的,所有的其它状态的tcp连接</span>
+</code></pre><h1 id="六、真实服务器配置">六、真实服务器配置</h1><h2 id="1、后端脚本">1、后端脚本</h2><blockquote>
+<p><strong>重要：</strong>没有这个脚本会导致后端真实服务器无法访问，后端只需要添加这个脚本即可，建议路径：/etc/init.d/lvs_realserver</p>
+<p>原理：active router收到vip的请求后，将mac地址改成real server的mac地址，并发送给real server ，real server 的链路层收到请求，上传到ip层，这时ip层需要验证目标ip，所以real server 需要一个配置一个vip，否则会拒绝掉这个包,这里使用lo:0,因为eth0:1会和局域网中的vip发生冲突。然后由real server直接回复客户端。</p>
+</blockquote>
+<pre><code><span class="comment">#!/bin/bash</span>
+<span class="comment"># description : start realserver</span>
+<span class="type">VIP</span>=<span class="number">192</span>.<span class="number">168</span>.<span class="number">100</span>.<span class="number">60</span>
+. /etc/rc.d/init.d/functions
+
+<span class="keyword">case</span> <span class="string">"$1"</span> <span class="keyword">in</span>
+start)
+    echo <span class="string">" start LVS of REALServer"</span>
+    /sbin/ifconfig lo:<span class="number">0</span> $<span class="type">VIP</span> broadcast $<span class="type">VIP</span> netmask <span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span> up
+    echo <span class="string">"1"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/lo/arp_ignore
+    echo <span class="string">"2"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/lo/arp_announce
+    echo <span class="string">"1"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/all/arp_ignore
+    echo <span class="string">"2"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/all/arp_announce
+;;
+stop)
+    /sbin/ifconfig lo:<span class="number">0</span> down
+    echo <span class="string">"close LVS Directorserver"</span>
+    echo <span class="string">"0"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/lo/arp_ignore
+    echo <span class="string">"0"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/lo/arp_announce
+    echo <span class="string">"0"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/all/arp_ignore
+    echo <span class="string">"0"</span> &gt;/<span class="keyword">proc</span>/sys/net/ipv4/conf/all/arp_announce
+;;
+*)
+    echo <span class="string">"Usage: $0 {start|stop}"</span>
+    exit <span class="number">1</span>
+esac
+</code></pre><h2 id="2、授权、启动">2、授权、启动</h2><pre><code>chmod <span class="number">500</span> <span class="regexp">/etc/</span>init.d/lvs_realserver
+<span class="regexp">/etc/</span>init.d/lvs_realserver start
+</code></pre><h1 id="七、报警脚本">七、报警脚本</h1><blockquote>
+<p>默认的监控报警需要搭建email服务器，但是通常这种邮件服务器会被其它邮件服务器拒绝掉，建议使用邮件客户端设置报警或者短信接口报警，下面为测试脚本示例：</p>
+</blockquote>
+<h2 id="1、服务端配置文件">1、服务端配置文件</h2><pre><code><span class="preprocessor"># 主从vrrp_instance下均添加下面两行配置文件</span>
+<span class="preprocessor"># chmod 500 /oper/script/check_lvs.sh</span>
+notify_master <span class="string">"/oper/script/check_lvs.sh master"</span>
+notify_backup <span class="string">"/oper/script/check_lvs.sh backup"</span>
+</code></pre><h2 id="2、脚本示例">2、脚本示例</h2><pre><code><span class="shebang">#!/bin/bash</span>
+ctime=`date +<span class="string">"%F %H:%M:%S"</span>`
+ip=<span class="number">192.168</span>.<span class="number">100.47</span>
+msg=<span class="string">"<span class="variable">${ctime}</span>: <span class="variable">${ip}</span> change <span class="variable">$1</span>"</span>
+logfile=/var/<span class="built_in">log</span>/lvs.log
+
+<span class="comment"># 邮件</span>
+smtp=<span class="string">'smtp.163.com'</span>
+emailu=<span class="string">'user'</span>
+emailp=<span class="string">'passwd'</span>
+senderemail=<span class="string">'user@163.com'</span>
+toemail=<span class="string">'aaa@163.com bbb@163.com'</span>
+
+<span class="comment">#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#</span>
+<span class="comment"># 标题 消息 收件人</span>
+<span class="comment"># sendm "${ctime}：keepalive通知" ${scan_result} safe@163.com</span>
+<span class="comment"># http://caspian.dotconf.net/menu/Software/SendEmail/sendEmail-v1.56.tar.gz</span>
+<span class="function"><span class="title">sendm</span></span>(){
+    SUBJECT=<span class="string">"<span class="variable">$1</span>"</span>
+    <span class="built_in">local</span> msg=<span class="string">"<span class="variable">$2</span>"</span>
+    toemail=<span class="string">"<span class="variable">$3</span>"</span>
+    /usr/<span class="built_in">local</span>/bin/sendEmail <span class="operator">-f</span> <span class="variable">$senderemail</span> -t <span class="variable">$toemail</span> <span class="operator">-s</span> <span class="variable">$smtp</span> -u <span class="string">"<span class="variable">$SUBJECT</span>"</span> -xu <span class="variable">$emailu</span> -xp <span class="variable">$emailp</span> -o message-charset=gbk -m <span class="variable">${msg}</span>
+}
+
+sendm <span class="string">"keepalive通知"</span> <span class="string">"<span class="variable">${msg}</span>"</span> <span class="string">"<span class="variable">${toemail}</span>"</span>
+<span class="built_in">echo</span> <span class="string">"<span class="variable">${msg}</span>"</span> &gt;&gt; <span class="variable">${logfile}</span>
+</code></pre><h1 id="八、测试">八、测试</h1><h2 id="1、确认脑裂方法">1、确认脑裂方法</h2><pre><code>a、查看日志<span class="comment">(tailf /var/log/messages)</span>，均声明为MASTER
+b、查看虚拟IP<span class="comment">(ip a)</span>，两台机器均包含VIP
+</code></pre><h2 id="2、测试相关包是否打标记">2、测试相关包是否打标记</h2><pre><code> # 主上面查看，远程<span class="tag">telnet</span>
+<span class="tag">telnet</span> <span class="tag">192</span><span class="class">.168</span><span class="class">.100</span><span class="class">.60</span> <span class="tag">80</span>
+<span class="tag">iptables</span> <span class="tag">-t</span> <span class="tag">mangle</span> <span class="tag">-nvL</span>
+
+# 第一列表示为处理的数据包数，访问没有计数的话，说明没有包打过标记，有问题
+ <span class="tag">pkts</span> <span class="tag">bytes</span> <span class="tag">target</span>     <span class="tag">prot</span> <span class="tag">opt</span> <span class="tag">in</span>     <span class="tag">out</span>     <span class="tag">source</span>               <span class="tag">destination</span>         
+ <span class="tag">100K</span>   <span class="tag">12M</span> <span class="tag">MARK</span>       <span class="tag">tcp</span>  <span class="tag">--</span>  *      *       <span class="tag">0</span><span class="class">.0</span><span class="class">.0</span><span class="class">.0</span>/<span class="tag">0</span>            <span class="tag">192</span><span class="class">.168</span><span class="class">.100</span><span class="class">.60</span>      <span class="tag">tcp</span> <span class="tag">dpt</span><span class="pseudo">:80</span> <span class="tag">MAC</span> ! <span class="tag">48</span><span class="pseudo">:5B</span><span class="pseudo">:39</span><span class="pseudo">:12</span><span class="pseudo">:52</span><span class="pseudo">:11</span> <span class="tag">MARK</span> <span class="tag">set</span> <span class="tag">0x3</span>
+</code></pre><h2 id="3、测试后端服务器掉线踢出">3、测试后端服务器掉线踢出</h2><pre><code>[root<span class="variable">@test</span>-<span class="number">39</span> keepalived]<span class="comment"># ipvsadm</span>
+<span class="constant">IP Virtual Server </span>version <span class="number">1.2</span>.<span class="number">1</span> (size=<span class="number">4096</span>)
+<span class="constant">Prot LocalAddress:Port Scheduler Flags</span>
+  -&gt; <span class="constant">RemoteAddress:Port </span>          <span class="constant">Forward Weight ActiveConn InActConn</span>
+<span class="constant">TCP </span> <span class="number">192.168</span>.<span class="number">100.60</span><span class="symbol">:http</span> rr persistent <span class="number">50</span>
+  -&gt; <span class="number">192.168</span>.<span class="number">100.59</span><span class="symbol">:http</span>          <span class="constant">Route </span>  <span class="number">1</span>      <span class="number">0</span>          <span class="number">0</span>         
+  -&gt; <span class="number">192.168</span>.<span class="number">100.47</span><span class="symbol">:http</span>          <span class="constant">Route </span>  <span class="number">1</span>      <span class="number">0</span>          <span class="number">0</span>         
+[root<span class="variable">@test</span>-<span class="number">39</span> keepalived]<span class="comment"># ipvsadm     # 关闭59的real_server相关进程后，LVS自动删除相关路由</span>
+<span class="constant">IP Virtual Server </span>version <span class="number">1.2</span>.<span class="number">1</span> (size=<span class="number">4096</span>)
+<span class="constant">Prot LocalAddress:Port Scheduler Flags</span>
+  -&gt; <span class="constant">RemoteAddress:Port </span>          <span class="constant">Forward Weight ActiveConn InActConn</span>
+<span class="constant">TCP </span> <span class="number">192.168</span>.<span class="number">100.60</span><span class="symbol">:http</span> rr persistent <span class="number">50</span>
+  -&gt; <span class="number">192.168</span>.<span class="number">100.47</span><span class="symbol">:http</span>          <span class="constant">Route </span>  <span class="number">1</span>      <span class="number">0</span>          <span class="number">0</span>         
+</code></pre><h2 id="4、测试后端服务器的VIP是否OK">4、测试后端服务器的VIP是否OK</h2><pre><code>[root<span class="annotation">@test</span>-<span class="number">47</span> <span class="keyword">public</span>]# ip a
+<span class="number">1</span>: <span class="string">lo:</span> &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="number">16436</span> qdisc noqueue 
+    link/loopback <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> brd <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>
+    inet <span class="number">127.0</span>.0.1/<span class="number">8</span> scope host lo
+    inet <span class="number">192.168</span>.100.60/<span class="number">32</span> brd <span class="number">192.168</span>.100.60 scope global <span class="string">lo:</span><span class="number">0</span>  # 此配置用于后端服务器，注意lo下面必须包含了相关虚拟VIP才能正常路由访问
+<span class="number">2</span>: <span class="string">eth0:</span> &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc pfifo_fast qlen <span class="number">1000</span>
+    link/ether <span class="number">00</span>:<span class="number">21</span>:<span class="number">5</span><span class="string">e:</span><span class="number">70</span>:<span class="string">ab:</span>c4 brd <span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span>ff
+    inet <span class="number">192.168</span>.3.47/<span class="number">24</span> brd <span class="number">192.168</span>.3.255 scope global eth0
+<span class="number">3</span>: <span class="string">eth1:</span> &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="number">1500</span> qdisc pfifo_fast qlen <span class="number">1000</span>
+    link/ether <span class="number">00</span>:<span class="number">21</span>:<span class="number">5</span><span class="string">e:</span><span class="number">70</span>:<span class="string">ab:</span>c6 brd <span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span><span class="string">ff:</span>ff
+    inet <span class="number">192.168</span>.100.47/<span class="number">27</span> brd <span class="number">192.168</span>.100.63 scope global eth1
+    inet <span class="number">192.168</span>.100.60/<span class="number">32</span> scope global eth1    # 此配置用于keepalive，MASTER上面才有
+</code></pre><h2 id="5、ipvsadm显示详细负载连接">5、ipvsadm显示详细负载连接</h2><pre><code><span class="title">ipvsadm</span> -Lcn
+</code></pre><h1 id="参考文档">参考文档</h1><ol>
+<li><a href="http://www.linuxvirtualserver.org/zh/index.html" title="lvs中文文档" target="_blank" rel="external">http://www.linuxvirtualserver.org/zh/index.html</a></li>
+<li><a href="http://outofmemory.cn/wiki/keepalived-configuration" title="keepalived工作原理和配置说明" target="_blank" rel="external">http://outofmemory.cn/wiki/keepalived-configuration</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://zazayaya.github.io/2015/05/21/keepalive-lvs双机高可用负载均衡/" data-id="ciagjbbg5000f7gjgqns1kinc" class="article-share-link" data-share="baidu" data-title="keepalive+lvs双机高可用负载均衡">分享到</a>
+      
+
+      
+        <a href="http://zazayaya.github.io/2015/05/21/keepalive-lvs双机高可用负载均衡/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/负载均衡/">负载均衡</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/05/14/搭建hexo博客/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">搭建hexo博客</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/21/keepalive-lvs双机高可用负载均衡/" data-title="keepalive+lvs双机高可用负载均衡" data-url="http://zazayaya.github.io/2015/05/21/keepalive-lvs双机高可用负载均衡/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo/">Hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/负载均衡/">负载均衡</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端/">前端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/负载均衡/">负载均衡</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/HTML/" style="font-size: 10px;">HTML</a><a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a><a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a><a href="/tags/前端/" style="font-size: 10px;">前端</a><a href="/tags/负载均衡/" style="font-size: 10px;">负载均衡</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/05/21/keepalive-lvs双机高可用负载均衡/">keepalive+lvs双机高可用负载均衡</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/14/搭建hexo博客/">搭建hexo博客</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/11/第一篇文章/">第一篇文章</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://www.cdlccs.com" target="_blank">丫丫</a>
+          </li>
+        
+          <li>
+            <a href="http://reqianduan.com" target="_blank">热前端</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 zaza<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"zaza"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
