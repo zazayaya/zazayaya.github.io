@@ -139,15 +139,7 @@
         <nav id="TableOfContents">
   <ul>
     <li><a href="#端口碰撞">端口碰撞</a></li>
-    <li><a href="#包大小碰撞">包大小碰撞</a>
-      <ul>
-        <li>
-          <ul>
-            <li></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
+    <li><a href="#包大小碰撞">包大小碰撞</a></li>
     <li><a href="#防火墙规则">防火墙规则</a></li>
     <li><a href="#配置文件">配置文件</a></li>
     <li><a href="#功能测试">功能测试</a></li>
@@ -221,7 +213,9 @@
             <h2 id="端口碰撞">端口碰撞</h2>
 <p>端口容易破解,因为一般探测器都是扫描端口，而ping很少用，所以用ping会保险一点，所以其实是包大小碰撞。</p>
 <h2 id="包大小碰撞">包大小碰撞</h2>
-<h5 id="包大小算法">包大小算法</h5>
+<blockquote>
+<p>包大小算法</p>
+</blockquote>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 潜在问题：以太网mtu(最大传输单元)=1500，某些网络可能不支持ping大于1500的包</span>
 </span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 切片，滑动窗口实现数据传输</span>
 </span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://zh.wikipedia.org/wiki/%E6%9C%80%E5%A4%A7%E4%BC%A0%E8%BE%93%E5%8D%95%E5%85%83</span>
@@ -541,7 +535,7 @@ if (!doNotTrack) {
     </li>
     
     <li>
-        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s教程-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s教程-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
     </li>
     
     <li>
