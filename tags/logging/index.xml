@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>logging on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/logging.html</link>
+    <description>Recent content in logging on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 10 Dec 2020 11:32:19 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/logging/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python-多进程日志文件拆分</title>
+      <link>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</link>
+      <pubDate>Thu, 10 Dec 2020 11:32:19 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</guid>
+      <description>import logging import colorlog import time from multiprocessing import Process, current_process def _job(event_id): [logging.root.removeHandler(handler) for handler in logging.root.handlers[:]] colorlog.basicConfig( level=logging.DEBUG, format=&amp;#34;[%(asctime)s%(log_color)s%(levelname)-8s%(reset)s%(processName)spid:%(process)d] %(message)s&amp;#34; &amp;#34;%(name)s:%(lineno)d&amp;#34;, filename=&amp;#34;main_{0}.log&amp;#34;.format(event_id), filemode=&amp;#39;a+&amp;#39;, ) count = 0 while True: time.sleep(0.1) logger = logging.getLogger(__name__) logger.error(&amp;#34;fuck: {0}{1}&amp;#34;.format(id(logger), event_id)) count += 1 if count == 100: break if __name__ == &amp;#39;__main__&amp;#39;: jobs = [] # 生成 for _event_id in range(10): _p = Process(target=_job, name=&amp;#34;{0}_{1}&amp;#34;.format(current_process().name, _event_id), args=(_event_id,))</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ci/cd on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/ci/cd.html</link>
+    <description>Recent content in ci/cd on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language><atom:link href="https://zazayaya.github.io/tags/ci/cd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</title>
+      <link>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</link>
+      <pubDate>Tue, 18 Jan 2022 15:33:16 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</guid>
+      <description>安装 Jenkins SCM, 全称Source Coce Management, 主要作用是监视&amp;quot;版本控制系统&amp;quot;(比如gitlab). Blue Ocean 重新思考Jenkins的用户</description>
+    </item>
+    
+  </channel>
+</rss>

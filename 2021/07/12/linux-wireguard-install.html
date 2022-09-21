@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Linux-wireguard安装文档 | zaza的博客</title>
+    <meta property="og:title" content="Linux-wireguard安装文档 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-07-12T10:22:29&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-07-12T10:22:29&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Linux-wireguard安装文档">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#架构">架构</a>
+      <ul>
+        <li><a href="#默认架构">默认架构</a></li>
+        <li><a href="#转发架构">转发架构</a></li>
+      </ul>
+    </li>
+    <li><a href="#转发架构-1">转发架构</a>
+      <ul>
+        <li><a href="#服务端">服务端</a>
+          <ul>
+            <li><a href="#前置条件">前置条件</a></li>
+            <li><a href="#安装">安装</a></li>
+            <li><a href="#生成私钥公钥">生成私钥、公钥</a></li>
+            <li><a href="#配置虚拟设备">配置虚拟设备</a></li>
+            <li><a href="#启动虚拟设备">启动虚拟设备</a></li>
+            <li><a href="#增加对等隧道添加用户">增加对等隧道(添加用户)</a></li>
+          </ul>
+        </li>
+        <li><a href="#客户端">客户端</a>
+          <ul>
+            <li><a href="#下载">下载</a></li>
+            <li><a href="#创建新隧道">创建新隧道</a></li>
+            <li><a href="#配置参考">配置参考</a></li>
+            <li><a href="#客户端登录后验证">客户端登录后验证</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#参考文档">参考文档</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Linux-wireguard安装文档</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月12日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+            <span class="meta-category"><a href='/categories/%E7%BD%91%E7%BB%9C'>网络</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <h2 id="架构">架构</h2>
+<h3 id="默认架构">默认架构</h3>
+<p>典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/</p>
+<p>两台服务器均创建 wireguard 类型的虚拟设备，通过将物理网卡的数据流转到虚拟设备进行数据认证和过滤</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic">############ 创建 wireguard 类型的虚拟设备 ############</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1、创建私钥、公钥</span>
+</span></span><span style="display:flex;"><span>wg genkey | tee privatekey | wg pubkey &gt; publickey
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 2、创建 wireguard 类型的虚拟设备</span>
+</span></span><span style="display:flex;"><span>ip link add dev wg0 <span style="color:#0086b3">type</span> wireguard
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 3、添加 ip，不要和本机 ip 冲突</span>
+</span></span><span style="display:flex;"><span>ip address add dev wg0 10.0.0.1/24
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 4、加载私钥</span>
+</span></span><span style="display:flex;"><span>wg <span style="color:#0086b3">set</span> wg0 private-key ./privatekey
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 5、启动虚拟设备</span>
+</span></span><span style="display:flex;"><span>ip link <span style="color:#0086b3">set</span> wg0 up
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ping 对方的隧道的设备 ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ping: sendmsg: Required key not available  # 这里说明这个设备的IP是特有协议的，需要key才能访问</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">############ 分别建立对等隧道 ############</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 对端服务器执行 wg 命令 可以查看 key 和 端口</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># endpoint 的 ip 是物理网卡的 ip，或者是外面 IP、映射 IP</span>
+</span></span><span style="display:flex;"><span>wg <span style="color:#0086b3">set</span> wg0 peer drCvrSFi+ZSPu9p4PBxLh702RVyGBa7kcl/umqxLpz8<span style="color:#000;font-weight:bold">=</span> allowed-ips 10.0.0.2/32 endpoint 192.168.5.191:45317
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wg set wg0 peer drCvrSFi+ZSPu9p4PBxLh702RVyGBa7kcl/umqxLpz8= remove</span>
+</span></span></code></pre></div><h3 id="转发架构">转发架构</h3>
+<p>典型应用：做为 vpn 服务端来应用，可以数据转发</p>
+<p>实现：默认架构 + iptables 的 nat 转发</p>
+<h2 id="转发架构-1">转发架构</h2>
+<h3 id="服务端">服务端</h3>
+<blockquote>
+<p>简单理解：数据转发还是通过防火墙的nat实现，数据通过wireguard虚拟设备进入(主要用于认证和过滤)</p>
+</blockquote>
+<h4 id="前置条件">前置条件</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启转发</span>
+</span></span><span style="display:flex;"><span>sysctl -p | grep -q <span style="color:#d14">&#39;net.ipv4.ip_forward = 1&#39;</span> <span style="color:#000;font-weight:bold">||</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#0086b3">echo</span> net.ipv4.ip_forward<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1</span> &gt;&gt; /etc/sysctl.conf <span style="color:#000;font-weight:bold">&amp;&amp;</span> sysctl -p<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># INPUT需要开启虚拟网卡访问的权限</span>
+</span></span><span style="display:flex;"><span>iptables -A INPUT -i wg0 -j ACCEPT
+</span></span></code></pre></div><h4 id="安装">安装</h4>
+<blockquote>
+<p>ubuntu 20.04已添加 WireGuard 支持，直接安装即可，安装包：wireguard、wireguard-tools</p>
+<p>ubuntu 18.04安装包：<em>wireguard</em>、<em>wireguard-dkms</em>、<em>wireguard-tools</em>，20.04默认打进内核所以不需要安装：wireguard-dkms</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ubuntu 20.04,依赖包自动被安装：wireguard-tools</span>
+</span></span><span style="display:flex;"><span>apt update <span style="color:#000;font-weight:bold">&amp;&amp;</span> apt -y install wireguard 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ubuntu 18.04</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># apt install software-properties-common</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># add-apt-repository ppa:wireguard/wireguard</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># apt install wireguard  # 包含：wireguard、wireguard-dkms、wireguard-tools</span>
+</span></span></code></pre></div><h4 id="生成私钥公钥">生成私钥、公钥</h4>
+<blockquote>
+<p>wireguard 类型的虚拟网卡需要加载密钥</p>
+<p>WireGuard 包含两个工具，名为<code>wg</code>和<code>wg-quick</code>，它允许你配置和管理 WireGuard 接口</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 设置掩码权限</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">umask</span> <span style="color:#099">077</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成私钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /etc/wireguard/privatekey <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> wg genkey &gt; /etc/wireguard/privatekey
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成公钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /etc/wireguard/publickey <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> wg pubkey &lt; /etc/wireguard/privatekey &gt; /etc/wireguard/publickey
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 也可以一条命令生成</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wg genkey | tee privatekey | wg pubkey &gt; publickey</span>
+</span></span></code></pre></div><h4 id="配置虚拟设备">配置虚拟设备</h4>
+<blockquote>
+<p>网卡名：名称为转发的目标网卡名</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#008080">privatekey</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>cat /etc/wireguard/privatekey<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">interface</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>ip -o -4 route show to default | awk <span style="color:#d14">&#39;{print $5}&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /etc/wireguard/wg0.conf <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> cat &gt; /etc/wireguard/wg0.conf <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Interface]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 这个 ip 是 vpn 的网关 ip，可以自定一个网段来使用，注意不要和本地 ip 冲突了
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Address = 192.168.26.1/24
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">SaveConfig = true
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ListenPort = 51826
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># PrivateKey = SERVER_PRIVATE_KEY值（cat /etc/wireguard/privatekey）
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PrivateKey = $privatekey
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 这里需要保证网关的网卡名不能错误
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o 网卡名 -j MASQUERADE
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o 网卡名 -j MASQUERADE
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $interface -j MASQUERADE
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $interface -j MASQUERADE
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 说明：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># [Interface]：服务器端配置开始标志</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Address：为VPN网段网关地址，注意只能是24位掩码，这里做为 VPN 网段</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># SaveConfig：为true时，有客户端连接时，保存状态信息，退出时自动保存到wg0.conf文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PrivateKey：为服务器的私钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ListenPort：为服务器监听的端口号，默认：51820</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看PostUp、PostDown网卡名： ip -o -4 route show to default | awk &#39;{print $5}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 网络不通日志调试</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># A POSTROUTING -o eth0 -j LOG --log-prefix &#34;IPTABLES POSTROUTING: &#34;</span>
+</span></span></code></pre></div><h4 id="启动虚拟设备">启动虚拟设备</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chown -v root:root /etc/wireguard/wg0.conf
+</span></span><span style="display:flex;"><span>chmod -v <span style="color:#099">600</span> /etc/wireguard/wg0.conf
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动 WireGuard interfaces</span>
+</span></span><span style="display:flex;"><span>wg-quick up wg0
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看 WireGuard interfaces 信息</span>
+</span></span><span style="display:flex;"><span>wg
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看虚拟卡信息</span>
+</span></span><span style="display:flex;"><span>ip addr show wg0
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开机自启动</span>
+</span></span><span style="display:flex;"><span>systemctl <span style="color:#0086b3">enable</span> wg-quick@wg0.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wg-quick up wg0 执行过程日志如下：</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span><span style="color:#998;font-style:italic">#] ip link add wg0 type wireguard</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span><span style="color:#998;font-style:italic">#] wg setconf wg0 /dev/fd/63</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span><span style="color:#998;font-style:italic">#] ip -4 address add 192.168.26.1/24 dev wg0</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span><span style="color:#998;font-style:italic">#] ip link set mtu 1420 up dev wg0</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span><span style="color:#998;font-style:italic">#] iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关闭虚拟网卡</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wg-quick down wg0</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动虚拟网卡</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wg-quick up wg0</span>
+</span></span></code></pre></div><h4 id="增加对等隧道添加用户">增加对等隧道(添加用户)</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vpn 外部网络可以访问的 ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">username</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;zaza&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">user_ip</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;192.168.26.2/32&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">pub_ip</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;1.1.1.1&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成客户端 ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 实现自动添加 ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vpn_gw=$(ip addr show wg0 | grep &#39;scope global wg0&#39; |awk &#39;{print $2}&#39;)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 访问限制,2.2.2.2/32 为需要转发的 ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">AllowedIPs</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">${</span><span style="color:#008080">user_ip</span><span style="color:#d14">}</span>,2.2.2.2/32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">################################</span>
+</span></span><span style="display:flex;"><span>mkdir /etc/wireguard/users
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成私钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">user_pri</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>wg genkey<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成公钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">user_pub</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span><span style="color:#0086b3">echo</span> <span style="color:#008080">$user_pri</span> | wg pubkey<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 服务器公钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ser_pub</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>cat /etc/wireguard/publickey<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 服务器添加用户对端隧道配置</span>
+</span></span><span style="display:flex;"><span>wg <span style="color:#0086b3">set</span> wg0 peer <span style="color:#008080">$user_pub</span> allowed-ips <span style="color:#008080">$AllowedIPs</span>
+</span></span><span style="display:flex;"><span>wg-quick save wg0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生成客户端配置</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /etc/wireguard/users/<span style="color:#d14">${</span><span style="color:#008080">username</span><span style="color:#d14">}</span>.conf <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> cat &gt; /etc/wireguard/users/<span style="color:#d14">${</span><span style="color:#008080">username</span><span style="color:#d14">}</span>.conf <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Interface]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PrivateKey = $user_pri
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Address = ${user_ip}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">DNS = 114.114.114.114
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Peer]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PublicKey = ${ser_pub}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">AllowedIPs = ${user_ip},2.2.2.2/32
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Endpoint = ${pub_ip}:51826
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">PersistentKeepalive = 25
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># [Peer]：客户端开始标志，（多个客户端，会有多个配置连接）</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PublicKey：为客户端的公钥，这个需要客户端生成，客户端生成完成后，需要填写</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># AllowedIPs：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	允许客户端连接的地址，注意多用户，必须使用32位掩码</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	客户端用于添加路由，对端用于对数据进行过滤</span>
+</span></span></code></pre></div><h3 id="客户端">客户端</h3>
+<h4 id="下载">下载</h4>
+<p><a href="https://www.wireguard.com/install/" target="_blank"> WireGuard各系统安装包</a></p>
+<h4 id="创建新隧道">创建新隧道</h4>
+<p>快捷键：ctrl+n</p>
+<p><strong>新建隧道(注意点击旁边的倒三角图标)</strong> -&gt; <strong>新建空隧道</strong></p>
+<h4 id="配置参考">配置参考</h4>
+<blockquote>
+<p>查看用户配置：cat /etc/wireguard/users/${username}.conf</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic">############################</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>Interface<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">PrivateKey</span> <span style="color:#000;font-weight:bold">=</span> 客户端的私钥<span style="color:#000;font-weight:bold">(</span>新建空隧道也会自动生成<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">Address</span> <span style="color:#000;font-weight:bold">=</span> 192.168.26.2/32
+</span></span><span style="display:flex;"><span><span style="color:#008080">DNS</span> <span style="color:#000;font-weight:bold">=</span> 114.114.114.114
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>Peer<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">PublicKey</span> <span style="color:#000;font-weight:bold">=</span> 服务器的公钥（cat /etc/wireguard/publickey）
+</span></span><span style="display:flex;"><span><span style="color:#008080">Endpoint</span> <span style="color:#000;font-weight:bold">=</span> 服务器的物理ip地址:51826
+</span></span><span style="display:flex;"><span><span style="color:#008080">AllowedIPs</span> <span style="color:#000;font-weight:bold">=</span> 192.168.26.0/24
+</span></span><span style="display:flex;"><span><span style="color:#008080">PersistentKeepalive</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">25</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">############################</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 说明：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># [Interface]：客户端配置开始部分</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Address：客户端IP地址（也就是本机地址），多用户的时候，这里指定到32位掩码的具体地址</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PrivateKey：客户端私钥</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># DNS：服务器IP地址作为DNS</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># [Peer]：服务器端的配置信息</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PublicKey：服务器的公钥（服务端生成的server_public_key文件）</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Endpoint：服务器的IP地址及端口号</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># AllowedIPs：就是需要走vpn的地址(会添加相关路由)，0.0.0.0/0为允许所有IP地址通讯(全代理)，如果单个IP地址，可以写多个用逗号隔开，默认写客户端的IP地址</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PersistentKeepalive：用来保持连接检查的，默认每过25s会自动检查连通性，如果IP有变化，也是通过这个自动更新endpoint</span>
+</span></span></code></pre></div><h4 id="客户端登录后验证">客户端登录后验证</h4>
+<blockquote>
+<p>登录后，接口状态提示&quot;已连接&quot;(这里显示的应该是：Interface的状态)</p>
+<p>但是需要注意观察节点的是接收和发送数据是否有流量</p>
+<p>如果接收没有流量，代表远端没有连接成功，可以看WireGuard&quot;隧道&quot;旁边的&quot;日志&quot;里面详细信息</p>
+<p>类似异常日志：2021-07-12 13:52:04.787: [TUN] [zbx] peer(HuU2…U60s) - Handshake did not complete after 5 seconds, retrying (try 2)</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>root@k8s-master-01:/etc/wireguard# wg
+</span></span><span style="display:flex;"><span>interface: wg0
+</span></span><span style="display:flex;"><span>  public key: <span style="color:#008080">EQjlcwdqx68MWpooWcmuBPzWtqoYVrzgEJC2NOni5U8</span><span style="color:#000;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>  private key: <span style="color:#000;font-weight:bold">(</span>hidden<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>  listening port: <span style="color:#099">51826</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>peer: rRjXGAd+wVae65DeSW5F6UTSSzvYaJOKxn36VUWJ6Ek<span style="color:#000;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>  endpoint: 10.0.26.28:54622
+</span></span><span style="display:flex;"><span>  allowed ips: 192.168.26.0/24
+</span></span><span style="display:flex;"><span>  latest handshake: <span style="color:#099">3</span> seconds ago       <span style="color:#998;font-style:italic"># 这个必须要有，才表示建立连接成功</span>
+</span></span><span style="display:flex;"><span>  transfer: <span style="color:#099">180</span> B received, <span style="color:#099">92</span> B sent
+</span></span></code></pre></div><h2 id="参考文档">参考文档</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/137119284" target="_blank">https://zhuanlan.zhihu.com/p/137119284</a></li>
+<li><a href="http://www.iis7.com/a/nr/wz/202102/2253.html" target="_blank">使用 DNS-SD 进行 NAT-to-NAT 穿透</a></li>
+<li><a href="http://www.lixh.cn/archives/2134.html" target="_blank">http://www.lixh.cn/archives/2134.html</a></li>
+<li><a href="https://serverfault.com/questions/1053724/wireguard-tunnelling-multiple-clients-to-server-and-internet-allowedips" target="_blank">多用户注意事项</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html">https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/06/18/linux-rsync-template.html">Linux-rsync基础配置</a></li>
+        
+        <li><a href="/2021/06/17/mysql-5.7-install-on-centos7.html">Mysql-centos7安装5.7</a></li>
+        
+        <li><a href="/2021/06/17/linux-samba-install.html">Linux-samba安装</a></li>
+        
+        <li><a href="/2021/06/16/docker-commands.html">K8s-docker基础命令</a></li>
+        
+        <li><a href="/2021/06/09/mysql-5.6-install-on-centos7.html">Mysql-centos7安装5.6</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/wireguard'>wireguard</a></li>
+                
+                <li><a href='/tags/vpn'>vpn</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

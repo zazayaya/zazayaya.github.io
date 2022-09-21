@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nginx on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/nginx.html</link>
+    <description>Recent content in nginx on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 08 Nov 2021 17:00:32 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ELK-nginx数据录入</title>
+      <link>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</link>
+      <pubDate>Mon, 08 Nov 2021 17:00:32 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</guid>
+      <description>需求说明 客户端日志包含多个项目 不同项目request_body分为kv和json格式 nginx日志格式 # request_body为k</description>
+    </item>
+    
+    <item>
+      <title>Openresty-日志记录接口示例</title>
+      <link>https://zazayaya.github.io/2021/05/20/openresty-log-example.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openresty-log-example.html</guid>
+      <description>local function close_db(db) if not db then return end db:close() end local mysql = require(&amp;#34;resty.mysql&amp;#34;) local db, err = mysql:new() if not db then ngx.say(&amp;#34;new mysql error : &amp;#34;, err) return end db:set_timeout(1000) local props = { host = &amp;#34;127.0.0.1&amp;#34;, port = 3306, database = &amp;#34;logs&amp;#34;, user = &amp;#34;root&amp;#34;, password = &amp;#34;root&amp;#34; } local res, err, errno, sqlstate = db:connect(props) if not res then ngx.say(&amp;#34;connect to</description>
+    </item>
+    
+  </channel>
+</rss>

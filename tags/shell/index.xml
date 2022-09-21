@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shell on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/shell.html</link>
+    <description>Recent content in shell on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 11 Aug 2021 17:19:33 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell-常见使用</title>
+      <link>https://zazayaya.github.io/2021/08/11/shell-normal-use.html</link>
+      <pubDate>Wed, 11 Aug 2021 17:19:33 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/11/shell-normal-use.html</guid>
+      <description>脚本状态检测 潜在风险：编辑脚本也会被当作是程序运行中 pid文件+进程状态规避 问题：crontab下无法使用 shell_name=`basename $0` # 基于&amp;#34;脚本&amp;</description>
+    </item>
+    
+  </channel>
+</rss>

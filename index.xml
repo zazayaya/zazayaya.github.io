@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>zaza的博客</title>
+    <link>https://zazayaya.github.io/</link>
+    <description>Recent content on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 20 Jun 2022 17:02:38 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Visual-Studio安装配置</title>
+      <link>https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html</link>
+      <pubDate>Mon, 20 Jun 2022 17:02:38 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html</guid>
+      <description>下载 Visual Studio https://visualstudio.microsoft.com/zh-hans/downloads/ 安装 Visual Studio 通常选择： 使用 C++ 的桌面开发 目录调整 默认安装在C目录，如果空间不够用，可以调整到其它目录 # 1、先移动目录其它的盘符，</description>
+    </item>
+    
+    <item>
+      <title>Python-通过抽象基类实现存储抽象化</title>
+      <link>https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html</link>
+      <pubDate>Fri, 01 Apr 2022 11:33:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html</guid>
+      <description>应用场景 场景： 张三需要将数据推送到rsync服务，于是通过rsync类进行推送 李四更喜欢ftp，于是又新增ftp类，修改rsync调</description>
+    </item>
+    
+    <item>
+      <title>Java-Shiro入门学习</title>
+      <link>https://zazayaya.github.io/2022/03/15/java-shiro-started.html</link>
+      <pubDate>Tue, 15 Mar 2022 16:09:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/03/15/java-shiro-started.html</guid>
+      <description>安全框架 什么是安全框架 安全框架通常包含：执行身份验证、授权、密码和会话管理等 什么是身份验证 身份验证（authentication），</description>
+    </item>
+    
+    <item>
+      <title>Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</title>
+      <link>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</link>
+      <pubDate>Tue, 18 Jan 2022 15:33:16 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</guid>
+      <description>安装 Jenkins SCM, 全称Source Coce Management, 主要作用是监视&amp;quot;版本控制系统&amp;quot;(比如gitlab). Blue Ocean 重新思考Jenkins的用户</description>
+    </item>
+    
+    <item>
+      <title>Java-入门学习</title>
+      <link>https://zazayaya.github.io/2021/12/31/java-getting-started.html</link>
+      <pubDate>Fri, 31 Dec 2021 16:09:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/12/31/java-getting-started.html</guid>
+      <description>名称解释 javaSE：是Java的基础。包含了基础的类库。主要用于程序开发。 javaEE：扩展了javaSE，除了包含se的内容，还</description>
+    </item>
+    
+    <item>
+      <title>ELK-nginx数据录入</title>
+      <link>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</link>
+      <pubDate>Mon, 08 Nov 2021 17:00:32 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</guid>
+      <description>需求说明 客户端日志包含多个项目 不同项目request_body分为kv和json格式 nginx日志格式 # request_body为k</description>
+    </item>
+    
+    <item>
+      <title>K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</title>
+      <link>https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html</link>
+      <pubDate>Wed, 03 Nov 2021 08:53:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html</guid>
+      <description>Dockerfile-5.6 基于ubuntu20.04构建ssh和mysql服务的镜像 需要下载：mysql-5.6.36-linux-glibc2.5-x86</description>
+    </item>
+    
+    <item>
+      <title>ELK-6.0.0升级到7.15.0</title>
+      <link>https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html</link>
+      <pubDate>Tue, 12 Oct 2021 17:22:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html</guid>
+      <description>本文基于二进制6.0单节点安装升级到7.15.0 rpm包 基于：Centos6.x 注意：centos6.x只支持 &amp;lt;= 7.10.0 升级策略 7.0–7</description>
+    </item>
+    
+    <item>
+      <title>Python-3.8安装文档</title>
+      <link>https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html</link>
+      <pubDate>Sat, 09 Oct 2021 11:08:58 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html</guid>
+      <description>测试环境：centos6.8 安装依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，</description>
+    </item>
+    
+    <item>
+      <title>ELK-基于docker安装</title>
+      <link>https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html</link>
+      <pubDate>Mon, 27 Sep 2021 15:08:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html</guid>
+      <description>测试环境：Ubuntu20.04 环境准备 grep -q vm.max_map_count /etc/sysctl.conf || echo &amp;#34;vm.max_map_count=262144&amp;#34; &amp;gt;&amp;gt; /etc/sysctl.conf sysctl -p | grep vm.max_map_count # 初始化目录 install -o 1000 -g root -d /data/elasticsearch/{data,logs} install -o 1000 -g root -d /data/logstash/pipeline logstash配置 pi</description>
+    </item>
+    
+    <item>
+      <title>K8s-k3s安装文档</title>
+      <link>https://zazayaya.github.io/2021/08/31/k8s-k3s-install-doc.html</link>
+      <pubDate>Tue, 31 Aug 2021 15:26:26 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/31/k8s-k3s-install-doc.html</guid>
+      <description>环境准备 # 解决已知bug # open /proc/sys/net/netfilter/nf_conntrack_max: permission denied grep -q net.netfilter.nf_conntrack_max /etc/sysctl.conf || echo &amp;#39;net.netfilter.nf_conntrack_max=131072&amp;#39; &amp;gt;&amp;gt; /etc/sysctl.conf sysctl -p | grep nf_conntrack_max 安装server # 国内用户，可以使用以下方法加速安装 curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh - # 查</description>
+    </item>
+    
+    <item>
+      <title>K8s-rancher安装文档</title>
+      <link>https://zazayaya.github.io/2021/08/31/k8s-install-by-rancher.html</link>
+      <pubDate>Tue, 31 Aug 2021 09:18:26 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/31/k8s-install-by-rancher.html</guid>
+      <description>环境准备 # 解决已知bug # open /proc/sys/net/netfilter/nf_conntrack_max: permission denied grep -q net.netfilter.nf_conntrack_max /etc/sysctl.conf || echo &amp;#39;net.netfilter.nf_conntrack_max=131072&amp;#39; &amp;gt;&amp;gt; /etc/sysctl.conf sysctl -p | grep nf_conntrack_max 安装 # 安装 Rancher 2.x docker run -d --privileged --restart=unless-stopped \ -p 80:80 -p 443:443 \ rancher/rancher:latest 注册主机(创建业务集群) 添加集群</description>
+    </item>
+    
+    <item>
+      <title>K8s-ceph分布式存储</title>
+      <link>https://zazayaya.github.io/2021/08/25/ceph-getting-started.html</link>
+      <pubDate>Wed, 25 Aug 2021 15:16:26 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/25/ceph-getting-started.html</guid>
+      <description>测试环境：Ubuntu20.04 版本 v14.2.22 Nautilus released v15.2.14 Octopus released v16.2.5 Pacific released 最新版本，建议使用此版本？ This is the fifth backport release in the Pacific series. We recommend all Pacific users update to this release. 概念介绍 什么是</description>
+    </item>
+    
+    <item>
+      <title>K8s-ingress-nginx测试</title>
+      <link>https://zazayaya.github.io/2021/08/24/k8s-ingress-nginx.html</link>
+      <pubDate>Tue, 24 Aug 2021 18:29:11 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/24/k8s-ingress-nginx.html</guid>
+      <description>注意保证虚拟机时间同步，否则无法拉取镜像 报错：x509: certificate has expired or is not yet valid 创建deployment test1.zazayaya.com 和 test2.zazayaya.com # apt install ntpdate;ntpdate cn.ntp.org.cn mkdir ~/ingress-test # 部署pod cat &amp;gt;</description>
+    </item>
+    
+    <item>
+      <title>K8s-自定义镜像并上传dockerhub</title>
+      <link>https://zazayaya.github.io/2021/08/24/docker-hub-upload.html</link>
+      <pubDate>Tue, 24 Aug 2021 16:41:11 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/24/docker-hub-upload.html</guid>
+      <description>编写web测试程序 cat &amp;gt; hello-world.go &amp;lt;&amp;lt; EOF package main import ( &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;os&amp;#34; ) func main() { http.HandleFunc(&amp;#34;/&amp;#34;, HelloServer) fmt.Printf(&amp;#34;http://0.0.0.0:8080\n&amp;#34;) http.ListenAndServe(&amp;#34;:8080&amp;#34;, nil) } func HelloServer(w http.ResponseWriter, r *http.Request) { name, err := os.Hostname() if err != nil { name=&amp;#34;获取主机名失败&amp;#3</description>
+    </item>
+    
+    <item>
+      <title>树莓派安装系统</title>
+      <link>https://zazayaya.github.io/2021/08/19/raspberrypi-install-os.html</link>
+      <pubDate>Thu, 19 Aug 2021 14:28:56 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/raspberrypi-install-os.html</guid>
+      <description>以ubuntu为例 下载ubuntu 也可以通过 Raspberry Pi Imager 进行远程下载 https://ubuntu.com/download/raspberry-pi 镜像烧录工具 来自官方：Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.org/software/ 功能： 远程镜像：</description>
+    </item>
+    
+    <item>
+      <title>树莓派LED指示灯状态</title>
+      <link>https://zazayaya.github.io/2021/08/19/raspberrypi-led-status.html</link>
+      <pubDate>Thu, 19 Aug 2021 14:24:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/raspberrypi-led-status.html</guid>
+      <description>LED亮灯状态 LED 颜色 功能 正常状态 ACT 绿色 card status 闪烁：SD卡正在活动（类似电脑的硬盘灯） PWR 红色 power 不闪烁：正常 FDX 橙 full duplex 亮：全双工/不亮：半双</description>
+    </item>
+    
+    <item>
+      <title>网络工具包net-tools和iproute对比</title>
+      <link>https://zazayaya.github.io/2021/08/19/net-tools-vs-iproute.html</link>
+      <pubDate>Thu, 19 Aug 2021 13:30:56 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/net-tools-vs-iproute.html</guid>
+      <description>从下面这个图来看，netstat和ss都是网络相关的监控，netstat在协议栈中每一层都可以做监控统计：TCP、路由表、网络接口、</description>
+    </item>
+    
+    <item>
+      <title>K8s-kubernetes Ingress控制器</title>
+      <link>https://zazayaya.github.io/2021/08/17/k8s-ingress.html</link>
+      <pubDate>Tue, 17 Aug 2021 15:27:11 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/17/k8s-ingress.html</guid>
+      <description>应用场景 Ingress 是 K8S Service 暴露内部服务的一种方式，比起 ClusterIP，NodePort，LoadBalancer等方式，Ingress 具有</description>
+    </item>
+    
+    <item>
+      <title>K8s-kubernetes参考文档</title>
+      <link>https://zazayaya.github.io/2021/08/17/k8s-doc.html</link>
+      <pubDate>Tue, 17 Aug 2021 09:09:38 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/17/k8s-doc.html</guid>
+      <description>Kubernetes 官方文档 | Kubernetes 云原生新手入门指南(非常好，包含原理，强烈推荐) Kubernetes实践指南(很不错) Kubernetes 中文指南/云原生应用架构实践手</description>
+    </item>
+    
+    <item>
+      <title>Shell-常见使用</title>
+      <link>https://zazayaya.github.io/2021/08/11/shell-normal-use.html</link>
+      <pubDate>Wed, 11 Aug 2021 17:19:33 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/11/shell-normal-use.html</guid>
+      <description>脚本状态检测 潜在风险：编辑脚本也会被当作是程序运行中 pid文件+进程状态规避 问题：crontab下无法使用 shell_name=`basename $0` # 基于&amp;#34;脚本&amp;</description>
+    </item>
+    
+    <item>
+      <title>K8s-docker网络模型</title>
+      <link>https://zazayaya.github.io/2021/08/04/docker-network-model.html</link>
+      <pubDate>Wed, 04 Aug 2021 14:53:39 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/04/docker-network-model.html</guid>
+      <description>说明 macvlan 注意：ping 不通的情况下排除以下问题： 物理网卡开启混杂模式 虚拟机开启混杂模式：virtualbox-设置-网络-高级-混杂模</description>
+    </item>
+    
+    <item>
+      <title>K8s-docker二进制安装</title>
+      <link>https://zazayaya.github.io/2021/07/23/docker-install-by-binary.html</link>
+      <pubDate>Fri, 23 Jul 2021 09:30:18 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/07/23/docker-install-by-binary.html</guid>
+      <description>环境准备 # 开启桥接功能 modprobe br_netfilter cat &amp;gt; /etc/sysctl.d/k8s.conf &amp;lt;&amp;lt; EOF net.bridge.bridge-nf-call-ip6tables = 1 net.bridge.bridge-nf-call-iptables = 1 net.ipv4.ip_forward = 1 EOF sysctl -p /etc/sysctl.d/k8s.conf 防火墙选择 集成Firewalld # 默认使用 iptables 管理，如果安装了 firewalld ，则通过</description>
+    </item>
+    
+    <item>
+      <title>K8s-docker健康检查</title>
+      <link>https://zazayaya.github.io/2021/07/20/docker-health-check.html</link>
+      <pubDate>Tue, 20 Jul 2021 09:51:36 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/07/20/docker-health-check.html</guid>
+      <description>Dockerfile 新增 HEALTHCHECK，healthcheck.sh 需要实现对内部程序状态的检测 HEALTHCHECK &amp;ndash;interval=5s &amp;ndash;timeout=3s CMD bash /healthcheck.sh || exit 1 测试 # 测试 mkdir nginx &amp;amp;&amp;amp; cd nginx # 编写 Dockerfile</description>
+    </item>
+    
+    <item>
+      <title>Linux-wireguard安装文档</title>
+      <link>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</link>
+      <pubDate>Mon, 12 Jul 2021 10:22:29 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</guid>
+      <description>架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务</description>
+    </item>
+    
+    <item>
+      <title>Linux-rsync基础配置</title>
+      <link>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</link>
+      <pubDate>Fri, 18 Jun 2021 11:15:49 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</guid>
+      <description>配置文件 cat &amp;gt; /etc/rsyncd.conf &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; ###################################### # 全局默认配置文件(可以在模块中覆盖) uid=root gid=root use chroot=no max connections=6000 read only=no list=no ignore errors=yes strict modes =yes log file=/var/log/rsyncd.log pid file=/var/run/rsyncd.pid lock file=/var/run/rsyncd.lock # 账号密码保存位置 secrets file=/etc/rsyncd.secrets # 默认全部拒</description>
+    </item>
+    
+    <item>
+      <title>Mysql-centos7安装5.7</title>
+      <link>https://zazayaya.github.io/2021/06/17/mysql-5.7-install-on-centos7.html</link>
+      <pubDate>Thu, 17 Jun 2021 15:10:55 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/17/mysql-5.7-install-on-centos7.html</guid>
+      <description>环境准备 yum -y install numactl-devel libaio-devel useradd mysql -M -s /sbin/nologin install -d -o mysql -g mysql -m 755 /data/mysql_data install -d -o mysql -g mysql -m 755 /data/mysql_data/data install -d -o mysql -g mysql -m 755 /data/mysql_data/tmp install -d -o mysql -g mysql -m 755 /backup/mysql_log install -d -o mysql -g mysql -m 755 /backup/mysql_log 二进制安装 cd /usr/local/src/</description>
+    </item>
+    
+    <item>
+      <title>Linux-samba安装</title>
+      <link>https://zazayaya.github.io/2021/06/17/linux-samba-install.html</link>
+      <pubDate>Thu, 17 Jun 2021 11:07:39 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/17/linux-samba-install.html</guid>
+      <description>测试环境：Centos6.x 安装 yum -y install python-devel gnutls-devel libacl-devel pam-devel openldap-devel # 默认路径就是：/usr/local/samba ./configure make &amp;amp;&amp;amp; make install mkdir -pv /var/log/samba mkdir -pv /usr/local/samba/etc/user mkdir -pv /data/smb 配置 cat &amp;gt;</description>
+    </item>
+    
+    <item>
+      <title>K8s-docker基础命令</title>
+      <link>https://zazayaya.github.io/2021/06/16/docker-commands.html</link>
+      <pubDate>Wed, 16 Jun 2021 11:24:48 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/16/docker-commands.html</guid>
+      <description>docker 进入docker docker在1.3.X版本之后还提供了一个新的命令exec # 查看运行的实例 docker ps # 进入其中的一个实例 docker exec -it f9be4e65bce5 /bin/bash # 退</description>
+    </item>
+    
+    <item>
+      <title>Mysql-centos7安装5.6</title>
+      <link>https://zazayaya.github.io/2021/06/09/mysql-5.6-install-on-centos7.html</link>
+      <pubDate>Wed, 09 Jun 2021 09:46:39 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/09/mysql-5.6-install-on-centos7.html</guid>
+      <description>安装依赖 mysql 5.6 版本 cd /usr/local/src/ &amp;amp;&amp;amp; rz -b yum -y install gcc gcc-c++ cmake bison ncurses-devel 编译 tar xzf mysql-5.6.38.tar.gz &amp;amp;&amp;amp; cd mysql-5.6.38 cmake . \ -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \ -DMYSQL_DATADIR=/usr/local/mysql/data/ \ -DDEFAULT_CHARSET=utf8 \ -DWITH_INNOBASE_STORAGE_ENGINE=1 \ -DDEFAULT_COLLATION=utf8_general_ci \ -DEXTRA_CHARSETS=big5,ascii,gb2312,gbk,utf8,latin1 make &amp;amp;&amp;amp; make install 添加环境路径 echo &amp;#39;PATH=/usr/local/mysql/bin:$PATH:$HOME/bin&amp;#39; &amp;gt;&amp;gt; /etc/profile echo &amp;#34;export PATH&amp;#34; &amp;gt;&amp;gt; /etc/profile source /etc/profile 创建</description>
+    </item>
+    
+    <item>
+      <title>K8s-containerd基础学习</title>
+      <link>https://zazayaya.github.io/2021/06/08/containerd-getting-started.html</link>
+      <pubDate>Tue, 08 Jun 2021 17:57:48 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/08/containerd-getting-started.html</guid>
+      <description>测试环境：Ubuntu20.04 环境准备 # 基础包 apt-get install -y net-tools lrzsz # 安装和配置的先决条件 cat &amp;gt; /etc/modules-load.d/containerd.conf &amp;lt;&amp;lt; EOF overlay br_netfilter EOF # 加载 modprobe overlay modprobe br_netfilter # 设置必需的 sysctl 参数，这</description>
+    </item>
+    
+    <item>
+      <title>Centos-6源</title>
+      <link>https://zazayaya.github.io/2021/06/08/centos-6-repos.html</link>
+      <pubDate>Tue, 08 Jun 2021 17:17:54 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/08/centos-6-repos.html</guid>
+      <description>Base源 cat &amp;gt; /etc/yum.repos.d/CentOS-Base.repo &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; # CentOS-Base.repo # # The mirror system uses the connecting IP address of the client and the # update status of each mirror to pick mirrors that are updated to and # geographically close to the client. You should use this for CentOS updates # unless you are manually picking other mirrors. # # If the</description>
+    </item>
+    
+    <item>
+      <title>Mysql-5.7安装(升级)文档</title>
+      <link>https://zazayaya.github.io/2021/06/07/mysql-5.7-install-upgrade.html</link>
+      <pubDate>Mon, 07 Jun 2021 16:56:42 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/07/mysql-5.7-install-upgrade.html</guid>
+      <description>测试环境：Centos6.x rpm安装 https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-boost-5.7.33.tar.gz # centos6的rpm包 # yum -y install numactl-devel # bundle包含了所有rpm包 https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.33-1.el6.x86_64.rpm-bundle.tar # 解压安装 tar -xvf mysql-5.7.33-1.el6.x86_64.rpm-bundle.tar # yu</description>
+    </item>
+    
+    <item>
+      <title>K8s-kubernetes基于kubeadm搭建</title>
+      <link>https://zazayaya.github.io/2021/06/04/k8s-install-by-kubeadm.html</link>
+      <pubDate>Fri, 04 Jun 2021 17:50:25 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/04/k8s-install-by-kubeadm.html</guid>
+      <description>基于 kubeadm 搭建集群 kubeadm + containerd + docker 测试环境：Ubuntu20.04 master 环境准备 # Container runtimes # 容器运行时 使用 containerd (也是Docker开发的) 而不是 Docke</description>
+    </item>
+    
+    <item>
+      <title>K8s-构建docker镜像</title>
+      <link>https://zazayaya.github.io/2021/06/04/docker-build-image.html</link>
+      <pubDate>Fri, 04 Jun 2021 13:32:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/04/docker-build-image.html</guid>
+      <description>docker build 依赖 buildkit 命令 BuildKit 是下一代的镜像构建组件，在 https://github.com/moby/buildkit 开源 安装 cd /usr/local/src/ wget https://github.com/moby/buildkit/releases/download/v0.8.3/buildkit-v0.8.3.linux-amd64.tar.gz tar xzf buildkit-v0.8.3.linux-amd64.tar.gz [ -f /usr/bin/buildctl ] || (cp -v bin/buildctl bin/buildkitd /usr/bin/) systemd服务单元配置 cat &amp;gt; /usr/lib/systemd/system/buildkit.service &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; [Unit] Description=Dockerfile-agnostic builder toolkit Documentation=https://github.com/moby/buildkit</description>
+    </item>
+    
+    <item>
+      <title>K8s-kubernetes基于二进制搭建</title>
+      <link>https://zazayaya.github.io/2021/06/02/k8s-install-by-binary.html</link>
+      <pubDate>Wed, 02 Jun 2021 10:25:11 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/02/k8s-install-by-binary.html</guid>
+      <description>选型 二进制安装？ 方便了解各个模块运行机制，同时支持各种版本的系统 使用cfssl做为证书工具 生成标准的命名方式，方便统一，json做为</description>
+    </item>
+    
+    <item>
+      <title>K8s-kubernetes异常测试</title>
+      <link>https://zazayaya.github.io/2021/05/27/k8s-qa-test.html</link>
+      <pubDate>Thu, 27 May 2021 10:12:38 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/27/k8s-qa-test.html</guid>
+      <description>node 关闭 docker systemctl stop docker 此时kubelet也会被自动关闭 # 关闭 docker systemctl stop docker # nodes 状态变成 NotReady root@k8s-master:~/k8s-test# kubectl get nodes -o wide NAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIME k8s-node1 Ready &amp;lt;none&amp;gt; 41h v1.21.1 10.0.26.188 &amp;lt;none&amp;gt; Ubuntu 20.04.2 LTS 5.4.0-73-generic docker://20.10.6 k8s-node2</description>
+    </item>
+    
+    <item>
+      <title>Openldap-教程（centos）</title>
+      <link>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-centos.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-centos.html</guid>
+      <description>源码包版本：2.4.54 系统：centos 6.x 介绍 ldap是什么 LDAP：Lightweight Directory Access Protocol，轻量目录访问协议</description>
+    </item>
+    
+    <item>
+      <title>Openldap-教程（ubuntu）</title>
+      <link>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-ubuntu.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-ubuntu.html</guid>
+      <description>源码包版本：2.6.2 系统：ubuntu 20.04 介绍 ldap是什么 LDAP：Lightweight Directory Access Protocol，轻量目录访问协议 L</description>
+    </item>
+    
+    <item>
+      <title>Openresty-日志记录接口示例</title>
+      <link>https://zazayaya.github.io/2021/05/20/openresty-log-example.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openresty-log-example.html</guid>
+      <description>local function close_db(db) if not db then return end db:close() end local mysql = require(&amp;#34;resty.mysql&amp;#34;) local db, err = mysql:new() if not db then ngx.say(&amp;#34;new mysql error : &amp;#34;, err) return end db:set_timeout(1000) local props = { host = &amp;#34;127.0.0.1&amp;#34;, port = 3306, database = &amp;#34;logs&amp;#34;, user = &amp;#34;root&amp;#34;, password = &amp;#34;root&amp;#34; } local res, err, errno, sqlstate = db:connect(props) if not res then ngx.say(&amp;#34;connect to</description>
+    </item>
+    
+    <item>
+      <title>K8s-etcd集群搭建</title>
+      <link>https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html</link>
+      <pubDate>Thu, 20 May 2021 11:54:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html</guid>
+      <description>etcd etcd 是一个分布式键值对存储，设计用来可靠而快速的保存关键数据并提供访问。通过分布式锁，leader选举和写屏障(write barri</description>
+    </item>
+    
+    <item>
+      <title>Linux-date常见使用</title>
+      <link>https://zazayaya.github.io/2021/05/12/linux-date.html</link>
+      <pubDate>Wed, 12 May 2021 15:37:55 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/12/linux-date.html</guid>
+      <description>## 以星期一为示例 # 星期一 date -dmonday +%Y%m%d # 上周一 date -dlast-monday +%Y%m%d # 下周一 date -dnext-monday +%Y%m%d # 二周后的星期一 date -d&amp;#39;monday+14 days&amp;#39; +%Y%m%d date -d&amp;#39;monday+fortnight&amp;#39; +%Y%m%d # 二周前的星期一 date -d&amp;#39;monday-14 days&amp;#39; +%Y%m%d date -d&amp;#39;monday-fortnight ago&amp;#39; +%Y%m%d # 一年后的星</description>
+    </item>
+    
+    <item>
+      <title>Python-上下文管理器</title>
+      <link>https://zazayaya.github.io/2021/05/12/python-contextor.html</link>
+      <pubDate>Wed, 12 May 2021 09:57:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/12/python-contextor.html</guid>
+      <description>原理 执行 contextor 以获取上下文管理器 加载上下文管理器的 exit() 方法以备稍后调用 调用上下文管理器的 enter() 方法 如果有 as var 从句，则将 enter() 方法的返回值赋给 var 执行</description>
+    </item>
+    
+    <item>
+      <title>Python-时间转换</title>
+      <link>https://zazayaya.github.io/2021/05/06/python-time-formatter.html</link>
+      <pubDate>Thu, 06 May 2021 14:52:04 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/06/python-time-formatter.html</guid>
+      <description>掌握几种对象及其关系 了解每类对象的基本操作方法 通过转化关系转化 time对象 datetime &amp;gt;&amp;gt;&amp;gt; import datetime &amp;gt;&amp;gt;&amp;gt; now = datetime.datetime.now() &amp;gt;&amp;gt;&amp;gt; now datetime.datetime(2015, 1, 12, 23, 9, 12, 946118) &amp;gt;&amp;gt;&amp;gt; type(now) &amp;lt;type &amp;#39;datetime.datetime&amp;#39;&amp;gt; timestamp &amp;gt;&amp;gt;&amp;gt; import time &amp;gt;&amp;gt;&amp;gt; time.time() 1421075455.568243 time</description>
+    </item>
+    
+    <item>
+      <title>Jumpserver-安装文档</title>
+      <link>https://zazayaya.github.io/2021/04/25/jumpserver-install.html</link>
+      <pubDate>Sun, 25 Apr 2021 14:04:46 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/04/25/jumpserver-install.html</guid>
+      <description>最新版本是docker安装，建议centos7+ 数据库安装 略&amp;hellip;&amp;hellip; 安装redis cd /usr/local/src &amp;amp;&amp;amp; wget https://download.redis.io/releases/redis-6.2.2.tar.gz tar xzf redis-6.2.2.tar.gz &amp;amp;&amp;amp; cd redis-6.2.2 make &amp;amp;&amp;amp;</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ-持久化</title>
+      <link>https://zazayaya.github.io/2021/03/30/rabbitmq-durable.html</link>
+      <pubDate>Tue, 30 Mar 2021 17:19:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/30/rabbitmq-durable.html</guid>
+      <description>exchange持久化 broker服务重启之后，exchange任然保留，否则没有broker存在的时候会消失 channel.exchange_declare(exchange=&amp;#39;ticket&amp;#39;, exchange_type=&amp;#39;direct&amp;#39;, durable=True) queue持久化</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ-安装文档</title>
+      <link>https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html</link>
+      <pubDate>Tue, 30 Mar 2021 11:30:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html</guid>
+      <description>测试环境：Centos6.x 安装 # 安装erlang(注意查看支持的系统版本) # https://github.com/rabbitmq/erlang-rpm/releases # 注意不要选错版本了，el6是centos6，el7</description>
+    </item>
+    
+    <item>
+      <title>Pureftpd-安装文档(基于puredb认证)</title>
+      <link>https://zazayaya.github.io/2021/03/24/pureftpd-install-of-puredb.html</link>
+      <pubDate>Wed, 24 Mar 2021 11:32:10 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/24/pureftpd-install-of-puredb.html</guid>
+      <description>下载 wget -c --no-check-certificate https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.42.tar.gz 编译安装 # 依赖包 yum -y install openssl-devel.x86_64 useradd -M -s /bin/false ftp tar xzf pure-ftpd-1.0.42.tar.gz &amp;amp;&amp;amp; cd pure-ftpd-1.0.42 ./configure --prefix=/usr/local/pureftpd --with-puredb --with-altlog --without-shadow --with-quotas \ --with-cookie --with-virtualchroot --with-language=english --with-rfc2640 --with-peruserlimits --with-tls make install-strip 生成配置文件 # 配置文件 install -o root -g root -m 500 -d /usr/local/pureftpd/etc install -o</description>
+    </item>
+    
+    <item>
+      <title>Python-多线程注意事项</title>
+      <link>https://zazayaya.github.io/2021/03/23/python-threading-memory-leak.html</link>
+      <pubDate>Tue, 23 Mar 2021 16:11:14 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/23/python-threading-memory-leak.html</guid>
+      <description>锁申请位置错误导致内存泄露-多线程内存泄露注意事项 # encoding: UTF-8 import threading import time def show_fun(sem, n): # 不能放在这里 # sem_lock.acquire() print(&amp;#34;{0}start -- {1}&amp;#34;.format(time.ctime(), n)) print &amp;#34;working&amp;#34; time.sleep(2) print(&amp;#34;{0}end -- {1}&amp;#34;.format(time.ctime(), n)) sem.release() if __name__ == &amp;#39;__main__&amp;#39;: max_connections = 5 semaphore = threading.BoundedSemaphore(max_connections)</description>
+    </item>
+    
+    <item>
+      <title>Supervisord-使用文档</title>
+      <link>https://zazayaya.github.io/2021/03/17/python-supervisord.html</link>
+      <pubDate>Wed, 17 Mar 2021 11:07:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/17/python-supervisord.html</guid>
+      <description>环境依赖 # python2.7版本 # supervisord支持include功能 安装 # 建议最新版本 pip install supervisor==4.1.0 配置 # /root/.virtualenvs/test/bin/echo_supervisord_conf # 如果是virtual</description>
+    </item>
+    
+    <item>
+      <title>Kafka-集群安装文档(单机版)</title>
+      <link>https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html</link>
+      <pubDate>Thu, 11 Mar 2021 10:15:42 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html</guid>
+      <description>kafka集群安装文档 一、架构 # zookeeper和kafka架构 producer producer producer | | | -------------------- | zookeeper zookeeper zookeeper (zookeeper支持failover,至</description>
+    </item>
+    
+    <item>
+      <title>Flask-celery使用文档-实现异步进度条实时显示</title>
+      <link>https://zazayaya.github.io/2021/02/19/flask-celery.html</link>
+      <pubDate>Fri, 19 Feb 2021 11:52:36 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/02/19/flask-celery.html</guid>
+      <description>启动注意事项 # 任务队列 celery -A tasks worker --loglevel=info # windows下运行需要添加参数：--pool=solo celery -A tasks worker --pool=solo --loglevel=info # 但是需要说明的是，虽然cel</description>
+    </item>
+    
+    <item>
+      <title>Mysql-5.7-json测试</title>
+      <link>https://zazayaya.github.io/2021/01/29/mysql-5.7-json-test.html</link>
+      <pubDate>Fri, 29 Jan 2021 09:13:54 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/29/mysql-5.7-json-test.html</guid>
+      <description>创建表 /* create table json_table ( id int unsigned primary key auto_increment comment &amp;#39;主键&amp;#39;, json_info json comment &amp;#39;json数据&amp;#39;, json_id int generated always as (json_info -&amp;gt; &amp;#39;$.id&amp;#39;) comment &amp;#39;json</description>
+    </item>
+    
+    <item>
+      <title>Mysql-8.0安装文档</title>
+      <link>https://zazayaya.github.io/2021/01/28/mysql-5.8-install.html</link>
+      <pubDate>Thu, 28 Jan 2021 10:17:13 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/28/mysql-5.8-install.html</guid>
+      <description>mysql8.0安装文档 安装 wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.23-1.el6.x86_64.rpm-bundle.tar tar xvf mysql-8.0.23-1.el6.x86_64.rpm-bundle.tar # yum install mysql-community-{server,client,common,libs}-* yum install *rpm 初始化 mysqld --initialize chown -R mysql: /var/lib/mysql 改密码 mysql_secure_installation # shell&amp;gt; grep &amp;#39;temporary password&amp;#39; /var/log/mysqld.log # mysql&amp;gt; ALTER USER &amp;#39;root&amp;#39;@&amp;#39;localhost&amp;#39; IDENTIFIED BY &amp;#39;MyNewPass4!&amp;#39;; 参考 https://learnku.com/articles/38466</description>
+    </item>
+    
+    <item>
+      <title>Linux-硬盘io测试</title>
+      <link>https://zazayaya.github.io/2021/01/27/disk-io-test.html</link>
+      <pubDate>Wed, 27 Jan 2021 15:08:54 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/27/disk-io-test.html</guid>
+      <description>硬盘io测试 高IO写测试 # 64k写 mkdir /data1/disk-io fio -name iops -rw=write -bs=64k -runtime=60 -iodepth 32 -filename /data1/disk-io/test.bin -ioengine libaio -direct=1 -size=1g # 查看结果 iostat -x 1 Device: rrqm/s wrqm/s r/s w/s rsec/s wsec/s avgrq-sz avgqu-sz await r_await w_await svctm %util nvme1n1 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00</description>
+    </item>
+    
+    <item>
+      <title>Iredmail-安装指南</title>
+      <link>https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html</link>
+      <pubDate>Fri, 15 Jan 2021 09:36:35 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html</guid>
+      <description>版本推荐：Centos6.9，0.96，非常稳定，从来没出过任何问题 修改主机名 hostname=mail.zaza.cn grep -wq $hostname /etc/hosts || sed -i &amp;#34;s/127.0.0.1/127.0.0.1 $hostname/g&amp;#34; /etc/hosts sed -i &amp;#39;s/^HOSTNAME.*$/HOSTNAME=&amp;#39;&amp;#34;$hostname&amp;#34;&amp;#39;/g&amp;#39; /etc/sysconfig/network hostname $hostname ifconfig|grep &amp;#34;inet addr&amp;#34; 关闭selin</description>
+    </item>
+    
+    <item>
+      <title>ES-6新语法糖</title>
+      <link>https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html</link>
+      <pubDate>Mon, 11 Jan 2021 17:15:30 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html</guid>
+      <description>class的语法 类的新申明方式 class Point { // 静态属性，定义在类的最顶层 bar = &amp;#39;hello&amp;#39;; baz = &amp;#39;world&amp;#39;; // 构造器，类似python的__init__ constructor(x, y) { this.x = x;</description>
+    </item>
+    
+    <item>
+      <title>Linux-硬盘操作</title>
+      <link>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</link>
+      <pubDate>Thu, 07 Jan 2021 16:18:04 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</guid>
+      <description>新增swap mkdir /data/.swap dd if=/dev/zero of=/data/.swap/swap bs=1024 count=8192000 mkswap /data/.swap/swap # swapon /data/.swap/swap # vim /etc/fstab # /data/.swap/swap swap swap defaults 0 0 # swapon -a grep &amp;#34;/data/.swap/swap&amp;#34; /etc/fstab || echo &amp;#39;/data/.swap/swap swap swap defaults 0 0&amp;#39; &amp;gt;&amp;gt; /etc/fstab swapon -a ; free -m fdisk模式扩容 1、fdisk删</description>
+    </item>
+    
+    <item>
+      <title>Flask-基础框架搭建</title>
+      <link>https://zazayaya.github.io/2020/12/25/flask-project-struct.html</link>
+      <pubDate>Fri, 25 Dec 2020 17:45:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/25/flask-project-struct.html</guid>
+      <description>说明文档 flask相关 基于restful风格的开发基础环境包 基础依赖包 Flask # 主框架 PyMySQL # SQLAlchemy数据库驱动 5.7k星星(My</description>
+    </item>
+    
+    <item>
+      <title>Python-3.7安装文档</title>
+      <link>https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html</link>
+      <pubDate>Fri, 11 Dec 2020 16:11:00 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html</guid>
+      <description>依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，则需要卸载) yum -y install gcc gcc-c++ openssl-devel readline-devel bzip2-devel \ sqlite-devel</description>
+    </item>
+    
+    <item>
+      <title>Python-2.7安装文档</title>
+      <link>https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html</link>
+      <pubDate>Fri, 11 Dec 2020 16:10:47 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html</guid>
+      <description>测试环境：Centos6.x 安装 #依赖包 yum -y install gcc gcc-c++ openssl-devel bzip2-devel sqlite-devel libffi-devel # python2.7最新版本自带pip cd /usr/local/src wget https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tgz tar xzf Python-2.7.17.tgz &amp;amp;&amp;amp; cd Python-2.7.17 ./configure --with-ensurepip --enable-shared make &amp;amp;&amp;amp; make install #</description>
+    </item>
+    
+    <item>
+      <title>Python-多进程日志文件拆分</title>
+      <link>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</link>
+      <pubDate>Thu, 10 Dec 2020 11:32:19 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</guid>
+      <description>import logging import colorlog import time from multiprocessing import Process, current_process def _job(event_id): [logging.root.removeHandler(handler) for handler in logging.root.handlers[:]] colorlog.basicConfig( level=logging.DEBUG, format=&amp;#34;[%(asctime)s%(log_color)s%(levelname)-8s%(reset)s%(processName)spid:%(process)d] %(message)s&amp;#34; &amp;#34;%(name)s:%(lineno)d&amp;#34;, filename=&amp;#34;main_{0}.log&amp;#34;.format(event_id), filemode=&amp;#39;a+&amp;#39;, ) count = 0 while True: time.sleep(0.1) logger = logging.getLogger(__name__) logger.error(&amp;#34;fuck: {0}{1}&amp;#34;.format(id(logger), event_id)) count += 1 if count == 100: break if __name__ == &amp;#39;__main__&amp;#39;: jobs = [] # 生成 for _event_id in range(10): _p = Process(target=_job, name=&amp;#34;{0}_{1}&amp;#34;.format(current_process().name, _event_id), args=(_event_id,))</description>
+    </item>
+    
+    <item>
+      <title>Node-npm入门教程</title>
+      <link>https://zazayaya.github.io/2020/12/08/node-npm-getting-started.html</link>
+      <pubDate>Tue, 08 Dec 2020 09:11:33 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/08/node-npm-getting-started.html</guid>
+      <description>JavaScript经典工具库 https://github.com/sorrycc/awesome-javascript https://www.cnblogs.com/fundebug/p/13_js_utilities_you_need.html Underscore或者Lodash Ramda MathJS Moment &amp;amp; date-fns Sugar Lazy CollectJS ChanceJS ChartJS Polished Mout Voca Licia 常见命令 安装包 # 本地安装 ### # 将安装</description>
+    </item>
+    
+    <item>
+      <title>Flask-WSGI规范</title>
+      <link>https://zazayaya.github.io/2020/12/03/flask-source-study.html</link>
+      <pubDate>Thu, 03 Dec 2020 17:39:00 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/03/flask-source-study.html</guid>
+      <description>WSGI规范(PEP 3333) WSGI 的全称是：Web Server Gateway Interface，介于 web server(uwsgi) 和应用 server (flask)之间的接口规范。当使用 Python 进行 web 开发时，</description>
+    </item>
+    
+    <item>
+      <title>Python-Windows安装Crypto</title>
+      <link>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</link>
+      <pubDate>Wed, 02 Dec 2020 14:40:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</guid>
+      <description>Windows安装Crypto m2crypto vs pycrypto vs pycryptodome m2crypto：30+的星星，windows的兼容性较差，pip上面默认的版本不是whl包</description>
+    </item>
+    
+    <item>
+      <title>Kafka-集群安装文档</title>
+      <link>https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html</link>
+      <pubDate>Mon, 23 Nov 2020 16:13:18 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html</guid>
+      <description>kafka集群安装文档 一、架构 # zookeeper和kafka架构 producer producer producer | | | -------------------- | zookeeper zookeeper zookeeper (zookeeper支持failover,至</description>
+    </item>
+    
+    <item>
+      <title>Axios-学习文档</title>
+      <link>https://zazayaya.github.io/2020/11/10/axios-doc.html</link>
+      <pubDate>Tue, 10 Nov 2020 11:45:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/11/10/axios-doc.html</guid>
+      <description>axios链式请求 const axios = require(&amp;#39;axios&amp;#39;) // 全局配置文件 axios.defaults.baseURL = &amp;#39;https://httpbin.org&amp;#39;; axios.defaults.timeout = 100000; console.log(&amp;#39;第一次异步请求数据：/json&amp;#39;); axios.get(&amp;#39;/json&amp;#39;).then(response</description>
+    </item>
+    
+    <item>
+      <title>ECMAScript6-标准</title>
+      <link>https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html</link>
+      <pubDate>Tue, 27 Oct 2020 15:54:44 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html</guid>
+      <description>环境搭建 创建目录 C:\Users\Administrator\WebstormProjects\es6 项目初始化 # 主要用于生成配置文件 package.json # 静默生成配置文件 # npm init --yes cd es6 &amp;amp;&amp;amp; npm init 安装基础依赖包 常见组件安装 npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/node # npm</description>
+    </item>
+    
+    <item>
+      <title>前端工具</title>
+      <link>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</link>
+      <pubDate>Thu, 22 Oct 2020 10:52:14 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</guid>
+      <description>diagram-designer 流程图，思维导图，电路图，GUI界面布局设计 Snipaste 一个简单但强大的截图工具 F1可以截图，同时测量大小，设置箭头，书写文字 F3在桌面置顶</description>
+    </item>
+    
+    <item>
+      <title>Kafka-代理(NAT)</title>
+      <link>https://zazayaya.github.io/2020/10/20/kafka-nat.html</link>
+      <pubDate>Tue, 20 Oct 2020 17:03:34 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/20/kafka-nat.html</guid>
+      <description>一、kafka配置 1.1 配置文件修改 vim /usr/local/kafka/config/server.properties listeners=PLAINTEXT://:9092 # 必须声明域名 advertised.listeners=PLAINTEXT://test.kafka:9092 1.2 hosts绑定(必须绑定) # vim /etc/hosts # host 绑定本地内网ip 10.0.26.26 test.kafka 二、nat服务器配置</description>
+    </item>
+    
+    <item>
+      <title>Iptables-芝麻开门</title>
+      <link>https://zazayaya.github.io/2020/10/19/iptables-lock-lock.html</link>
+      <pubDate>Mon, 19 Oct 2020 16:40:40 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/19/iptables-lock-lock.html</guid>
+      <description>端口碰撞 端口容易破解,因为一般探测器都是扫描端口，而ping很少用，所以用ping会保险一点，所以其实是包大小碰撞。 包大小碰撞 包大小</description>
+    </item>
+    
+    <item>
+      <title>Ansible-安装文档</title>
+      <link>https://zazayaya.github.io/2020/10/06/ansible-getting-started.html</link>
+      <pubDate>Tue, 06 Oct 2020 10:07:35 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/06/ansible-getting-started.html</guid>
+      <description>安装 pip install ansible mkdir /etc/ansible/ cd /etc/ansible/ &amp;amp;&amp;amp; [ -f ansible.cfg ] || wget https://raw.github.com/ansible/ansible/devel/examples/ansible.cfg # 可以查看配置文件路径、模块路径 ansible --version 配置 配置读取顺序： ansible.cfg (in the current directory) ~/.ansible.cfg (in the home directory) /etc/ansible/ansible.cfg # /etc/ansible/ansible.cfg 添加以下参数，忽略</description>
+    </item>
+    
+    <item>
+      <title>Iptables-nat</title>
+      <link>https://zazayaya.github.io/2020/09/23/iptables-nat.html</link>
+      <pubDate>Wed, 23 Sep 2020 15:27:22 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/09/23/iptables-nat.html</guid>
+      <description>架构图 开启转发 # 存在第一条net.ipv4.ip_forward=0，ansible会删除net.ipv4.ip_forward = 1</description>
+    </item>
+    
+    <item>
+      <title>Network-网络测试工具</title>
+      <link>https://zazayaya.github.io/2020/08/24/network-tools.html</link>
+      <pubDate>Mon, 24 Aug 2020 17:16:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/24/network-tools.html</guid>
+      <description>tcpping 用于测试链路状态，可以展现成图 # 依赖包 yum install tcptraceroute bc # 生成数据文件 # ./tcpping -c 1.1.1.1 22 | tee -a res.txt ./tcpping -c 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # -x重复次数 ./tcpping -c -x 86400 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # 正常</description>
+    </item>
+    
+    <item>
+      <title>Kafka-单机版安装</title>
+      <link>https://zazayaya.github.io/2020/08/20/kafka-one-instance-install.html</link>
+      <pubDate>Thu, 20 Aug 2020 17:31:47 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/20/kafka-one-instance-install.html</guid>
+      <description>测试环境：Centos6.x 安装 # 依赖环境 yum -y install java-1.8.0-openjdk.x86_64 # 线上版本：kafka_2.11-0.11.0.0.tgz # python2.6支持</description>
+    </item>
+    
+    <item>
+      <title>ELK-7.10.0安装文档</title>
+      <link>https://zazayaya.github.io/2020/08/19/elk-install.html</link>
+      <pubDate>Wed, 19 Aug 2020 18:50:43 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/19/elk-install.html</guid>
+      <description>测试环境：Centos6.x &amp;lt;=7.10.0，新版本的kibana依赖glibc-2.17 下载地址 https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.0-x86_64.rpm https://artifacts.elastic.co/downloads/logstash/logstash-7.10.0.rpm https://artifacts.elastic.co/downloads/kibana/kibana-7.10.0-x86_64.rpm https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.10.0-x86_64.rpm 依赖环境 yum -y install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 #</description>
+    </item>
+    
+    <item>
+      <title>前端代码规范</title>
+      <link>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</link>
+      <pubDate>Thu, 30 Jul 2020 16:07:58 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</guid>
+      <description>代码规范 1. 概述 欢迎使用品优购代码规范， 这个是我借鉴京东前端代码规范，组织的品优购内部规范。旨在增强团队开发协作、提高代码质量和打造开</description>
+    </item>
+    
+    <item>
+      <title>Ansible-基础语法</title>
+      <link>https://zazayaya.github.io/2020/07/06/ansible-suggest.html</link>
+      <pubDate>Mon, 06 Jul 2020 14:50:43 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/07/06/ansible-suggest.html</guid>
+      <description>轮询一次和轮询三次 # This will run debug three times since the list is flattened- debug:msg:&amp;#34;{{ item }}&amp;#34;vars:nested_list:- - one- two- threewith_items:&amp;#34;{{ nested_list }}&amp;#34;# This will run debug once with the three items- debug:msg:&amp;#34;{{ item }}&amp;#34;vars:nested_list:- - one- two- threewith_items:- &amp;#34;{{ nested_list }}&amp;#34;变量生成 - name:动</description>
+    </item>
+    
+    <item>
+      <title>Git-常见操作</title>
+      <link>https://zazayaya.github.io/2020/06/03/git-doc.html</link>
+      <pubDate>Wed, 03 Jun 2020 14:04:49 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/06/03/git-doc.html</guid>
+      <description>版本回退 # 本地回退 # git reset --hard &amp;lt;commit_id&amp;gt; git reset --hard HEAD^ # 强制回退远程仓库代码 git push -f 版本合并 # 将 dev 的版本合并到 master git checkout master git merge dev # 这个命令把分支dev(&amp;#</description>
+    </item>
+    
+    <item>
+      <title>Ecmascript-入门教程</title>
+      <link>https://zazayaya.github.io/2020/04/24/node-ecmascript.html</link>
+      <pubDate>Fri, 24 Apr 2020 15:12:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/04/24/node-ecmascript.html</guid>
+      <description>文档 2009年，Node.js 项目诞生，所有模块一律为 CommonJS 格式。 https://www.w3cschool.cn/ecmascript/ et const var的区别 es5时候只有var定义变量，只有全局作用域和函数作</description>
+    </item>
+    
+    <item>
+      <title>Ansible-注意事项</title>
+      <link>https://zazayaya.github.io/2020/03/25/ansible-attention.html</link>
+      <pubDate>Wed, 25 Mar 2020 10:42:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/03/25/ansible-attention.html</guid>
+      <description>ansible注意事项 mysql_user mysql_user:append_privs:yes# 建议追加授权，否则手动添加的权限会被清除</description>
+    </item>
+    
+    <item>
+      <title>Kafka-2.2.0-安装</title>
+      <link>https://zazayaya.github.io/2020/03/11/kafka-install.html</link>
+      <pubDate>Wed, 11 Mar 2020 15:14:55 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/03/11/kafka-install.html</guid>
+      <description>版本选择 目前阿里云最新版本是基于2.2.0版本开发 下载 # http://kafka.apache.org/downloads # https://archive.apache.org/dist/kafka/2.2.0/kafka_2.12-2.2.0.tgz tar xzf kafka_2.12-2.2.0.tgz [ -d /usr/local/kafka ] || mv kafka_2.12-2.2.0 /usr/local/kafka 测试 # 创建topic cd /usr/local/kafka # 新版本用的bootst</description>
+    </item>
+    
+    <item>
+      <title>Node-安装</title>
+      <link>https://zazayaya.github.io/2019/12/19/node-install.html</link>
+      <pubDate>Thu, 19 Dec 2019 16:01:31 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2019/12/19/node-install.html</guid>
+      <description>window安装 注意执行：Install Additional Tools for Node.js，安装扩展环境，如：node-gyp: Node.js native addon build tool 第一步安装包管理工具：c</description>
+    </item>
+    
+    <item>
+      <title>Python-模块编写</title>
+      <link>https://zazayaya.github.io/2019/02/14/python-project-struct.html</link>
+      <pubDate>Thu, 14 Feb 2019 16:27:46 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2019/02/14/python-project-struct.html</guid>
+      <description>目录结构 (ops) [root@zaza-test ~]# tree opsutil/ opsutil ├── README.rst ├── setup.py ├── src │ ├── ftp.py │ ├── __init__.py # 可以添加类似内容：from .ftp import Ftp，实现from opsutil import Ftp导入类</description>
+    </item>
+    
+    <item>
+      <title>Linux-keepalive-lvs双机高可用负载均衡</title>
+      <link>https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</link>
+      <pubDate>Fri, 11 Dec 2015 17:22:10 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</guid>
+      <description>基于Centos5.7测试通过 一、下载 # 建议安装稳定版本1.2.1 wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz 二、安装LVS管理工具 yum -y install ipvsadm 三、编译安装 # 依赖包 yum -y install popt-devel openssl-devel libnl-devel</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://zazayaya.github.io/about.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zazayaya.github.io/about.html</guid>
+      <description>关于 email：zyqojj@gmail.com</description>
+    </item>
+    
+    <item>
+      <title>归档</title>
+      <link>https://zazayaya.github.io/archives.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zazayaya.github.io/archives.html</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>搜索</title>
+      <link>https://zazayaya.github.io/search.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zazayaya.github.io/search.html</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

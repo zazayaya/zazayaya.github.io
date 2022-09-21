@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ansible on zaza的博客</title>
+    <link>https://zazayaya.github.io/categories/Ansible.html</link>
+    <description>Recent content in Ansible on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 06 Oct 2020 10:07:35 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/categories/Ansible/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ansible-安装文档</title>
+      <link>https://zazayaya.github.io/2020/10/06/ansible-getting-started.html</link>
+      <pubDate>Tue, 06 Oct 2020 10:07:35 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/06/ansible-getting-started.html</guid>
+      <description>安装 pip install ansible mkdir /etc/ansible/ cd /etc/ansible/ &amp;amp;&amp;amp; [ -f ansible.cfg ] || wget https://raw.github.com/ansible/ansible/devel/examples/ansible.cfg # 可以查看配置文件路径、模块路径 ansible --version 配置 配置读取顺序： ansible.cfg (in the current directory) ~/.ansible.cfg (in the home directory) /etc/ansible/ansible.cfg # /etc/ansible/ansible.cfg 添加以下参数，忽略</description>
+    </item>
+    
+    <item>
+      <title>Ansible-基础语法</title>
+      <link>https://zazayaya.github.io/2020/07/06/ansible-suggest.html</link>
+      <pubDate>Mon, 06 Jul 2020 14:50:43 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/07/06/ansible-suggest.html</guid>
+      <description>轮询一次和轮询三次 # This will run debug three times since the list is flattened- debug:msg:&amp;#34;{{ item }}&amp;#34;vars:nested_list:- - one- two- threewith_items:&amp;#34;{{ nested_list }}&amp;#34;# This will run debug once with the three items- debug:msg:&amp;#34;{{ item }}&amp;#34;vars:nested_list:- - one- two- threewith_items:- &amp;#34;{{ nested_list }}&amp;#34;变量生成 - name:动</description>
+    </item>
+    
+    <item>
+      <title>Ansible-注意事项</title>
+      <link>https://zazayaya.github.io/2020/03/25/ansible-attention.html</link>
+      <pubDate>Wed, 25 Mar 2020 10:42:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/03/25/ansible-attention.html</guid>
+      <description>ansible注意事项 mysql_user mysql_user:append_privs:yes# 建议追加授权，否则手动添加的权限会被清除</description>
+    </item>
+    
+  </channel>
+</rss>

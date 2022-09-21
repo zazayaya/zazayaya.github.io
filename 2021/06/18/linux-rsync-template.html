@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Linux-rsync基础配置 | zaza的博客</title>
+    <meta property="og:title" content="Linux-rsync基础配置 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-06-18T11:15:49&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-06-18T11:15:49&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Linux-rsync基础配置">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/06/18/linux-rsync-template.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#配置文件">配置文件</a></li>
+    <li><a href="#密码配置">密码配置</a></li>
+    <li><a href="#开机自启动">开机自启动</a></li>
+    <li><a href="#错误">错误</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Linux-rsync基础配置</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年6月18日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <h2 id="配置文件">配置文件</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt; /etc/rsyncd.conf <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">######################################
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 全局默认配置文件(可以在模块中覆盖)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">uid=root
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">gid=root
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">use chroot=no
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">max connections=6000
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">read only=no
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">list=no
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ignore errors=yes
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">strict modes =yes
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">log file=/var/log/rsyncd.log
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">pid file=/var/run/rsyncd.pid
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">lock file=/var/run/rsyncd.lock
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 账号密码保存位置
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">secrets file=/etc/rsyncd.secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 默认全部拒绝
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">hosts deny=*
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">######################################
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 配置的一个模块
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[www]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">path=/data/rsync/www
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">auth users=www
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">hosts allow=10.0.0.0/8
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h2 id="密码配置">密码配置</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>touch /etc/rsyncd.secrets
+</span></span><span style="display:flex;"><span>chmod <span style="color:#099">400</span> /etc/rsyncd.secrets
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;www:123456&#39;</span> &gt;&gt; /etc/rsyncd.secrets
+</span></span></code></pre></div><h2 id="开机自启动">开机自启动</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开机自启动</span>
+</span></span><span style="display:flex;"><span>systemctl <span style="color:#0086b3">enable</span> rsync.service
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动服务</span>
+</span></span><span style="display:flex;"><span>systemctl start rsync.service
+</span></span></code></pre></div><h2 id="错误">错误</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>password mismatch
+</span></span><span style="display:flex;"><span>【注意】有的客户端和服务器端密码看起来一样，实际里面（行尾）有空格，也能报错，注意一下
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/06/18/linux-rsync-template.html">https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/06/17/mysql-5.7-install-on-centos7.html">Mysql-centos7安装5.7</a></li>
+        
+        <li><a href="/2021/06/17/linux-samba-install.html">Linux-samba安装</a></li>
+        
+        <li><a href="/2021/06/16/docker-commands.html">K8s-docker基础命令</a></li>
+        
+        <li><a href="/2021/06/09/mysql-5.6-install-on-centos7.html">Mysql-centos7安装5.6</a></li>
+        
+        <li><a href="/2021/06/08/containerd-getting-started.html">K8s-containerd基础学习</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/rsync'>rsync</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

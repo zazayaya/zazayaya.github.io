@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Java-入门学习 | zaza的博客</title>
+    <meta property="og:title" content="Java-入门学习 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-12-31T16:09:51&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-12-31T16:09:51&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Java-入门学习">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/12/31/java-getting-started.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#名称解释">名称解释</a></li>
+    <li><a href="#vscode设置">vscode设置</a></li>
+    <li><a href="#第一个java程序">第一个Java程序</a></li>
+    <li><a href="#基础">基础</a></li>
+    <li><a href="#构造方法">构造方法</a></li>
+    <li><a href="#多构造方法">多构造方法</a></li>
+    <li><a href="#方法重载">方法重载</a></li>
+    <li><a href="#静态字段">静态字段</a></li>
+    <li><a href="#静态方法">静态方法</a></li>
+    <li><a href="#遍历list">遍历List</a></li>
+    <li><a href="#list和array转换">List和Array转换</a></li>
+    <li><a href="#初始化list对象并同时赋值">初始化List对象并同时赋值</a></li>
+    <li><a href="#类">类</a></li>
+    <li><a href="#classpath">classpath</a></li>
+    <li><a href="#jar包">jar包</a></li>
+    <li><a href="#java包运行原理">java包运行原理</a></li>
+    <li><a href="#javabean">JavaBean</a></li>
+    <li><a href="#vscode插件">vscode插件</a></li>
+    <li><a href="#jar包-1">jar包</a>
+      <ul>
+        <li><a href="#方案一">方案一</a></li>
+        <li><a href="#方案二推荐">方案二(推荐)</a></li>
+        <li><a href="#方案三推荐">方案三(推荐)</a></li>
+      </ul>
+    </li>
+    <li><a href="#maven">Maven</a>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#镜像配置">镜像配置</a></li>
+        <li><a href="#命名规则">命名规则</a></li>
+        <li><a href="#创建项目">创建项目</a></li>
+        <li><a href="#插件搜索">插件搜索</a></li>
+        <li><a href="#打包插件">打包插件</a></li>
+        <li><a href="#log4j2插件">log4j2插件</a>
+          <ul>
+            <li><a href="#安装-1">安装</a></li>
+          </ul>
+        </li>
+        <li><a href="#最佳实践">最佳实践</a>
+          <ul>
+            <li><a href="#properties配置">properties配置</a></li>
+            <li><a href="#log4j2示例代码">log4j2示例代码</a></li>
+            <li><a href="#日志格式">日志格式</a></li>
+          </ul>
+        </li>
+        <li><a href="#slf4jlogback插件">SLF4J+Logback插件</a>
+          <ul>
+            <li><a href="#安装-2">安装</a></li>
+            <li><a href="#logback配置">logback配置</a></li>
+            <li><a href="#示例代码">示例代码</a></li>
+          </ul>
+        </li>
+        <li><a href="#mysql插件">mysql插件</a></li>
+        <li><a href="#rabbitmq插件">rabbitmq插件</a></li>
+        <li><a href="#打jar包">打jar包</a></li>
+      </ul>
+    </li>
+    <li><a href="#nexus私有仓库">Nexus私有仓库</a>
+      <ul>
+        <li><a href="#常见地址">常见地址</a></li>
+        <li><a href="#mvn配置">mvn配置</a></li>
+        <li><a href="#发布">发布</a></li>
+      </ul>
+    </li>
+    <li><a href="#数据库连接池">数据库连接池</a></li>
+    <li><a href="#spring">spring</a>
+      <ul>
+        <li><a href="#结构">结构</a></li>
+      </ul>
+    </li>
+    <li><a href="#vscode扩展spring-boot-extension-pack指定java版本">vscode扩展Spring Boot Extension Pack指定java版本</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Java-入门学习</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年12月31日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Java'>Java</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="名称解释">名称解释</h2>
+<ul>
+<li>javaSE：是Java的基础。包含了基础的类库。主要用于程序开发。</li>
+<li>javaEE：扩展了javaSE，除了包含se的内容，还包含了web开发需要的一些基础包，例如selvlet等，他是一个抽象的规范，具体由应用服务器实现(如GlassFish、WildFly、WebLogic) 。主要用于web开发。</li>
+<li>SSM/SSH：架构已经过时，不建议学习</li>
+<li>Spring：是一个独立的框架，没有严格遵循&quot;JavaEE规范&quot;，他替代并改进了JavaEE的许多部分，但是允许使用所有JavaEE技术。推荐学习</li>
+</ul>
+<h2 id="vscode设置">vscode设置</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// java源码支持中文
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#d14">&#34;code-runner.executorMap&#34;</span><span style="color:#a61717;background-color:#e3d2d2">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&#34;java&#34;</span>: <span style="color:#d14">&#34;cd $dir &amp;&amp; javac -encoding UTF-8 $fileName &amp;&amp; java -Dfile.encoding=UTF-8 $fileNameWithoutExt&#34;</span>,
+</span></span><span style="display:flex;"><span>}<span style="color:#a61717;background-color:#e3d2d2">,</span>
+</span></span></code></pre></div><h2 id="第一个java程序">第一个Java程序</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> Test Hello <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Hello, world!&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="基础">基础</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 一个程序只有一个这种入口
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// println是print line的缩写
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 变量
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>StringBuilder sb <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> StringBuilder<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 编译器会根据赋值语句自动推断出变量sb的类型是StringBuilder
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>var sb <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> StringBuilder<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 实际上会自动变成：
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>StringBuilder sb <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> StringBuilder<span style="color:#000;font-weight:bold">();</span>
+</span></span></code></pre></div><h2 id="构造方法">构造方法</h2>
+<blockquote>
+<p>由于构造方法是如此特殊，所以构造方法的名称就是类名。构造方法的参数没有限制，在方法内部，也可以编写任意语句。但是，和普通方法相比，构造方法没有返回值（也没有<code>void</code>），调用构造方法，必须用<code>new</code>操作符。类似python的init</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// Person zaza = new Person(&#34;zaza&#34;, 18);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Person</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">private</span> String name<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">private</span> <span style="color:#458;font-weight:bold">int</span> age<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#900;font-weight:bold">Person</span><span style="color:#000;font-weight:bold">(</span>String name<span style="color:#000;font-weight:bold">,</span> <span style="color:#458;font-weight:bold">int</span> age<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">name</span> <span style="color:#000;font-weight:bold">=</span> name<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">age</span> <span style="color:#000;font-weight:bold">=</span> age<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="多构造方法">多构造方法</h2>
+<blockquote>
+<p>可以定义多个构造方法，在通过<code>new</code>操作符调用的时候，编译器通过构造方法的参数数量、位置和类型自动区分</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Person</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">private</span> String name<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">private</span> <span style="color:#458;font-weight:bold">int</span> age<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#900;font-weight:bold">Person</span><span style="color:#000;font-weight:bold">(</span>String name<span style="color:#000;font-weight:bold">,</span> <span style="color:#458;font-weight:bold">int</span> age<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">name</span> <span style="color:#000;font-weight:bold">=</span> name<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">age</span> <span style="color:#000;font-weight:bold">=</span> age<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#900;font-weight:bold">Person</span><span style="color:#000;font-weight:bold">(</span>String name<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">name</span> <span style="color:#000;font-weight:bold">=</span> name<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">age</span> <span style="color:#000;font-weight:bold">=</span> 12<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#900;font-weight:bold">Person</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="方法重载">方法重载</h2>
+<blockquote>
+<p>类似多个构造方法。方法重载的目的是，功能类似的方法使用同一名字，更容易记住，因此，调用起来更简单。泛型处理？</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Hello</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">hello</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Hello, world!&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">hello</span><span style="color:#000;font-weight:bold">(</span>String name<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Hello, &#34;</span> <span style="color:#000;font-weight:bold">+</span> name <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#34;!&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">hello</span><span style="color:#000;font-weight:bold">(</span>String name<span style="color:#000;font-weight:bold">,</span> <span style="color:#458;font-weight:bold">int</span> age<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>age <span style="color:#000;font-weight:bold">&lt;</span> 18<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Hi, &#34;</span> <span style="color:#000;font-weight:bold">+</span> name <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#34;!&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Hello, &#34;</span> <span style="color:#000;font-weight:bold">+</span> name <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#34;!&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="静态字段">静态字段</h2>
+<blockquote>
+<p>类似go的*类型，属于指针类型数据，多实例共享此数据。</p>
+<p>虽然实例可以访问静态字段，但是它们指向的其实都是<code>Person class</code>的静态字段。所以，所有实例共享一个静态字段。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 定义静态字段number:
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">int</span> number<span style="color:#000;font-weight:bold">;</span>
+</span></span></code></pre></div><h2 id="静态方法">静态方法</h2>
+<blockquote>
+<p>因为静态方法属于<code>class</code>而不属于实例，因此，静态方法内部，无法访问<code>this</code>变量，也无法访问实例字段，它只能访问静态字段。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 静态方法经常用于工具类。例如：
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>Arrays<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">sort</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>Math<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">random</span><span style="color:#000;font-weight:bold">()</span>
+</span></span></code></pre></div><h2 id="遍历list">遍历List</h2>
+<blockquote>
+<p>常见写法</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">java.util.List</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Main</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#000;font-weight:bold">&lt;</span>String<span style="color:#000;font-weight:bold">&gt;</span> list <span style="color:#000;font-weight:bold">=</span> List<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">of</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;apple&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;pear&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;banana&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span>String s <span style="color:#000;font-weight:bold">:</span> list<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span>s<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="list和array转换">List和Array转换</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">java.util.List</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Main</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#000;font-weight:bold">&lt;</span>Integer<span style="color:#000;font-weight:bold">&gt;</span> list <span style="color:#000;font-weight:bold">=</span> List<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">of</span><span style="color:#000;font-weight:bold">(</span>12<span style="color:#000;font-weight:bold">,</span> 34<span style="color:#000;font-weight:bold">,</span> 56<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// toArray(T[]) 可以保证类型信息不丢失
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        Number<span style="color:#000;font-weight:bold">[]</span> array <span style="color:#000;font-weight:bold">=</span> list<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">toArray</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">new</span> Number<span style="color:#000;font-weight:bold">[</span>list<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">size</span><span style="color:#000;font-weight:bold">()]);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 更简洁的方法：Integer[] array = list.toArray(Integer[]::new);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span>Number n <span style="color:#000;font-weight:bold">:</span> array<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span>n<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="初始化list对象并同时赋值">初始化List对象并同时赋值</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// java 8
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">private</span> List<span style="color:#000;font-weight:bold">&lt;</span>User<span style="color:#000;font-weight:bold">&gt;</span> users <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> ArrayList<span style="color:#000;font-weight:bold">&lt;</span>User<span style="color:#000;font-weight:bold">&gt;()</span> <span style="color:#000;font-weight:bold">{{</span>
+</span></span><span style="display:flex;"><span>    add<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>1<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;zaza@163.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;123456&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Zaza&#34;</span><span style="color:#000;font-weight:bold">));</span>
+</span></span><span style="display:flex;"><span>    add<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>2<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;yaya@163.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;123456&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Yaya&#34;</span><span style="color:#000;font-weight:bold">));</span>
+</span></span><span style="display:flex;"><span>    add<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>3<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;xiaozhuang@163.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;123456&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Xiaozhuang&#34;</span><span style="color:#000;font-weight:bold">));</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}};</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// java 11
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">private</span> List<span style="color:#000;font-weight:bold">&lt;</span>User<span style="color:#000;font-weight:bold">&gt;</span> users <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> ArrayList<span style="color:#000;font-weight:bold">&lt;&gt;(</span>List<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">of</span><span style="color:#000;font-weight:bold">(</span> <span style="color:#998;font-style:italic">// users:
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>1<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;bob@example.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;password&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Bob&#34;</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#998;font-style:italic">// bob
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>2<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;alice@example.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;password&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Alice&#34;</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#998;font-style:italic">// alice
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">new</span> User<span style="color:#000;font-weight:bold">(</span>3<span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;tom@example.com&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;password&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;Tom&#34;</span><span style="color:#000;font-weight:bold">)));</span> <span style="color:#998;font-style:italic">// tom
+</span></span></span></code></pre></div><h2 id="类">类</h2>
+<blockquote>
+<p>一个<code>.java</code>文件只能包含一个<code>public</code>类，但可以包含多个非<code>public</code>类。</p>
+</blockquote>
+<h2 id="classpath">classpath</h2>
+<blockquote>
+<p>在系统环境变量中设置<code>classpath</code>环境变量，不推荐；</p>
+<p>在启动JVM时设置<code>classpath</code>变量，推荐。</p>
+<p>更好的做法是，不要设置<code>classpath</code>！默认的当前目录<code>.</code>对于绝大多数情况都够用了。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>java -classpath .;C:<span style="color:#d14">\w</span>ork<span style="color:#d14">\p</span>roject1<span style="color:#d14">\b</span>in;C:<span style="color:#d14">\s</span>hared abc.xyz.Hello
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 简写</span>
+</span></span><span style="display:flex;"><span>java -cp .;C:<span style="color:#d14">\w</span>ork<span style="color:#d14">\p</span>roject1<span style="color:#d14">\b</span>in;C:<span style="color:#d14">\s</span>hared abc.xyz.Hello
+</span></span></code></pre></div><p>现在我们假设<code>classpath</code>是<code>.;C:\work\project1\bin;C:\shared</code>，当JVM在加载<code>abc.xyz.Hello</code>这个类时，会依次查找：</p>
+<ul>
+<li>&lt;当前目录&gt;\abc\xyz\Hello.class</li>
+<li>C:\work\project1\bin\abc\xyz\Hello.class</li>
+<li>C:\shared\abc\xyz\Hello.class</li>
+</ul>
+<p><em><strong>不要把任何Java核心库添加到classpath中！JVM根本不依赖classpath加载核心库！</strong></em></p>
+<h2 id="jar包">jar包</h2>
+<p>如果有很多<code>.class</code>文件，散落在各层目录中，肯定不便于管理。如果能把目录打一个包，变成一个文件，就方便多了。</p>
+<p>jar包就是用来干这个事的，它可以把<code>package</code>组织的目录层级，以及各个目录下的所有文件（包括<code>.class</code>文件和其他文件）都打成一个jar文件，这样一来，无论是备份，还是发给客户，就简单多了。</p>
+<p>jar包实际上就是一个zip格式的压缩文件，而jar包相当于目录。如果我们要执行一个jar包的<code>class</code>，就可以把jar包放到<code>classpath</code>中：</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>java -cp ./hello.jar abc.xyz.Hello
+</span></span></code></pre></div><h2 id="java包运行原理">java包运行原理</h2>
+<blockquote>
+<p>jar包还可以包含一个特殊的<code>/META-INF/MANIFEST.MF</code>文件，<code>MANIFEST.MF</code>是纯文本，可以指定<code>Main-Class</code>和其它信息。JVM会自动读取这个<code>MANIFEST.MF</code>文件，如果存在<code>Main-Class</code>，我们就不必在命令行指定启动的类名，而是用更方便的命令：</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>java -jar hello.jar
+</span></span></code></pre></div><h2 id="javabean">JavaBean</h2>
+<blockquote>
+<p>如果读写方法符合以下这种命名规范，那么这种<code>class</code>被称为<code>JavaBean</code>：</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 读方法:
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">public</span> Type <span style="color:#900;font-weight:bold">getXyz</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 写方法:
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">setXyz</span><span style="color:#000;font-weight:bold">(</span>Type value<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="vscode插件">vscode插件</h2>
+<ul>
+<li>Extension Pack for JavaPreview</li>
+<li>Doxygen Documentation Generator</li>
+<li>Todo Tree</li>
+</ul>
+<h2 id="jar包-1">jar包</h2>
+<h3 id="方案一">方案一</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># javac 变成成二进制class文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -d 指定生成class的根目录</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -verbose 打印模式</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -classpath 指定依赖包(需要完整路径) linux为冒号，windows为分号</span>
+</span></span><span style="display:flex;"><span>javac -classpath /root/javaTest/lib/amqp-client-5.7.1.jar:/root/javaTest/lib/slf4j-api-1.7.26.jar:/root/javaTest/lib/slf4j-simple-1.7.26.jar -d ../bin/ -verbose com/zaza/ops/main/App.java ./com/zaza/ops/person/Student.java
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 打包（e参数直接指定入库main函数）</span>
+</span></span><span style="display:flex;"><span>jar -cvfe hello.jar com.zaza.main.App -C bin/ .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看class加载信息(-verbose:class)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># java -verbose:class -cp /root/javaTest/lib/amqp-client-5.7.1.jar -jar hello.jar</span>
+</span></span><span style="display:flex;"><span>java -verbose:class -jar hello.jar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 运行指定依赖的jar包（注意发布的时候需要将lib目录一同发布）</span>
+</span></span><span style="display:flex;"><span>java -Xbootclasspath/a:lib/amqp-client-5.7.1.jar:lib/slf4j-api-1.7.26.jar:lib/slf4j-simple-1.7.26.jar -jar hello.jar
+</span></span></code></pre></div><h3 id="方案二推荐">方案二(推荐)</h3>
+<blockquote>
+<p>不用包管理工具的最佳实践</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># javac 变成成二进制class文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -d 指定生成class的根目录</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -verbose 打印 class 加载</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -classpath 指定依赖包(需要完整路径) linux为冒号，windows为分号</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 需要指定所有java源码依赖文件，否则报错</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> src <span style="color:#000;font-weight:bold">&amp;&amp;</span> mkdir -pv ../bin/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># javac -verbose -classpath /root/javaTest/lib/amqp-client-5.7.1.jar:/root/javaTest/lib/slf4j-api-1.7.26.jar:/root/javaTest/lib/slf4j-simple-1.7.26.jar -d ../bin/ com/zaza/ops/*/*.java</span>
+</span></span><span style="display:flex;"><span>javac -classpath /root/javaTest/lib/amqp-client-5.7.1.jar:/root/javaTest/lib/slf4j-api-1.7.26.jar:/root/javaTest/lib/slf4j-simple-1.7.26.jar -d ../bin/ com/zaza/ops/*/*.java
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 打包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 根据需求创建入口函数和依赖包信息</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 其它信息会自动创建，如：Manifest-Version、Created-By</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;Main-Class: com.zaza.main.App&#39;</span> &gt; Manifest.txt
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;Class-Path: lib/amqp-client-5.7.1.jar lib/slf4j-api-1.7.26.jar lib/slf4j-simple-1.7.26.jar&#39;</span> &gt;&gt; Manifest.txt
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># m指定Manifest文件</span>
+</span></span><span style="display:flex;"><span>jar -cvfm hello.jar Manifest.txt -C bin/ .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看class加载信息(-verbose:class)</span>
+</span></span><span style="display:flex;"><span>java -verbose:class -jar hello.jar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 直接运行</span>
+</span></span><span style="display:flex;"><span>java -jar hello.jar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加参数运行</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># java -Dlog4j2.formatMsgNoLookups=true -Xms512m -Xmx512m -jar hello.jar --logging.config=./log4j2-spring.xml</span>
+</span></span></code></pre></div><h3 id="方案三推荐">方案三(推荐)</h3>
+<blockquote>
+<p>建议使用 <em>Maven</em> 帮助我们管理构建(可以方便的打JAR包)</p>
+</blockquote>
+<h2 id="maven">Maven</h2>
+<blockquote>
+<p>jar包构建</p>
+</blockquote>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>D:<span style="color:#d14">\P</span>rogram Files<span style="color:#d14">\m</span>aven
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新建环境变量</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># MAVEN_HOME，赋值 D:\Program Files\maven</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 编辑环境变量Path，追加</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># %MAVEN_HOME%\bin</span>
+</span></span></code></pre></div><h3 id="镜像配置">镜像配置</h3>
+<blockquote>
+<p>~/.m2/settings.xml</p>
+<p>依赖包保存目录：~/.m2/repository</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;settings&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;mirrors&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;mirror&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;id&gt;</span>aliyun<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;name&gt;</span>aliyun<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;mirrorOf&gt;</span>central<span style="color:#000080">&lt;/mirrorOf&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 国内推荐阿里云的Maven镜像 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;url&gt;</span>https://maven.aliyun.com/repository/central<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/mirror&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/mirrors&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/settings&gt;</span>
+</span></span></code></pre></div><h3 id="命名规则">命名规则</h3>
+<blockquote>
+<p><a href="https://github.com/apache/dubbo/blob/3.0/pom.xml" target="_blank">dubbo/pom.xml拥有父ID以及自己是下面子模块的父ID，很不错</a></p>
+<p><a href="https://github.com/apache/hadoop/blob/trunk/pom.xml" target="_blank">hadoop/pom.xml同上</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>com.zaxxer<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>HikariCP<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>com.qcloud<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>cos_migrate_tool<span style="color:#000080">&lt;/artifactId&gt;</span> <span style="color:#998;font-style:italic">&lt;!-- 不是很标准？ --&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>com.alibaba<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>druid<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- 拥有父ID的，druid是apache下面的一个子项目 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;parent&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>org.apache<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>apache<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>21<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/parent&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>org.apache.druid<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>druid<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- 拥有父ID的，druid是apache下面的一个子项目 --&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>com.rabbitmq<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>amqp-client<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- 带版本信息？ --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;groupId&gt;</span>org.apache.spark<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;artifactId&gt;</span>spark-parent_2.12<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span></code></pre></div><h3 id="创建项目">创建项目</h3>
+<blockquote>
+<p><a href="https://maven.apache.org/archetypes/maven-archetype-quickstart/" target="_blank">Maven Quickstart Archetype-实例指定了版本</a></p>
+<p>建议使用命令：mvn archetype:generate -DarchetypeVersion=&ldquo;1.4&rdquo;，这样会使用最新版本的配置创建pom.xml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 需要指定参数：-DarchetypeVersion=&#34;1.4&#34;，这样才会显式的生成 build 配置信息</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 否则生成的配置是老版本的：project created from Old (1.x) Archetype</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 优势：这样可以动态的调整编译插件的版本：maven-xxx-plugin</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 交互式创建：mvn archetype:generate -DarchetypeVersion=&#34;1.4&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># archetype建议使用默认版本（内容最精简，后续一步一步的配置，熟悉后生成自己的pom.xml即可）</span>
+</span></span><span style="display:flex;"><span>mvn archetype:generate -DarchetypeVersion<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;1.4&#34;</span> -DarchetypeArtifactId<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;maven-archetype-quickstart&#34;</span> -DinteractiveMode<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;false&#34;</span> -DgroupId<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;com.zaza&#34;</span> -DartifactId<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;xstack-agent&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># jdk修改成1.8</span>
+</span></span><span style="display:flex;"><span>    &lt;maven.compiler.source&gt;1.7&lt;/maven.compiler.source&gt;
+</span></span><span style="display:flex;"><span>    &lt;maven.compiler.target&gt;1.7&lt;/maven.compiler.target&gt;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 改成</span>
+</span></span><span style="display:flex;"><span>    &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+</span></span><span style="display:flex;"><span>    &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vscode 创建（建议使用此方法创建）：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ctrl+shift+p 输入：&gt;create java --&gt; Maven --&gt; 选择：maven-archetype-quickstart</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 这里pom.xml多了build编译的插件信息：maven-xxx-plugin  （影响参数：-DarchetypeVersion=&#34;1.4&#34;）</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vscode 实际创建命令：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># mvn org.apache.maven.plugins:maven-archetype-plugin:3.1.2:generate -DarchetypeArtifactId=&#34;maven-archetype-quickstart&#34; -DarchetypeGroupId=&#34;org.apache.maven.archetypes&#34; -DarchetypeVersion=&#34;1.4&#34; -DgroupId=&#34;com.example&#34; -DartifactId=&#34;demo&#34;</span>
+</span></span></code></pre></div><h3 id="插件搜索">插件搜索</h3>
+<blockquote>
+<p>还可以查看每个插件的pom文件内容</p>
+<p>&ldquo;Latest Version&rdquo;  &ldquo;Updated&rdquo; 之间有一个版本数量点击进去，再点击对应的&quot;Version&quot;后，左上角就有：Apache Maven的dependency相关内容</p>
+</blockquote>
+<p><a href="https://search.maven.org/" target="_blank">Maven Central Repository Search</a></p>
+<h3 id="打包插件">打包插件</h3>
+<blockquote>
+<p>打包：我们日常使用的以maven-assembly-plugin为最多，因为大数据项目中往往有很多shell脚本、SQL脚本、.properties及.xml配置项等，采用assembly插件可以让输出的结构清晰而标准化。</p>
+<p>参考：https://github.com/tencentyun/cos_migrate_tool_v5/blob/master/pom.xml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- 依赖信息:dependencies下不用配置 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- 编译配置，注意不要配置到：build-&gt;pluginManagement下面了 --&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;build&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;plugins&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;groupId&gt;</span>org.apache.maven.plugins<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;artifactId&gt;</span>maven-assembly-plugin<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;version&gt;</span>3.3.0<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;executions&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;execution&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;id&gt;</span>make-assembly<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;phase&gt;</span>package<span style="color:#000080">&lt;/phase&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;goals&gt;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#000080">&lt;goal&gt;</span>single<span style="color:#000080">&lt;/goal&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;/goals&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;/execution&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/executions&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#998;font-style:italic">&lt;!-- &lt;descriptor&gt;src/main/assembly/assembly.xml&lt;/descriptor&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;finalName&gt;</span>${project.name}<span style="color:#000080">&lt;/finalName&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;descriptorRefs&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 将依赖的jar打入目标jar包，这样可以实现jar单包而不需要拷贝lib包 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;descriptorRef&gt;</span>jar-with-dependencies<span style="color:#000080">&lt;/descriptorRef&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;/descriptorRefs&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;archive&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;manifest&gt;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#000080">&lt;mainClass&gt;</span>com.zaza.App<span style="color:#000080">&lt;/mainClass&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;/manifest&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;/archive&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/plugins&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/build&gt;</span>
+</span></span></code></pre></div><h3 id="log4j2插件">log4j2插件</h3>
+<h4 id="安装-1">安装</h4>
+<blockquote>
+<p>使用最新版本，log4j出了远程执行的严重漏洞</p>
+<p><a href="https://logging.apache.org/log4j/2.x/maven-artifacts.html" target="_blank">Log4j – Maven, Ivy, Gradle, and SBT Artifacts (apache.org)</a></p>
+<h3 id="最佳实践">最佳实践</h3>
+<p>在开发阶段，始终使用Commons Logging接口来写入日志，并且开发阶段无需引入Log4j。如果需要把日志写入文件， 只需要把正确的配置文件和Log4j相关的jar包放入<code>classpath</code>，就可以自动把日志切换成使用Log4j写入，无需修改任何代码。</p>
+<ul>
+<li>log4j-jcl:commons-logging到log4j2的桥梁 （Commons Logging是一个第三方提供的库），默认common-logging会自动检查是否使用log4j</li>
+<li>JDK自带的Logging其实是一个鸡肋，竟然没有debug的日志级别，差评。。。</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;dependencies&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>commons-logging<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>commons-logging<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>1.2<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>org.apache.logging.log4j<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>log4j-api<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>2.17.1<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>org.apache.logging.log4j<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>log4j-core<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>2.17.1<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">&lt;!-- 这个是依赖包：SLF4J: Failed to load class &#34;org.slf4j.impl.StaticLoggerBinder&#34;. --&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>org.apache.logging.log4j<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>log4j-slf4j-impl<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>2.17.1<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">&lt;!-- commons-logging到log4j2的桥梁 --&gt;</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;groupId&gt;</span>org.apache.logging.log4j<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;artifactId&gt;</span>log4j-jcl<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;version&gt;</span>2.17.1<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/dependency&gt;</span>    
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div><h4 id="properties配置">properties配置</h4>
+<blockquote>
+<p><a href="https://logging.apache.org/log4j/2.x/manual/configuration.html" target="_blank">Log4j – Configuring Log4j 2 (apache.org)</a></p>
+<p>log4j 1.x 默认路径：src/main/resources/log4j.properties</p>
+<p><strong>log4j 2.x 默认路径</strong>：src/main/resources/log4j2.properties</p>
+</blockquote>
+<pre tabindex="0"><code class="language-properties" data-lang="properties">status = error
+dest = err
+name = PropertiesConfig
+ 
+property.filename = logs/rollingtest.log
+ 
+filter.threshold.type = ThresholdFilter
+filter.threshold.level = debug
+ 
+appender.console.type = Console
+appender.console.name = STDOUT
+appender.console.layout.type = PatternLayout
+appender.console.layout.pattern = %d [%-5p] [%t:%r] [%c:%x] [%F:%L] %m%n
+appender.console.filter.threshold.type = ThresholdFilter
+appender.console.filter.threshold.level = debug
+
+appender.rolling.type = RollingFile
+appender.rolling.name = RollingFile
+appender.rolling.fileName = ${filename}
+# appender.rolling.filePattern = target/rolling2/test1-%d{MM-dd-yy-HH-mm-ss}-%i.log.gz
+appender.rolling.filePattern = logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz
+appender.rolling.layout.type = PatternLayout
+appender.rolling.layout.charset = UTF-8
+
+# appender.rolling.layout.pattern = %d %p %C{1.} [%t] %m%n ==&gt; # 2022-01-11 04:10:43,304 ERROR c.e.App [main] 严重信息
+# 2022-01-11 04:10:58 [INFO ] [main:1176] [com.example.App:[]] [App.java:16] 一般信息
+appender.rolling.layout.pattern = %d [%-5p] [%t:%r] [%c:%x] [%F:%L] %m%n
+appender.rolling.policies.type = Policies
+appender.rolling.policies.time.type = TimeBasedTriggeringPolicy
+appender.rolling.policies.time.interval = 2
+appender.rolling.policies.time.modulate = true
+appender.rolling.policies.size.type = SizeBasedTriggeringPolicy
+appender.rolling.policies.size.size = 100MB
+appender.rolling.strategy.type = DefaultRolloverStrategy
+appender.rolling.strategy.max = 10
+ 
+logger.rolling.name = com.example.App
+logger.rolling.level = debug
+logger.rolling.additivity = false
+logger.rolling.appenderRef.rolling.ref = RollingFile
+
+rootLogger.level = info
+rootLogger.appenderRef.stdout.ref = STDOUT
+</code></pre><h4 id="log4j2示例代码">log4j2示例代码</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>package com.example;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>import org.apache.commons.logging.Log;
+</span></span><span style="display:flex;"><span>import org.apache.commons.logging.LogFactory;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/**
+</span></span><span style="display:flex;"><span> * Hello world!
+</span></span><span style="display:flex;"><span> *
+</span></span><span style="display:flex;"><span> */
+</span></span><span style="display:flex;"><span>public class App <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    private static final Log <span style="color:#008080">log</span> <span style="color:#000;font-weight:bold">=</span> LogFactory.getLog<span style="color:#000;font-weight:bold">(</span>App.class<span style="color:#000;font-weight:bold">)</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    public static void main<span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        log.info<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;一般信息&#34;</span><span style="color:#000;font-weight:bold">)</span>;
+</span></span><span style="display:flex;"><span>        log.warn<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;警示信息&#34;</span><span style="color:#000;font-weight:bold">)</span>;
+</span></span><span style="display:flex;"><span>        log.error<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;严重信息&#34;</span><span style="color:#000;font-weight:bold">)</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h4 id="日志格式">日志格式</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Log4j2 的日志格式</span>
+</span></span><span style="display:flex;"><span>17:24:11.194 <span style="color:#000;font-weight:bold">[</span>main<span style="color:#000;font-weight:bold">]</span> ERROR com.zaza.app.App - 严重信息
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># commons-logging 的日志格式</span>
+</span></span><span style="display:flex;"><span>Jan 11, <span style="color:#099">2022</span> 4:17:40 AM com.example.App main
+</span></span><span style="display:flex;"><span>SEVERE: 严重信息
+</span></span></code></pre></div><h3 id="slf4jlogback插件">SLF4J+Logback插件</h3>
+<blockquote>
+<ul>
+<li>从目前的趋势来看，越来越多的开源项目从Commons Logging加Log4j转向了SLF4J加Logback。 <a href="https://www.qos.ch/" target="_blank">QOS.CH (Switzerland)-使用率对比</a></li>
+<li>Logback是由log4j创始人设计的另一个开源日志组件,官方网站： <a href="http://logback.qos.ch" target="_blank">http://logback.qos.ch</a>。</li>
+<li>SprintBoot 默认使用此方案</li>
+</ul>
+</blockquote>
+<h4 id="安装-2">安装</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;groupId&gt;</span>org.slf4j<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;artifactId&gt;</span>slf4j-api<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;version&gt;</span>1.7.32<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;groupId&gt;</span>ch.qos.logback<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;artifactId&gt;</span>logback-classic<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;version&gt;</span>1.2.10<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">&lt;!-- &lt;scope&gt;test&lt;/scope&gt; 注意注释这行--&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h4 id="logback配置">logback配置</h4>
+<blockquote>
+<p>保存路径：src/main/resources/logback.xml</p>
+<p><a href="http://logback.qos.ch/translator/" target="_blank">log4j转换成logback配置</a></p>
+<p>运行使用自定义配置：java <strong>-Dlogback.configurationFile =/path/to/config.xml</strong></p>
+<p><a href="https://toutiao.io/posts/lnl5fmi/preview" target="_blank">故事篇：终于给老婆讲明白什么是logback了</a></p>
+<p><a href="https://zhangzw.com/posts/20200610.html" target="_blank">SpringBoot 日志 logback-spring.xml 配置技巧：使用 springProfile 分环境打印日志到不同目标-很不错</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">&lt;!-- property ：用来定义变量值 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;property</span> <span style="color:#008080">name=</span><span style="color:#d14">&#34;PATTERN&#34;</span> <span style="color:#008080">value=</span><span style="color:#d14">&#34;[%d{yyyy-MM-dd HH:mm:ss SSS}] [%X] [%-5p] %logger{0}.%M\\(%L\\) - %msg%n&#34;</span> <span style="color:#000080">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;property</span> <span style="color:#008080">name=</span><span style="color:#d14">&#34;LOG_HOME&#34;</span> <span style="color:#008080">value=</span><span style="color:#d14">&#34;logs&#34;</span> <span style="color:#000080">/&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">&lt;!-- 输出到控制台 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;appender</span> <span style="color:#008080">name=</span><span style="color:#d14">&#34;CONSOLE&#34;</span> <span style="color:#008080">class=</span><span style="color:#d14">&#34;ch.qos.logback.core.ConsoleAppender&#34;</span><span style="color:#000080">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;encoder&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;pattern&gt;</span>${PATTERN}<span style="color:#000080">&lt;/pattern&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/encoder&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/appender&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">&lt;!-- 输出到文件 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;appender</span> <span style="color:#008080">name=</span><span style="color:#d14">&#34;FILE&#34;</span> <span style="color:#008080">class=</span><span style="color:#d14">&#34;ch.qos.logback.core.rolling.RollingFileAppender&#34;</span><span style="color:#000080">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;rollingPolicy</span> <span style="color:#008080">class=</span><span style="color:#d14">&#34;ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy&#34;</span><span style="color:#000080">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;fileNamePattern&gt;</span>${LOG_HOME}/log-%d{yyyy-MM-dd}.%i.log<span style="color:#000080">&lt;/fileNamePattern&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 日志保留天数 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;MaxHistory&gt;</span>100<span style="color:#000080">&lt;/MaxHistory&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 日志文件最大值 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;maxFileSize&gt;</span>100MB<span style="color:#000080">&lt;/maxFileSize&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/rollingPolicy&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;encoder&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;charset&gt;</span>UTF-8<span style="color:#000080">&lt;/charset&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#000080">&lt;pattern&gt;</span>${PATTERN}<span style="color:#000080">&lt;/pattern&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/encoder&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/appender&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;logger</span> <span style="color:#008080">name=</span><span style="color:#d14">&#34;com.example.App&#34;</span><span style="color:#000080">/&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;root</span> <span style="color:#008080">level=</span><span style="color:#d14">&#34;trace&#34;</span><span style="color:#000080">&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;appender-ref</span> <span style="color:#008080">ref=</span><span style="color:#d14">&#34;CONSOLE&#34;</span> <span style="color:#000080">/&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;appender-ref</span> <span style="color:#008080">ref=</span><span style="color:#d14">&#34;FILE&#34;</span> <span style="color:#000080">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/root&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/configuration&gt;</span>
+</span></span></code></pre></div><h4 id="示例代码">示例代码</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> <span style="color:#555">com.example</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">org.slf4j.Logger</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">org.slf4j.LoggerFactory</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * Hello world!
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">App</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">final</span> <span style="color:#000;font-weight:bold">static</span> Logger logger <span style="color:#000;font-weight:bold">=</span> LoggerFactory<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getLogger</span><span style="color:#000;font-weight:bold">(</span>App<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">class</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        logger<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">trace</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;logback 成功了&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        logger<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">debug</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;logback 成功了&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        logger<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;logback 成功了&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        logger<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">warn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;logback {}&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;成功了&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        logger<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;logback 成功了&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h3 id="mysql插件">mysql插件</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;groupId&gt;</span>mysql<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;artifactId&gt;</span>mysql-connector-java<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;version&gt;</span>8.0.27<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h3 id="rabbitmq插件">rabbitmq插件</h3>
+<blockquote>
+<p>根据需求添加</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;groupId&gt;</span>com.rabbitmq<span style="color:#000080">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;artifactId&gt;</span>amqp-client<span style="color:#000080">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;version&gt;</span>5.14.0<span style="color:#000080">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h3 id="打jar包">打jar包</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 代码规范校验</span>
+</span></span><span style="display:flex;"><span>mvn checkstyle::check
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关闭校验：&lt;skip&gt;${skipTests}&lt;/skip&gt; 改成：&lt;skip&gt;true&lt;/skip&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 打包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># mvn assembly:single</span>
+</span></span><span style="display:flex;"><span>mvn package
+</span></span></code></pre></div><h2 id="nexus私有仓库">Nexus私有仓库</h2>
+<blockquote>
+<p><a href="https://www.sonatype.com/thanks/repo-oss" target="_blank">Nexus下载地址</a></p>
+</blockquote>
+<h3 id="常见地址">常见地址</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 中央仓库客户端请求的时候，自动缓存</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-central/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 私有快照</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-snapshots/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 私有发布版本</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-releases/
+</span></span></code></pre></div><h3 id="mvn配置">mvn配置</h3>
+<blockquote>
+<p>pom.xml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;project&gt;</span>
+</span></span><span style="display:flex;"><span>......
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;distributionManagement&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;repository&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;name&gt;</span>Releases<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-releases<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/repository&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;snapshotRepository&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;name&gt;</span>Snapshot<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-snapshots<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/snapshotRepository&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/distributionManagement&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/project&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p>~/.m2/settings.xml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;settings&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;mirrors&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;mirror&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;name&gt;</span>zaza<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;mirrorOf&gt;</span>central<span style="color:#000080">&lt;/mirrorOf&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 国内推荐阿里云的Maven镜像 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- &lt;url&gt;https://maven.aliyun.com/repository/central&lt;/url&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-central/<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/mirror&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/mirrors&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;servers&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;server&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;username&gt;</span>admin<span style="color:#000080">&lt;/username&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;password&gt;</span>71382b73-942a-4328-99d2-0d83155fa83b<span style="color:#000080">&lt;/password&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;/server&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/servers&gt;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/settings&gt;</span>
+</span></span></code></pre></div><h3 id="发布">发布</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mvn deploy
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 快照版本 &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 正式版本 &lt;version&gt;1.0.0&lt;/version&gt;</span>
+</span></span></code></pre></div><h2 id="数据库连接池">数据库连接池</h2>
+<blockquote>
+<p>JBoss 过时了</p>
+<p>Druid或者HikariCP，建议Druid ？ HikariCP？</p>
+</blockquote>
+<h2 id="spring">spring</h2>
+<blockquote>
+<p><a href="https://start.spring.io/" target="_blank">Spring Initializr-源码包生成器</a></p>
+<p><a href="https://learner.blog.csdn.net/article/details/88925013" target="_blank">Vue + Spring Boot 项目实战（一）</a></p>
+</blockquote>
+<h3 id="结构">结构</h3>
+<ul>
+<li><a href="https://mvnrepository.com/artifact/org.springframework/spring" target="_blank">springframework</a> 更名为 <a href="https://mvnrepository.com/artifact/org.springframework/spring-core" target="_blank">spring-core</a>, <a href="https://mvnrepository.com/artifact/org.springframework/spring-core" target="_blank">spring-core</a> 只依赖 <a href="https://mvnrepository.com/artifact/org.springframework/spring-jcl" target="_blank">Logging Bridge之spring-jcl</a></li>
+<li><a href="https://mvnrepository.com/artifact/org.springframework/spring-context" target="_blank">spring 的 ioc 容器</a></li>
+<li>[<a href="https://mvnrepository.com/artifact/org.springframework/spring-aspects" target="_blank">spring 的 AOP</a></li>
+<li><a href="https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web" target="_blank">web开发&ndash;spring-boot-starter-web</a></li>
+</ul>
+<h2 id="vscode扩展spring-boot-extension-pack指定java版本">vscode扩展Spring Boot Extension Pack指定java版本</h2>
+<ol>
+<li>Open Visual Studio Code</li>
+<li>CRTL + , to open the settings</li>
+<li>Search spring-boot.ls.java.home</li>
+<li>Select &lsquo;Edit in settings.json&rsquo;</li>
+<li>Your Java 11 installation → &ldquo;spring-boot.ls.java.home&rdquo;: &ldquo;C:\Program Files\Java\jdk-17.0.2&rdquo;</li>
+<li>Save and restart VS Code</li>
+<li>Prereq: Have a Java 11 installation</li>
+</ol>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://mvnrepository.com/" target="_blank">Maven Repository-查找各个组件排名和配置信息</a></li>
+<li><a href="https://blog.csdn.net/qq_32736999/article/details/93395246" target="_blank">Maven 3种打包方式之一maven-assembly-plugin的使用</a></li>
+<li><a href="https://segmentfault.com/a/1190000016237395" target="_blank">maven&ndash;插件篇（assembly插件）</a></li>
+<li><a href="https://juejin.cn/post/6844904071145455624" target="_blank">13 个最火的 SpringBoot 实战开源项目推荐</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html">https://zazayaya.github.io/2021/12/31/java-getting-started.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/11/08/elk-insert-nginx-log.html">ELK-nginx数据录入</a></li>
+        
+        <li><a href="/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a></li>
+        
+        <li><a href="/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html">ELK-6.0.0升级到7.15.0</a></li>
+        
+        <li><a href="/2021/10/09/python-3.8-install-on-centos6.x-doc.html">Python-3.8安装文档</a></li>
+        
+        <li><a href="/2021/09/27/elk-install-by-docker.html">ELK-基于docker安装</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/java'>java</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

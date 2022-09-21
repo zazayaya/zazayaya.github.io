@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>flask on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/flask.html</link>
+    <description>Recent content in flask on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 25 Dec 2020 17:45:02 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/flask/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flask-基础框架搭建</title>
+      <link>https://zazayaya.github.io/2020/12/25/flask-project-struct.html</link>
+      <pubDate>Fri, 25 Dec 2020 17:45:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/25/flask-project-struct.html</guid>
+      <description>说明文档 flask相关 基于restful风格的开发基础环境包 基础依赖包 Flask # 主框架 PyMySQL # SQLAlchemy数据库驱动 5.7k星星(My</description>
+    </item>
+    
+    <item>
+      <title>Flask-WSGI规范</title>
+      <link>https://zazayaya.github.io/2020/12/03/flask-source-study.html</link>
+      <pubDate>Thu, 03 Dec 2020 17:39:00 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/03/flask-source-study.html</guid>
+      <description>WSGI规范(PEP 3333) WSGI 的全称是：Web Server Gateway Interface，介于 web server(uwsgi) 和应用 server (flask)之间的接口规范。当使用 Python 进行 web 开发时，</description>
+    </item>
+    
+  </channel>
+</rss>

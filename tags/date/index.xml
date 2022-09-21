@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>date on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/date.html</link>
+    <description>Recent content in date on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 12 May 2021 15:37:55 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/date/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-date常见使用</title>
+      <link>https://zazayaya.github.io/2021/05/12/linux-date.html</link>
+      <pubDate>Wed, 12 May 2021 15:37:55 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/12/linux-date.html</guid>
+      <description>## 以星期一为示例 # 星期一 date -dmonday +%Y%m%d # 上周一 date -dlast-monday +%Y%m%d # 下周一 date -dnext-monday +%Y%m%d # 二周后的星期一 date -d&amp;#39;monday+14 days&amp;#39; +%Y%m%d date -d&amp;#39;monday+fortnight&amp;#39; +%Y%m%d # 二周前的星期一 date -d&amp;#39;monday-14 days&amp;#39; +%Y%m%d date -d&amp;#39;monday-fortnight ago&amp;#39; +%Y%m%d # 一年后的星</description>
+    </item>
+    
+  </channel>
+</rss>

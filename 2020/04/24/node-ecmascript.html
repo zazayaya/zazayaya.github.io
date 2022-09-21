@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Ecmascript-入门教程 | zaza的博客</title>
+    <meta property="og:title" content="Ecmascript-入门教程 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-04-24T15:12:27&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-04-24T15:12:27&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Ecmascript-入门教程">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2020/04/24/node-ecmascript.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#文档">文档</a></li>
+    <li><a href="#et-const-var的区别">et const var的区别</a></li>
+    <li><a href="#基础">基础</a></li>
+    <li><a href="#变量是弱类型的">变量是弱类型的</a></li>
+    <li><a href="#命名变量">命名变量</a></li>
+    <li><a href="#注释">注释</a></li>
+    <li><a href="#代码块">代码块</a></li>
+    <li><a href="#ecmascript-关键字">ECMAScript 关键字</a></li>
+    <li><a href="#ecmascript-保留字">ECMAScript 保留字</a></li>
+    <li><a href="#ecmascript-原始类型">ECMAScript 原始类型</a></li>
+    <li><a href="#ecmascript-引用类">ECMAScript 引用类</a></li>
+    <li><a href="#运算符">运算符</a></li>
+    <li><a href="#语句">语句</a></li>
+    <li><a href="#函数">函数</a></li>
+    <li><a href="#arguments对象函数参数位置处理">arguments对象(函数参数位置处理)</a></li>
+    <li><a href="#function-对象类">Function 对象（类）</a></li>
+    <li><a href="#闭包closure">闭包（closure）</a></li>
+    <li><a href="#面向对象技术">面向对象技术</a></li>
+    <li><a href="#关键字-this">关键字 this</a></li>
+    <li><a href="#定义类或对象">定义类或对象</a></li>
+    <li><a href="#let和const命令">let和const命令</a></li>
+    <li><a href="#模块">模块</a></li>
+    <li><a href="#常见模块">常见模块</a>
+      <ul>
+        <li><a href="#path">path</a></li>
+        <li><a href="#process">process</a></li>
+        <li><a href="#require加载顺序">require加载顺序</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量命名规则">变量命名规则</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Ecmascript-入门教程</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年4月24日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%89%8D%E7%AB%AF'>前端</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="文档">文档</h2>
+<pre><code>2009年，Node.js 项目诞生，所有模块一律为 CommonJS 格式。
+https://www.w3cschool.cn/ecmascript/
+</code></pre>
+<h2 id="et-const-var的区别">et const var的区别</h2>
+<pre><code>es5时候只有var定义变量，只有全局作用域和函数作用域
+es6新增 let和const，存在块级作用域  let替换es5中的var
+
+let:块级作用域	
+var:全局作用域
+const:常常定义常量 也是块级作用域
+let const定义变量不存在变量提成，var存在声明提前。
+let 和const定义变量必须先定义再使用，否则会报错。
+const定义变量不能直接修改赋值
+</code></pre>
+<h2 id="基础">基础</h2>
+<h2 id="变量是弱类型的">变量是弱类型的</h2>
+<pre><code>// 自动识别类型，而不需要什么类型
+let color = &quot;red&quot;;
+let num = 5;
+let visible = true;
+</code></pre>
+<h2 id="命名变量">命名变量</h2>
+<pre><code>第一个字符必须是字母、下划线（_）或美元符号（$）
+余下的字符可以是下划线、美元符号或任何字母或数字字符
+// 合法变量
+var test;
+var $test;
+var $1;
+var _$te$t2;
+</code></pre>
+<h2 id="注释">注释</h2>
+<pre><code>// 这是一条单行注释
+
+/*这是一个多行
+注释*/
+</code></pre>
+<h2 id="代码块">代码块</h2>
+<pre><code>// 括号表示代码块
+if (colorTest == &quot;red&quot;) {
+    colorTest= &quot;blue&quot;;
+    alert(colorTest);
+}
+</code></pre>
+<h2 id="ecmascript-关键字">ECMAScript 关键字</h2>
+<pre><code>break case catch continue default delete do else finally for function if in instanceof new return switch this throw try typeof var void while with
+</code></pre>
+<h2 id="ecmascript-保留字">ECMAScript 保留字</h2>
+<pre><code>abstract boolean byte char class const debugger double enum export extends final float goto implements import int interface long native package private protected public short static super synchronized throws transient volatile
+</code></pre>
+<h2 id="ecmascript-原始类型">ECMAScript 原始类型</h2>
+<pre><code>ECMAScript有5种原始类型（primitive type），即Undefined、Null、Boolean、Number和String。
+
+typeof运算符有一个参数，即要检查的变量或值。例如：
+
+var sTemp = &quot;test string&quot;;
+alert (typeof sTemp);    //输出 &quot;string&quot;
+alert (typeof 86);    //输出 &quot;number&quot;
+</code></pre>
+<h2 id="ecmascript-引用类">ECMAScript 引用类</h2>
+<pre><code>// 引用类型通常叫做类（class），也就是说，遇到引用值，所处理的就是对象。
+var o = new Object();
+// 等价于（如果没有参数可以忽略括号）
+var o = new Object;
+
+注意：尽管括号不是必需的，但是为了避免混乱，最好使用括号。
+
+// 所有对象继承Object
+
+// Object基础属性
+	constructor
+	对创建对象的函数的引用（指针）。对于Object对象，该指针指向原始的Object()函数。
+	Prototype
+	对该对象的对象原型的引用。对于所有的对象，它默认返回Object对象的一个实例。
+
+
+// Object 对象还具有几个方法：
+	hasOwnProperty(property)
+	判断对象是否有某个特定的属性。必须用字符串指定该属性。（例如，o.hasOwnProperty(&quot;name&quot;)）
+	IsPrototypeOf(object)
+	判断该对象是否为另一个对象的原型。
+	PropertyIsEnumerable
+	判断给定的属性是否可以用for...in语句进行枚举。
+	ToString()
+	返回对象的原始字符串表示。对于Object对象，ECMA-262没有定义这个值，所以不同的ECMAScript实现具有不同的值。
+	ValueOf()
+	返回最适合该对象的原始值。对于许多对象，该方法返回的值都与ToString()的返回值相同。
+
+
+// 示例
+let o = new Object();
+console.log(o.hasOwnProperty('zaza'));
+
+Boolean 对象
+Number 对象 自带几个方法
+String 对象
+</code></pre>
+<h2 id="运算符">运算符</h2>
+<pre><code>// 条件运算符
+variable = boolean_expression ? true_value : false_value;
+var iMax = (iNum1 &gt; iNum2) ? iNum1 : iNum2;
+
+// 赋值运算符
+var iNum = 10;
+iNum += 10；
+
+乘法/赋值（*=）
+除法/赋值（/=）
+取模/赋值（%=）
+加法/赋值（+=）
+减法/赋值（-=）
+左移/赋值（&lt;&lt;=）
+有符号右移/赋值（&gt;&gt;=）
+无符号右移/赋值（&gt;&gt;&gt;=）
+
+// 逗号运算符
+var iNum1 = 1, iNum = 2, iNum3 = 3;
+</code></pre>
+<h2 id="语句">语句</h2>
+<pre><code># 至少执行一次
+do
+ {statement} 
+while
+ (expression);
+
+while
+ (expression) statement
+
+for
+(initialization; expression; post-loop-expression) statement
+
+// 枚举对象
+for
+ (property 	in
+ expression) statement
+
+// 标签语句(goto效果)
+// break 语句和 continue 语句都可以与有标签的语句联合使用，返回代码中的特定位置。
+label : statement
+
+
+switch (sColor) {
+  case BLUE: alert(&quot;Blue&quot;);
+    break;
+  case RED: alert(&quot;Red&quot;);
+    break;
+  case GREEN: alert(&quot;Green&quot;);
+    break;
+  default: alert(&quot;Other&quot;);
+}
+</code></pre>
+<h2 id="函数">函数</h2>
+<pre><code>function functionName(arg0, arg1, ... argN) {
+  statements
+}
+
+// 示例
+function diff(iNum1, iNum2) {
+  if (iNum1 &gt; iNum2) {
+    return iNum1 - iNum2;
+  } else {
+    return iNum2 - iNum1;
+  }
+}
+</code></pre>
+<h2 id="arguments对象函数参数位置处理">arguments对象(函数参数位置处理)</h2>
+<pre><code>function doAdd() {
+  if(arguments.length == 1) {
+    alert(arguments[0] + 5);
+  } else if(arguments.length == 2) {
+    alert(arguments[0] + arguments[1]);
+  }
+}
+</code></pre>
+<h2 id="function-对象类">Function 对象（类）</h2>
+<pre><code>var function_name = new function(arg1, arg2, ..., argN, function_body)
+在上面的形式中，每个 arg 都是一个参数，最后一个参数是函数主体（要执行的代码）。这些参数必须是字符串。
+
+注意：尽管可以使用 Function 构造函数创建函数，但最好不要使用它，因为用它定义函数比用传统方式要慢得多。不过，所有函数都应看作 Function 类的实例。
+
+
+
+var doAdd = new Function(&quot;iNum&quot;, &quot;alert(iNum + 10)&quot;);
+var alsodoAdd = doAdd;
+doAdd(10);	//输出 &quot;20&quot;
+alsodoAdd(10);	//输出 &quot;20&quot;	
+在这里，变量 doAdd 被定义为函数，然后 alsodoAdd 被声明为指向同一个函数的指针。用这两个变量都可以执行该函数的代码，并输出相同的结果 - &quot;20&quot;。因此，如果函数名只是指向函数的变量，那么可以把函数作为参数传递给另一个函数吗？回答是肯定的！
+</code></pre>
+<h2 id="闭包closure">闭包（closure）</h2>
+<pre><code>闭包，指的是词法表示包括不被计算的变量的函数，也就是说，函数可以使用函数之外定义的变量。
+</code></pre>
+<h2 id="面向对象技术">面向对象技术</h2>
+<pre><code>ECMA-262 把对象（object）定义为“属性的无序集合，每个属性存放一个原始值、对象或函数”。严格来说，这意味着对象是无特定顺序的值的数组。
+尽管 ECMAScript 如此定义对象，但它更通用的定义是基于代码的名词（人、地点或事物）的表示。
+
+面向对象语言的要求
+一种面向对象语言需要向开发者提供四种基本能力： 	
+	封装 - 把相关的信息（无论数据或方法）存储在对象中的能力
+	聚集 - 把一个对象存储在另一个对象内的能力
+	继承 - 由另一个类（或多个类）得来类的属性和方法的能力
+	多态 - 编写能以多种方法运行的函数或方法的能力
+
+
+// 声明和实例化
+对象的创建方式是用关键字 new 后面跟上实例化的类的名字：
+var oObject = new Object(); // 等价于 var oObject = {}; 
+var oStringObject = new String();
+
+// 对象类型
+Object Function Array String Boolean Number Date RegExp Error EvalError RangeError ReferenceError SyntaxError TypeError URIError
+</code></pre>
+<h2 id="关键字-this">关键字 this</h2>
+<pre><code>在 ECMAScript 中，要掌握的最重要的概念之一是关键字 this 的用法，它用在对象的方法中。关键字 this 总是指向调用该方法的对象，例如：
+</code></pre>
+<h2 id="定义类或对象">定义类或对象</h2>
+<pre><code>如前所述，目前使用最广泛的是混合的构造函数/原型方式。
+联合使用构造函数和原型方式，就可像用其他程序设计语言一样创建对象。这种概念非常简单，即用构造函数定义对象的所有非函数属性，
+用原型方式定义对象的函数属性（方法）。结果是，所有函数都只创建一次，而每个对象都具有自己的对象属性实例。
+
+// 混合的构造函数/原型方式
+function Car(sColor,iDoors,iMpg) {
+  this.color = sColor;
+  this.doors = iDoors;
+  this.mpg = iMpg;
+  this.drivers = new Array(&quot;Mike&quot;,&quot;John&quot;);
+}
+
+Car.prototype.showColor = function() {
+  alert(this.color);
+};
+
+var oCar1 = new Car(&quot;red&quot;,4,23);
+var oCar2 = new Car(&quot;blue&quot;,3,25);
+
+oCar1.drivers.push(&quot;Bill&quot;);
+
+alert(oCar1.drivers);	//输出 &quot;Mike,John,Bill&quot;
+alert(oCar2.drivers);	//输出 &quot;Mike,John&quot;
+</code></pre>
+<h2 id="let和const命令">let和const命令</h2>
+<pre><code>ES6新增了let命令，用来声明变量。它的用法类似于var，但是所声明的变量，只在let命令所在的代码块内有效。
+
+上面代码使用了一个五层的块级作用域。外层作用域无法读取内层作用域的变量。
+{{{{
+  {let insane = 'Hello World'}
+  console.log(insane); // 报错
+}}}};
+
+// 多个块级别声明
+{{{{
+  let insane = 'Hello World';
+  {let insane = 'Hello World'}
+}}}};
+
+
+const声明一个只读的常量。一旦声明，常量的值就不能改变。
+const PI = 3.1415;
+PI // 3.1415
+
+PI = 3;
+// TypeError: Assignment to constant variable.
+</code></pre>
+<h2 id="模块">模块</h2>
+<pre><code>模块引用(require)；模块定义(exports)；模块标识(module)
+require // python import
+exports // def ?
+module // as ?
+
+module跟module.exports有什么区别
+1.exports 是指向的 module.exports 的引用
+2.module.exports 初始值为一个空对象 {}，所以 exports 初始值也是 {}
+3.require() 返回的是 module.exports 而不是 exports
+</code></pre>
+<h2 id="常见模块">常见模块</h2>
+<h3 id="path">path</h3>
+<pre><code>const path = require('path');
+// 格式化路径
+console.log('normalization : ' + path.normalize('/test/test1//2slashes/1slash/tab/..'));
+
+// 连接路径
+console.log('joint path : ' + path.join('/test', 'test1', '2slashes/1slash', 'tab', '..'));
+
+// 转换为绝对路径
+console.log('resolve : ' + path.resolve('main.js'));
+
+// 路径中文件的后缀名
+console.log('ext name : ' + path.extname('main.js'));
+</code></pre>
+<h3 id="process">process</h3>
+<pre><code>process.env.NODE_ENV
+process对象是全局变量。它对于node应用程序是始终可用的，无需require()。
+</code></pre>
+<h3 id="require加载顺序">require加载顺序</h3>
+<pre><code>Vue里require('../config') 如何加载index.js
+http://www.ruanyifeng.com/blog/2015/05/require.html
+
+require('../config') 加载顺序
+
+将 config 当成文件，依次查找下面文件，存在立即退出
+config
+config.js
+config.json
+config.node
+
+将 config 当成目录
+config/package.json（main字段）
+config/index.js
+config/index.json
+config/index.node
+</code></pre>
+<h2 id="变量命名规则">变量命名规则</h2>
+<pre><code>Camel 标记法
+首字母是小写的，接下来的字母都以大写字符开头。例如：
+var myTestValue = 0, mySecondValue = &quot;hi&quot;;
+
+Pascal 标记法
+首字母是大写的，接下来的字母都以大写字符开头。例如：
+
+var MyTestValue = 0, MySecondValue = &quot;hi&quot;;
+
+匈牙利类型标记法
+在以 Pascal 标记法命名的变量前附加一个小写字母（或小写字母序列），说明该变量的类型。例如，i 表示整数，s 表示字符串，如下所示：
+
+var iMyTestValue = 0, sMySecondValue = &quot;hi&quot;;</code></pre>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2020/04/24/node-ecmascript.html">https://zazayaya.github.io/2020/04/24/node-ecmascript.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2019/12/19/node-install.html">Node-安装</a></li>
+        
+        <li><a href="/2020/03/25/ansible-attention.html">Ansible-注意事项</a></li>
+        
+        <li><a href="/2020/03/11/kafka-install.html">Kafka-2.2.0-安装</a></li>
+        
+        <li><a href="/2019/02/14/python-project-struct.html">Python-模块编写</a></li>
+        
+        <li><a href="/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html">Linux-keepalive-lvs双机高可用负载均衡</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%89%8D%E7%AB%AF'>前端</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

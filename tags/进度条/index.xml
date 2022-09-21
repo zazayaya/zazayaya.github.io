@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>进度条 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html</link>
+    <description>Recent content in 进度条 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 19 Feb 2021 11:52:36 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flask-celery使用文档-实现异步进度条实时显示</title>
+      <link>https://zazayaya.github.io/2021/02/19/flask-celery.html</link>
+      <pubDate>Fri, 19 Feb 2021 11:52:36 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/02/19/flask-celery.html</guid>
+      <description>启动注意事项 # 任务队列 celery -A tasks worker --loglevel=info # windows下运行需要添加参数：--pool=solo celery -A tasks worker --pool=solo --loglevel=info # 但是需要说明的是，虽然cel</description>
+    </item>
+    
+  </channel>
+</rss>

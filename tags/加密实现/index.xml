@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>加密实现 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html</link>
+    <description>Recent content in 加密实现 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 02 Dec 2020 14:40:05 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python-Windows安装Crypto</title>
+      <link>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</link>
+      <pubDate>Wed, 02 Dec 2020 14:40:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</guid>
+      <description>Windows安装Crypto m2crypto vs pycrypto vs pycryptodome m2crypto：30+的星星，windows的兼容性较差，pip上面默认的版本不是whl包</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RabbitMQ on zaza的博客</title>
+    <link>https://zazayaya.github.io/categories/RabbitMQ.html</link>
+    <description>Recent content in RabbitMQ on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 30 Mar 2021 17:19:15 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/categories/RabbitMQ/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RabbitMQ-持久化</title>
+      <link>https://zazayaya.github.io/2021/03/30/rabbitmq-durable.html</link>
+      <pubDate>Tue, 30 Mar 2021 17:19:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/30/rabbitmq-durable.html</guid>
+      <description>exchange持久化 broker服务重启之后，exchange任然保留，否则没有broker存在的时候会消失 channel.exchange_declare(exchange=&amp;#39;ticket&amp;#39;, exchange_type=&amp;#39;direct&amp;#39;, durable=True) queue持久化</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ-安装文档</title>
+      <link>https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html</link>
+      <pubDate>Tue, 30 Mar 2021 11:30:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html</guid>
+      <description>测试环境：Centos6.x 安装 # 安装erlang(注意查看支持的系统版本) # https://github.com/rabbitmq/erlang-rpm/releases # 注意不要选错版本了，el6是centos6，el7</description>
+    </item>
+    
+  </channel>
+</rss>

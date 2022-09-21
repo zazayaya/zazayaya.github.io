@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>supervisord on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/supervisord.html</link>
+    <description>Recent content in supervisord on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 17 Mar 2021 11:07:51 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/supervisord/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Supervisord-使用文档</title>
+      <link>https://zazayaya.github.io/2021/03/17/python-supervisord.html</link>
+      <pubDate>Wed, 17 Mar 2021 11:07:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/17/python-supervisord.html</guid>
+      <description>环境依赖 # python2.7版本 # supervisord支持include功能 安装 # 建议最新版本 pip install supervisor==4.1.0 配置 # /root/.virtualenvs/test/bin/echo_supervisord_conf # 如果是virtual</description>
+    </item>
+    
+  </channel>
+</rss>

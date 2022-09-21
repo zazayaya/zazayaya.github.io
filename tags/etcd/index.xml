@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>etcd on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/etcd.html</link>
+    <description>Recent content in etcd on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 20 May 2021 11:54:41 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s-etcd集群搭建</title>
+      <link>https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html</link>
+      <pubDate>Thu, 20 May 2021 11:54:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html</guid>
+      <description>etcd etcd 是一个分布式键值对存储，设计用来可靠而快速的保存关键数据并提供访问。通过分布式锁，leader选举和写屏障(write barri</description>
+    </item>
+    
+  </channel>
+</rss>

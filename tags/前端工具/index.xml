@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前端工具 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</link>
+    <description>Recent content in 前端工具 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 22 Oct 2020 10:52:14 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>前端工具</title>
+      <link>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</link>
+      <pubDate>Thu, 22 Oct 2020 10:52:14 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</guid>
+      <description>diagram-designer 流程图，思维导图，电路图，GUI界面布局设计 Snipaste 一个简单但强大的截图工具 F1可以截图，同时测量大小，设置箭头，书写文字 F3在桌面置顶</description>
+    </item>
+    
+  </channel>
+</rss>

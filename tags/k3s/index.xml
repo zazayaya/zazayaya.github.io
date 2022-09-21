@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k3s on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/k3s.html</link>
+    <description>Recent content in k3s on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 31 Aug 2021 15:26:26 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/k3s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s-k3s安装文档</title>
+      <link>https://zazayaya.github.io/2021/08/31/k8s-k3s-install-doc.html</link>
+      <pubDate>Tue, 31 Aug 2021 15:26:26 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/31/k8s-k3s-install-doc.html</guid>
+      <description>环境准备 # 解决已知bug # open /proc/sys/net/netfilter/nf_conntrack_max: permission denied grep -q net.netfilter.nf_conntrack_max /etc/sysctl.conf || echo &amp;#39;net.netfilter.nf_conntrack_max=131072&amp;#39; &amp;gt;&amp;gt; /etc/sysctl.conf sysctl -p | grep nf_conntrack_max 安装server # 国内用户，可以使用以下方法加速安装 curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh - # 查</description>
+    </item>
+    
+  </channel>
+</rss>

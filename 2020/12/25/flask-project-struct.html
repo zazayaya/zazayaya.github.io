@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Flask-基础框架搭建 | zaza的博客</title>
+    <meta property="og:title" content="Flask-基础框架搭建 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-12-25T17:45:02&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-12-25T17:45:02&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Flask-基础框架搭建">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2020/12/25/flask-project-struct.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#说明文档">说明文档</a>
+      <ul>
+        <li><a href="#flask相关">flask相关</a>
+          <ul>
+            <li><a href="#基础依赖包">基础依赖包</a></li>
+            <li><a href="#结构规划">结构规划</a></li>
+            <li><a href="#运行">运行</a></li>
+          </ul>
+        </li>
+        <li><a href="#flask-security-token获取">flask-security token获取</a>
+          <ul>
+            <li><a href="#postman使用">postman使用</a></li>
+            <li><a href="#curl使用无法使用csrf_token">curl使用（无法使用csrf_token）</a></li>
+            <li><a href="#token测试">token测试</a></li>
+          </ul>
+        </li>
+        <li><a href="#swagger">swagger</a></li>
+        <li><a href="#token生成原理">token生成原理</a></li>
+        <li><a href="#添加账号">添加账号</a></li>
+        <li><a href="#sqlalchemy">sqlalchemy</a></li>
+        <li><a href="#数据库">数据库</a>
+          <ul>
+            <li><a href="#外键">外键</a></li>
+            <li><a href="#外键示例">外键示例</a></li>
+            <li><a href="#结构同步">结构同步</a></li>
+            <li><a href="#常见字段">常见字段</a></li>
+          </ul>
+        </li>
+        <li><a href="#status的值含义">status的值含义</a></li>
+        <li><a href="#python上下文">python上下文</a></li>
+        <li><a href="#数据库结构说明">数据库结构说明</a></li>
+        <li><a href="#casbin_rule">casbin_rule</a></li>
+        <li><a href="#无极菜单">无极菜单</a>
+          <ul>
+            <li><a href="#后端实现原理">后端实现原理</a></li>
+            <li><a href="#后端实现">后端实现</a></li>
+            <li><a href="#前端实现">前端实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#分页处理">分页处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#api设计规范">api设计规范</a>
+      <ul>
+        <li><a href="#设计流程">设计流程</a></li>
+        <li><a href="#资源操作">资源操作</a></li>
+        <li><a href="#url命名规则">url命名规则</a></li>
+        <li><a href="#post的json数据命名规范">post的json数据命名规范</a></li>
+        <li><a href="#请求参数格式">请求参数格式</a></li>
+        <li><a href="#响应数据格式">响应数据格式</a></li>
+        <li><a href="#标准参数">标准参数</a></li>
+        <li><a href="#常见校验数据">常见校验数据</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Flask-基础框架搭建</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年12月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Flask'>Flask</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="说明文档">说明文档</h2>
+<h3 id="flask相关">flask相关</h3>
+<p>基于restful风格的开发基础环境包</p>
+<h4 id="基础依赖包">基础依赖包</h4>
+<ul>
+<li>Flask                                           # 主框架</li>
+<li>PyMySQL                                   #  SQLAlchemy数据库驱动 5.7k星星(MySQLdb已不支持python3)</li>
+<li>Flask-SQLAlchemy                   # 数据库ORM</li>
+<li>Flask-Migrate                            # 数据库迁移软件</li>
+<li>Flask-Cors                                  # 跨域处理</li>
+<li>Flask-RESTful                            # RESTful风格，不要使用flask-restplus(已停止维护)</li>
+<li>flask-swagger                           # api接口调试以及文档生成</li>
+<li>flask-authz                                # 基于PyCasbin的中间件(一个轻量级的访问控制框架)，授权控制：authorization</li>
+<li>casbin-sqlalchemy-adapter  # PyCasbin的数据库适配器</li>
+<li><del>flask-security                            # This project is non maintained anymore. Consider the <a href="https://flask-security-too.readthedocs.io/en/stable/" target="_blank">Flask-Security-Too</a> project as an alternative.</del></li>
+<li>Flask-Security-Too                   # 身份认证：authentication，需要单独安装依赖包：pip install bcrypt</li>
+</ul>
+<h4 id="结构规划">结构规划</h4>
+<h5 id="创建app目录">创建app目录</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主目录</span>
+</span></span><span style="display:flex;"><span>mkdir app
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 移动框架自动生成的目录(static和templates)，没有的话则创建</span>
+</span></span><span style="display:flex;"><span>mv static templates app/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 缓存文件</span>
+</span></span><span style="display:flex;"><span>mkdir tmp
+</span></span></code></pre></div><h5 id="初始化脚本">初始化脚本</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vim app/__init__.py</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#!/usr/bin/env python</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -*- coding:utf-8 -*-</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 加载主框架</span>
+</span></span><span style="display:flex;"><span>from flask import Flask
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 加载扩展库</span>
+</span></span><span style="display:flex;"><span>from flask_sqlalchemy import SQLAlchemy
+</span></span><span style="display:flex;"><span>from flask_migrate import Migrate
+</span></span><span style="display:flex;"><span>from flask_cors import CORS
+</span></span><span style="display:flex;"><span>from flask_restful import Api
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 实例化</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">db</span> <span style="color:#000;font-weight:bold">=</span> SQLAlchemy<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">cors</span> <span style="color:#000;font-weight:bold">=</span> CORS<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">migrate</span> <span style="color:#000;font-weight:bold">=</span> Migrate<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 声明app方法</span>
+</span></span><span style="display:flex;"><span>def create_app<span style="color:#000;font-weight:bold">(</span>config_name<span style="color:#000;font-weight:bold">)</span>:
+</span></span><span style="display:flex;"><span>	.....
+</span></span></code></pre></div><h5 id="改名apppy文件runpy">改名app.py文件run.py</h5>
+<p>因为上面的目录也为app，会导致冲突</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#!/usr/bin/env python
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span><span style="color:#998;font-style:italic"># -*- coding:utf-8 -*-</span>
+</span></span><span style="display:flex;"><span>import os
+</span></span><span style="display:flex;"><span>from app import create_app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 初始化app</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">app</span> <span style="color:#000;font-weight:bold">=</span> create_app<span style="color:#000;font-weight:bold">(</span>os.getenv<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#39;FLASK_CONFIG&#39;</span><span style="color:#000;font-weight:bold">)</span> or <span style="color:#d14">&#39;default&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><h4 id="运行">运行</h4>
+<h5 id="声明环境方式">声明环境方式</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 先声明环境</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># linux或者MINGW64:</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">export</span> <span style="color:#008080">FLASK_APP</span><span style="color:#000;font-weight:bold">=</span>app.py
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">export</span> <span style="color:#008080">FLASK_ENV</span><span style="color:#000;font-weight:bold">=</span>development
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># winwows:</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">set</span> <span style="color:#008080">FLASK_APP</span><span style="color:#000;font-weight:bold">=</span>app.py
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">set</span> <span style="color:#008080">FLASK_ENV</span><span style="color:#000;font-weight:bold">=</span>development
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 运行</span>
+</span></span><span style="display:flex;"><span>python.exe -m flask run
+</span></span></code></pre></div><h5 id="环境变量设置方式">环境变量设置方式</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Flask的自动发现程序实例机制还有第三条规则：如果安装了python-dotenv，那么在使用flask run或其它命令时</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 会使用它自动从.flaskenv文件和.env文件中加载环境变量</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 当安装了python-dotenv时，Flask在加载环境变量的优先级是：手动设置的环境变量&gt;.env中设置的环境变&gt;.flaskenv设置的环境变量</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装模块</span>
+</span></span><span style="display:flex;"><span>pip install python-dotenv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 编辑配置文件</span>
+</span></span><span style="display:flex;"><span>vim .flaskenv
+</span></span><span style="display:flex;"><span><span style="color:#008080">FLASK_APP</span><span style="color:#000;font-weight:bold">=</span>run.py
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 运行</span>
+</span></span><span style="display:flex;"><span>flask run
+</span></span></code></pre></div><h3 id="flask-security-token获取">flask-security token获取</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件关闭</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">WTF_CSRF_ENABLED</span> <span style="color:#000;font-weight:bold">=</span> False
+</span></span></code></pre></div><p><a href="https://www.jianshu.com/p/882070fad1fb?_ad0.08689877468409224" target="_blank">https://www.jianshu.com/p/882070fad1fb?_ad0.08689877468409224</a></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>核心使用auth_token的话，需要设置：Headers: Content-Type   application/json
+</span></span></code></pre></div><h4 id="postman使用">postman使用</h4>
+<ul>
+<li>get请求http://localhost:5000/login，获取csrf_token的值</li>
+<li>posthttp://localhost:5000/login，添加header-&gt;Content-Type：application/json，添加Body-&gt;row-&gt;{&ldquo;email&rdquo;:&ldquo;<a href="mailto:admin@qq.com">admin@qq.com</a>&rdquo;, &ldquo;password&rdquo;:&ldquo;admin&rdquo;, &ldquo;csrf_token&rdquo;: &ldquo;值&rdquo;}</li>
+</ul>
+<h4 id="curl使用无法使用csrf_token"><del>curl使用（无法使用csrf_token）</del></h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1、获取csrf_token值</span>
+</span></span><span style="display:flex;"><span>curl http://localhost:5000/login | grep csrf_token
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 2、获取数据</span>
+</span></span><span style="display:flex;"><span>curl -X POST -H <span style="color:#d14">&#34;Content-Type: application/json&#34;</span> -d <span style="color:#d14">&#39;{&#34;email&#34;:&#34;admin@qq.com&#34;, &#34;password&#34;:&#34;admin&#34;, &#34;csrf_token&#34;: &#34;csrf_token值&#34;}&#39;</span> http://localhost:5000/login
+</span></span></code></pre></div><h4 id="token测试">token测试</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 没有权限访问</span>
+</span></span><span style="display:flex;"><span>curl http://localhost:5000/api/v1/todos/todo3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 正常访问</span>
+</span></span><span style="display:flex;"><span>curl -H <span style="color:#d14">&#34;Authentication-Token: token值&#34;</span>  http://localhost:5000/api/v1/todos/todo3
+</span></span></code></pre></div><h3 id="swagger">swagger</h3>
+<p><a href="https://www.cnblogs.com/tianshifu/p/7156563.html" target="_blank">https://www.cnblogs.com/tianshifu/p/7156563.html</a></p>
+<p><a href="https://segmentfault.com/a/1190000010144742" target="_blank">https://segmentfault.com/a/1190000010144742</a></p>
+<h3 id="token生成原理">token生成原理</h3>
+<p><a href="https://blog.csdn.net/chenchong_88/article/details/78013332" target="_blank">https://blog.csdn.net/chenchong_88/article/details/78013332</a></p>
+<h3 id="添加账号">添加账号</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># shell操作</span>
+</span></span><span style="display:flex;"><span>flask shell
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建管理员</span>
+</span></span><span style="display:flex;"><span>admin <span style="color:#000;font-weight:bold">=</span> User(username<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;zaza&#39;</span>, nick_name<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;张小强&#39;</span>, sex<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;男&#39;</span>, phone<span style="color:#000;font-weight:bold">=</span><span style="color:#099">18712345678</span>, email<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;admin@qq.com&#39;</span>, password<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;admin&#39;</span>, active<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># db.session.add(admin)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># db.session.commit()</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建普通用户角色和Admin角色</span>
+</span></span><span style="display:flex;"><span>user_role <span style="color:#000;font-weight:bold">=</span> ud<span style="color:#000;font-weight:bold">.</span>create_role(name<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;User&#39;</span>, remark<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;Generic user role&#39;</span>)
+</span></span><span style="display:flex;"><span>admin_role <span style="color:#000;font-weight:bold">=</span> ud<span style="color:#000;font-weight:bold">.</span>create_role(name<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;Admin&#39;</span>, remark<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;Admin user role&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 为admin添加Admin角色(admin_role)</span>
+</span></span><span style="display:flex;"><span>ud<span style="color:#000;font-weight:bold">.</span>add_role_to_user(admin, admin_role)
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>create_all()
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单独添加</span>
+</span></span><span style="display:flex;"><span>user <span style="color:#000;font-weight:bold">=</span> ud<span style="color:#000;font-weight:bold">.</span>find_user(email<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;admin@qq.com&#34;</span>)
+</span></span><span style="display:flex;"><span>role <span style="color:#000;font-weight:bold">=</span> ud<span style="color:#000;font-weight:bold">.</span>find_role(<span style="color:#d14">&#34;User&#34;</span>)
+</span></span><span style="display:flex;"><span>ud<span style="color:#000;font-weight:bold">.</span>add_role_to_user(user, role)
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>create_all()
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>commit()
+</span></span></code></pre></div><h3 id="sqlalchemy">sqlalchemy</h3>
+<p>数据库命令转换：http://www.leeladharan.com/sqlalchemy-query-with-or-and-like-common-filters</p>
+<h3 id="数据库">数据库</h3>
+<p>参考文档：</p>
+<ul>
+<li><a href="https://blog.csdn.net/bestallen/article/details/52601457" target="_blank">relationship之lazy属性</a></li>
+<li><a href="https://www.cnblogs.com/awfj/p/11004185.html" target="_blank">Sqlalchemy多对多增删查改</a></li>
+<li><a href="https://www.cnblogs.com/goldsunshine/p/9269880.html" target="_blank">外键和查询</a></li>
+</ul>
+<h4 id="外键">外键</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 外键定义：在字段后面加上Foreignkey(主表.主键)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 定义主键时往往还会定义一个relationship</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">company_name</span> <span style="color:#000;font-weight:bold">=</span> Column<span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">(</span>32<span style="color:#000;font-weight:bold">)</span>,ForeignKey<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;company.name&#34;</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># relationship主要用于查询外键关联的具体数据</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">company</span> <span style="color:#000;font-weight:bold">=</span> relationship<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Company&#34;</span>,backref<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;phone_of_company&#34;</span><span style="color:#000;font-weight:bold">)</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ForeignKey：指示应将此列中的值限制为指定的远程列中存在的值</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">user_id</span> <span style="color:#000;font-weight:bold">=</span> Column<span style="color:#000;font-weight:bold">(</span>Integer, ForeignKey<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#39;users.id&#39;</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># relationship定义的不是字段，数据库没有相关的字段，实际上是</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># company = relationship(&#34;Company&#34;,backref=&#34;phone_of_company&#34;) </span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 第一个参数：代表关联的类名称，正向查询：phoen_obj.Company查询到company中外键关联的数据</span>
+</span></span><span style="display:flex;"><span>back_populates：反向关联的名称，反向查询：company_obj.phone_of_company查询到phone表的外键关联数据
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># backref：老版本参数，新版本用back_populates替代</span>
+</span></span><span style="display:flex;"><span>secondary：指定了外键的的中间表，主要用于多对多
+</span></span></code></pre></div><h4 id="外键示例">外键示例</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 多对多关联表的数据</span>
+</span></span><span style="display:flex;"><span>roles_users <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>Table(
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#39;sys_role_user&#39;</span>,
+</span></span><span style="display:flex;"><span>    db<span style="color:#000;font-weight:bold">.</span>Column(<span style="color:#d14">&#39;sys_user_id&#39;</span>, db<span style="color:#000;font-weight:bold">.</span>Integer(), db<span style="color:#000;font-weight:bold">.</span>ForeignKey(<span style="color:#d14">&#39;sys_user.id&#39;</span>)),
+</span></span><span style="display:flex;"><span>    db<span style="color:#000;font-weight:bold">.</span>Column(<span style="color:#d14">&#39;sys_role_id&#39;</span>, db<span style="color:#000;font-weight:bold">.</span>Integer(), db<span style="color:#000;font-weight:bold">.</span>ForeignKey(<span style="color:#d14">&#39;sys_role.id&#39;</span>))
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># use的外键多对多声明</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">UserModel</span>(db<span style="color:#000;font-weight:bold">.</span>Model, UserMixin, TimestampMixin):
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># roles属性不是sql的字段，只是一个关联属性</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># secondary：多对多的中间表</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># backref：反向查询关联属性名称</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># lazy：dynamic，生成的是查询对象</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># backref中声明意味着：在方向查询中使用dynamic</span>
+</span></span><span style="display:flex;"><span>    roles <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>relationship(<span style="color:#d14">&#39;RoleModel&#39;</span>, secondary<span style="color:#000;font-weight:bold">=</span>roles_users,
+</span></span><span style="display:flex;"><span>                            backref<span style="color:#000;font-weight:bold">=</span>db<span style="color:#000;font-weight:bold">.</span>backref(<span style="color:#d14">&#39;users&#39;</span>, lazy<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;dynamic&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 正向查询</span>
+</span></span><span style="display:flex;"><span>user_obj <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(UserModel)<span style="color:#000;font-weight:bold">.</span>filter_by(<span style="color:#0086b3">id</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>)<span style="color:#000;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles[<span style="color:#099">0</span>]<span style="color:#000;font-weight:bold">.</span>id
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles[<span style="color:#099">0</span>]<span style="color:#000;font-weight:bold">.</span>name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 反向查询，管理字段是users</span>
+</span></span><span style="display:flex;"><span>role_obj <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(RoleModel)<span style="color:#000;font-weight:bold">.</span>filter_by(<span style="color:#0086b3">id</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">2</span>)<span style="color:#000;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 一对多查询</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># lazy=&#39;dynamic&#39;代表生成的是查询对象</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># role_obj.users</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看执行的sql：print(role_obj.users)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看数据：</span>
+</span></span><span style="display:flex;"><span>role_obj<span style="color:#000;font-weight:bold">.</span>users<span style="color:#000;font-weight:bold">.</span>all()
+</span></span><span style="display:flex;"><span>role_obj<span style="color:#000;font-weight:bold">.</span>users<span style="color:#000;font-weight:bold">.</span>all()[<span style="color:#099">0</span>]<span style="color:#000;font-weight:bold">.</span>nickname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用户增加角色</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通过提交的角色id查出角色对象列表</span>
+</span></span><span style="display:flex;"><span>role_obj <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(RoleModel)<span style="color:#000;font-weight:bold">.</span>filter(RoleModel<span style="color:#000;font-weight:bold">.</span>id<span style="color:#000;font-weight:bold">.</span>in_([<span style="color:#099">1</span>,<span style="color:#099">2</span>,<span style="color:#099">3</span>]))<span style="color:#000;font-weight:bold">.</span>all()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查出用户</span>
+</span></span><span style="display:flex;"><span>user_obj <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(UserModel)<span style="color:#000;font-weight:bold">.</span>filter_by(<span style="color:#0086b3">id</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>)<span style="color:#000;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># all生成的是对象“列表”，first是列表的第一个“对象”</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 相关用户增加单角色对象则使用append</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># user_obj.roles.append(role_obj)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用户添加多角色对象列表则使用extend，相关id存在的话也会插入数据</span>
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles<span style="color:#000;font-weight:bold">.</span>extend(role_obj)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 提交数据</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看帮助文档，主要查看每个方法的使用说明</span>
+</span></span><span style="display:flex;"><span>help(user_obj<span style="color:#000;font-weight:bold">.</span>roles)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除单个对象</span>
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles<span style="color:#000;font-weight:bold">.</span>remove(role_obj)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除多个对象</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 没有相关方法</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除所有关联的外键数据</span>
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles<span style="color:#000;font-weight:bold">.</span>clear()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 更新数据，通过web提交的数据，数据库不存在的则增加，多余的则删除</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 实现方案：删除所有数据并新增添加的数据</span>
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles<span style="color:#000;font-weight:bold">.</span>clear()
+</span></span><span style="display:flex;"><span>user_obj<span style="color:#000;font-weight:bold">.</span>roles<span style="color:#000;font-weight:bold">.</span>extend(role_obj)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通过外键查询数据(role是relationship)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># db.session.query(MenuModel).filter(MenuModel.role.any(id=_id)).filter(MenuModel.type.in_((&#39;M&#39;, &#39;C&#39;))).all()</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(MenuModel)<span style="color:#000;font-weight:bold">.</span>filter(MenuModel<span style="color:#000;font-weight:bold">.</span>role<span style="color:#000;font-weight:bold">.</span>any(<span style="color:#0086b3">id</span><span style="color:#000;font-weight:bold">=</span>_id))<span style="color:#000;font-weight:bold">.</span>all()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查询独立字段</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(MenuModel<span style="color:#000;font-weight:bold">.</span>id)<span style="color:#000;font-weight:bold">.</span>filter(MenuModel<span style="color:#000;font-weight:bold">.</span>role<span style="color:#000;font-weight:bold">.</span>any(<span style="color:#0086b3">id</span><span style="color:#000;font-weight:bold">=</span>_id))<span style="color:#000;font-weight:bold">.</span>all()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除权限字段</span>
+</span></span><span style="display:flex;"><span>del_rule <span style="color:#000;font-weight:bold">=</span> db<span style="color:#000;font-weight:bold">.</span>session<span style="color:#000;font-weight:bold">.</span>query(CasbinRule)<span style="color:#000;font-weight:bold">.</span>filter(CasbinRule<span style="color:#000;font-weight:bold">.</span>v0 <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#39;zaza&#39;</span>)
+</span></span><span style="display:flex;"><span>del_rule<span style="color:#000;font-weight:bold">.</span>delete()
+</span></span></code></pre></div><h4 id="结构同步">结构同步</h4>
+<ol>
+<li>第一次初始化目录：flask db init</li>
+<li>生成变更代码：flask db migrate -m &ldquo;初始化&rdquo;</li>
+<li>同步变更到数据库：flask db upgrade</li>
+<li>初始化基础数据：python init_data.py</li>
+</ol>
+<p>注意事项：https://stackoverflow.com/questions/48762191/why-do-i-keep-getting-importerror-cannot-import-name-db/48762342</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>flask db init;flask db migrate -m <span style="color:#d14">&#34;初始化&#34;</span>;flask db upgrade
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SET <span style="color:#008080">foreign_key_checks</span> <span style="color:#000;font-weight:bold">=</span> 0;
+</span></span><span style="display:flex;"><span>truncate table sys_menu;
+</span></span><span style="display:flex;"><span>SET <span style="color:#008080">foreign_key_checks</span> <span style="color:#000;font-weight:bold">=</span> 1;
+</span></span></code></pre></div><h4 id="常见字段">常见字段</h4>
+<h3 id="status的值含义">status的值含义</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用bool值来理解就行了,所有通常0代表禁用，1代表激活</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#000;font-weight:bold">select</span> <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;status&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;option <span style="color:#008080">value</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;1&#34;</span>&gt;Active&lt;/option&gt;
+</span></span><span style="display:flex;"><span>&lt;option <span style="color:#008080">value</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;0&#34;</span>&gt;Inactive&lt;/option&gt;
+</span></span><span style="display:flex;"><span>&lt;/select&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt;&gt;&gt; bool<span style="color:#000;font-weight:bold">(</span>0<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>False
+</span></span><span style="display:flex;"><span>&gt;&gt;&gt; bool<span style="color:#000;font-weight:bold">(</span>1<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>True
+</span></span></code></pre></div><h3 id="python上下文">python上下文</h3>
+<ul>
+<li><a href="https://www.cnblogs.com/wangyanyan/p/11231599.html" target="_blank">https://www.cnblogs.com/wangyanyan/p/11231599.html</a></li>
+<li><a href="https://www.liaoxuefeng.com/wiki/1016959663602400/1115615597164000" target="_blank">https://www.liaoxuefeng.com/wiki/1016959663602400/1115615597164000</a></li>
+</ul>
+<h3 id="数据库结构说明">数据库结构说明</h3>
+<h3 id="casbin_rule">casbin_rule</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>casbin_rule<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">int</span>(<span style="color:#099">11</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">AUTO_INCREMENT</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>ptype<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v0<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v1<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v2<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v3<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v4<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>v5<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ENGINE</span><span style="color:#000;font-weight:bold">=</span>InnoDB<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CHARSET</span><span style="color:#000;font-weight:bold">=</span>utf8mb4;<span style="color:#bbb">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 字段说明：目前只使用到ptype,v0,v1,v2</span>
+</span></span><span style="display:flex;"><span>ptype v0 v1 v2 v3 v4 v5
+</span></span><span style="display:flex;"><span>p/g 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>p, yaya, /dataset2/resource2, GET
+</span></span><span style="display:flex;"><span>p, superAdmin, project, <span style="color:#0086b3">read</span>
+</span></span><span style="display:flex;"><span>g, zaza, superAdmin
+</span></span></code></pre></div><h3 id="无极菜单">无极菜单</h3>
+<h4 id="后端实现原理">后端实现原理</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://stackoverflow.com/questions/8191683/building-a-menu-tree-from-an-adjacency-list-in-python</span>
+</span></span><span style="display:flex;"><span>data <span style="color:#000;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">1</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">2</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node1&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">2</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">5</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node2&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">3</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node3&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">4</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">5</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node4&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">5</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node5&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">6</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">3</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node6&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">7</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">3</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node7&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">8</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node8&#34;</span> },
+</span></span><span style="display:flex;"><span>    { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">9</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">1</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Node9&#34;</span> }
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">list_to_tree</span>(data):
+</span></span><span style="display:flex;"><span>    out <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;root&#39;</span>: { <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Root node&#34;</span>, <span style="color:#d14">&#39;sub&#39;</span>: [] }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> p <span style="color:#000;font-weight:bold">in</span> data:
+</span></span><span style="display:flex;"><span>        pid <span style="color:#000;font-weight:bold">=</span> p[<span style="color:#d14">&#39;parent_id&#39;</span>] <span style="color:#000;font-weight:bold">or</span> <span style="color:#d14">&#39;root&#39;</span>
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(pid, { <span style="color:#d14">&#39;sub&#39;</span>: [] })
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(p[<span style="color:#d14">&#39;id&#39;</span>], { <span style="color:#d14">&#39;sub&#39;</span>: [] })
+</span></span><span style="display:flex;"><span>        out[p[<span style="color:#d14">&#39;id&#39;</span>]]<span style="color:#000;font-weight:bold">.</span>update(p)
+</span></span><span style="display:flex;"><span>        out[pid][<span style="color:#d14">&#39;sub&#39;</span>]<span style="color:#000;font-weight:bold">.</span>append(out[p[<span style="color:#d14">&#39;id&#39;</span>]])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> out[<span style="color:#d14">&#39;root&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看详细生成流程</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">list_to_tree</span>(data):
+</span></span><span style="display:flex;"><span>    out <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;root&#39;</span>: {<span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>, <span style="color:#d14">&#39;name&#39;</span>: <span style="color:#d14">&#34;Root node&#34;</span>, <span style="color:#d14">&#39;sub&#39;</span>: []}
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> p <span style="color:#000;font-weight:bold">in</span> data:
+</span></span><span style="display:flex;"><span>        <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;---</span><span style="color:#d14">{0}</span><span style="color:#d14">---&#39;</span><span style="color:#000;font-weight:bold">.</span>format(p))
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 获取父id值</span>
+</span></span><span style="display:flex;"><span>        pid <span style="color:#000;font-weight:bold">=</span> p[<span style="color:#d14">&#39;parent_id&#39;</span>] <span style="color:#000;font-weight:bold">or</span> <span style="color:#d14">&#39;root&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 设置父id对象</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;1、设置父id:</span><span style="color:#d14">{0}</span><span style="color:#d14">对象&#39;</span><span style="color:#000;font-weight:bold">.</span>format(pid))
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(pid, {<span style="color:#d14">&#39;sub&#39;</span>: []})
+</span></span><span style="display:flex;"><span>        pprint<span style="color:#000;font-weight:bold">.</span>pprint(out)
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 设置当前id对象</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;2、设置当前id:</span><span style="color:#d14">{0}</span><span style="color:#d14">对象&#39;</span><span style="color:#000;font-weight:bold">.</span>format(p[<span style="color:#d14">&#39;id&#39;</span>]))
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(p[<span style="color:#d14">&#39;id&#39;</span>], {<span style="color:#d14">&#39;sub&#39;</span>: []})
+</span></span><span style="display:flex;"><span>        pprint<span style="color:#000;font-weight:bold">.</span>pprint(out)
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 将p对象更新到当前id对象上</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;3、更新当前id:</span><span style="color:#d14">{0}</span><span style="color:#d14">对象&#39;</span><span style="color:#000;font-weight:bold">.</span>format(p[<span style="color:#d14">&#39;id&#39;</span>]))
+</span></span><span style="display:flex;"><span>        out[p[<span style="color:#d14">&#39;id&#39;</span>]]<span style="color:#000;font-weight:bold">.</span>update(p)
+</span></span><span style="display:flex;"><span>        pprint<span style="color:#000;font-weight:bold">.</span>pprint(out)
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 将当前id对象的追加到父对象的sub下面</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;4、当前对象追加到父对象的sub下面&#39;</span>)
+</span></span><span style="display:flex;"><span>        out[pid][<span style="color:#d14">&#39;sub&#39;</span>]<span style="color:#000;font-weight:bold">.</span>append(out[p[<span style="color:#d14">&#39;id&#39;</span>]])
+</span></span><span style="display:flex;"><span>        pprint<span style="color:#000;font-weight:bold">.</span>pprint(out)
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">print</span>(<span style="color:#d14">&#39;最后的结果&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> out[<span style="color:#d14">&#39;root&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vue-element-admin 后台动态加载菜单</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>https:<span style="color:#000;font-weight:bold">//</span>studygolang<span style="color:#000;font-weight:bold">.</span>com<span style="color:#000;font-weight:bold">/</span>articles<span style="color:#000;font-weight:bold">/</span><span style="color:#099">26932</span><span style="color:#a61717;background-color:#e3d2d2">?</span>fr<span style="color:#000;font-weight:bold">=</span>sidebar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>https:<span style="color:#000;font-weight:bold">//</span>stackoverflow<span style="color:#000;font-weight:bold">.</span>com<span style="color:#000;font-weight:bold">/</span>questions<span style="color:#000;font-weight:bold">/</span><span style="color:#099">24779093</span><span style="color:#000;font-weight:bold">/</span>query<span style="color:#000;font-weight:bold">-</span><span style="color:#999">self</span><span style="color:#000;font-weight:bold">-</span>referential<span style="color:#000;font-weight:bold">-</span><span style="color:#0086b3">list</span><span style="color:#000;font-weight:bold">-</span>relationship<span style="color:#000;font-weight:bold">-</span>to<span style="color:#000;font-weight:bold">-</span>retrieve<span style="color:#000;font-weight:bold">-</span>several<span style="color:#000;font-weight:bold">-</span>level<span style="color:#000;font-weight:bold">-</span>child
+</span></span></code></pre></div><h4 id="后端实现">后端实现</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># model</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">serialize</span>(<span style="color:#999">self</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    实现children嵌套即可，后端会解析数据的
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>id,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>parent_id,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;title&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>title,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;menu_name&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>menu_name,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;icon&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>icon,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;path&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>path,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;paths&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>paths,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;component&#39;</span>: <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>component,
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;redirect&#39;</span>: <span style="color:#d14">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># view</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">get</span>(<span style="color:#999">self</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># todo:基于角色返回数据</span>
+</span></span><span style="display:flex;"><span>    menu <span style="color:#000;font-weight:bold">=</span> MenuModel<span style="color:#000;font-weight:bold">.</span>query<span style="color:#000;font-weight:bold">.</span>all()
+</span></span><span style="display:flex;"><span>    out <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#39;root&#39;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#39;id&#39;</span>: <span style="color:#099">0</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#39;parent_id&#39;</span>: <span style="color:#099">0</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#39;children&#39;</span>: []}
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> m <span style="color:#000;font-weight:bold">in</span> menu:
+</span></span><span style="display:flex;"><span>        p <span style="color:#000;font-weight:bold">=</span> m<span style="color:#000;font-weight:bold">.</span>serialize()
+</span></span><span style="display:flex;"><span>        pid <span style="color:#000;font-weight:bold">=</span> p[<span style="color:#d14">&#39;parent_id&#39;</span>] <span style="color:#000;font-weight:bold">or</span> <span style="color:#d14">&#39;root&#39;</span>
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(pid, {<span style="color:#d14">&#39;children&#39;</span>: []})
+</span></span><span style="display:flex;"><span>        out<span style="color:#000;font-weight:bold">.</span>setdefault(p[<span style="color:#d14">&#39;id&#39;</span>], {<span style="color:#d14">&#39;children&#39;</span>: []})
+</span></span><span style="display:flex;"><span>        out[p[<span style="color:#d14">&#39;id&#39;</span>]]<span style="color:#000;font-weight:bold">.</span>update(p)
+</span></span><span style="display:flex;"><span>        out[pid][<span style="color:#d14">&#39;children&#39;</span>]<span style="color:#000;font-weight:bold">.</span>append(out[p[<span style="color:#d14">&#39;id&#39;</span>]])
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> jsonify(response<span style="color:#000;font-weight:bold">=</span>out[<span style="color:#d14">&#39;root&#39;</span>][<span style="color:#d14">&#39;children&#39;</span>])
+</span></span></code></pre></div><h4 id="前端实现">前端实现</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">function</span> generaMenu(routes, data) {
+</span></span><span style="display:flex;"><span>  data.forEach(item =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">const</span> menu <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>      path<span style="color:#000;font-weight:bold">:</span> item.path,
+</span></span><span style="display:flex;"><span>      component<span style="color:#000;font-weight:bold">:</span> item.component <span style="color:#000;font-weight:bold">===</span> <span style="color:#d14">&#39;Layout&#39;</span> <span style="color:#000;font-weight:bold">?</span> Layout <span style="color:#000;font-weight:bold">:</span> loadView(item.component),
+</span></span><span style="display:flex;"><span>      hidden<span style="color:#000;font-weight:bold">:</span> item.visible <span style="color:#000;font-weight:bold">!==</span> <span style="color:#d14">&#39;0&#39;</span>,
+</span></span><span style="display:flex;"><span>      children<span style="color:#000;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>      name<span style="color:#000;font-weight:bold">:</span> item.menuName,
+</span></span><span style="display:flex;"><span>      meta<span style="color:#000;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        title<span style="color:#000;font-weight:bold">:</span> item.title,
+</span></span><span style="display:flex;"><span>        icon<span style="color:#000;font-weight:bold">:</span> item.icon,
+</span></span><span style="display:flex;"><span>        noCache<span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">true</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">if</span> (item.children) {
+</span></span><span style="display:flex;"><span>      generaMenu(menu.children, item.children)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    routes.push(menu)
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="分页处理">分页处理</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">#</span><span style="color:#bbb"> </span>id连续分页<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">SELECT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">FROM</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">table</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">WHERE</span><span style="color:#bbb"> </span>id<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">BETWEEN</span><span style="color:#bbb"> </span><span style="color:#099">1000000</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">AND</span><span style="color:#bbb"> </span><span style="color:#099">1000010</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">#</span><span style="color:#bbb"> </span>id不连续分页<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">SELECT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">FROM</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">table</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">WHERE</span><span style="color:#bbb"> </span>id<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IN</span>(<span style="color:#099">10000</span>,<span style="color:#bbb"> </span><span style="color:#099">100000</span>,<span style="color:#bbb"> </span><span style="color:#099">1000000</span>...);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">#</span><span style="color:#bbb"> </span>mysql<span style="color:#bbb"> </span>id不是连续数据排序分页优化方法<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">select</span><span style="color:#bbb"> </span>...<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">from</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>tab<span style="color:#bbb"> </span>a<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">inner</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">join</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#000;font-weight:bold">select</span><span style="color:#bbb"> </span>lastid<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">from</span><span style="color:#bbb"> </span>tab<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">where</span><span style="color:#bbb"> </span>...<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">order</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">by</span><span style="color:#bbb"> </span><span style="color:#0086b3">date</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">limit</span><span style="color:#bbb"> </span><span style="color:#099">10000</span>,<span style="color:#099">10</span>)<span style="color:#bbb"> </span>b<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">on</span><span style="color:#bbb"> </span>a.lastid<span style="color:#000;font-weight:bold">=</span>b.lastid;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">派生表</span>b建个覆盖索引<span style="color:#a61717;background-color:#e3d2d2">，试试效率</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>lastid如果不是主键<span style="color:#a61717;background-color:#e3d2d2">，也要建个索引。</span><span style="color:#bbb">
+</span></span></span></code></pre></div><h2 id="api设计规范">api设计规范</h2>
+<p>入门：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/34289466" target="_blank">https://zhuanlan.zhihu.com/p/34289466</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html" target="_blank">https://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html</a></p>
+<p>此规范同时适用： RPC API 和 HTTP REST API</p>
+<p><a href="https://cloud.google.com/apis/design/resources" target="_blank">https://cloud.google.com/apis/design/resources</a></p>
+<p>微软规范：</p>
+<p><a href="https://github.com/onlyfor2/Microsoft-REST-API-Guidelines-Chinese" target="_blank">https://github.com/onlyfor2/Microsoft-REST-API-Guidelines-Chinese</a></p>
+<h3 id="设计流程">设计流程</h3>
+<p>设计指南建议在设计面向资源的 API 时采取以下步骤（更多细节将在下面的特定部分中介绍）：</p>
+<ul>
+<li>确定 API 提供的资源类型。</li>
+<li>确定资源之间的关系。</li>
+<li>根据类型和关系确定资源名称方案。</li>
+<li>确定资源架构。</li>
+<li>将最小的方法集附加到资源。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>gmail为示例
+</span></span><span style="display:flex;"><span>    用户集合：users/*。每个用户都拥有以下资源。
+</span></span><span style="display:flex;"><span>    消息集合：users/*/messages/*。
+</span></span><span style="display:flex;"><span>    线程集合：users/*/threads/*。
+</span></span><span style="display:flex;"><span>    标签集合：users/*/labels/*。
+</span></span><span style="display:flex;"><span>    变更历史记录集合：users/*/history/*。
+</span></span><span style="display:flex;"><span>    表示用户个人资料的资源：users/*/profile。
+</span></span><span style="display:flex;"><span>    表示用户设置的资源：users/*/settings。
+</span></span></code></pre></div><h3 id="资源操作">资源操作</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 获取ticket列表</span>
+</span></span><span style="display:flex;"><span>GET /tickets
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看某个具体的ticket</span>
+</span></span><span style="display:flex;"><span>GET /tickets/12
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新建一个ticket</span>
+</span></span><span style="display:flex;"><span>POST /tickets
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 更新ticket 12</span>
+</span></span><span style="display:flex;"><span>PUT /tickets/12
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除ticekt 12</span>
+</span></span><span style="display:flex;"><span>DELETE /tickets/12
+</span></span></code></pre></div><h3 id="url命名规则">url命名规则</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用spinal-case规则</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关键字：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 驼峰命名法：CamelCase</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 蛇形命名法：snake_case，也称为下划线命名法：(UnderScoreCase)，</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 脊柱命名法：spinal-case</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># So go with the option two or three. Most of the companies like google, PayPal &amp; other big companies are using spinal-case for the url.</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># It is recommended to use the spinal-case (which is highlighted by RFC3986), this case is used by Google, PayPal, and other big companies.</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># questions/41595/what-is-the-casing-convention-for-url-routes</span>
+</span></span><span style="display:flex;"><span>Double-click this in Chrome: camelCase
+</span></span><span style="display:flex;"><span>Double-click this in Chrome: under_score
+</span></span><span style="display:flex;"><span>Double-click this in Chrome: hyphen-ated
+</span></span></code></pre></div><h3 id="post的json数据命名规范">post的json数据命名规范</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 这个目前没有明确的规范，看个人喜好吧，主要是前后端都保持统一就行了...</span>
+</span></span><span style="display:flex;"><span>建议下划线，mysql字段名大小写不敏感的，字段名一般是下划线分隔的，如果json的key对应数据库的字段，那么就比较好对应了。当然其实无所谓了，就像变量命名，有用驼峰的，也有下划线的。
+</span></span><span style="display:flex;"><span>不过下划线用的比较多，题主也可以关注一下google/facebook/github...这些公司开放的 API 全部都是使用下划线分隔单词的。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 本人建议：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Flask-RESTful关联的是mysql的话，建议使用下划线分隔，和后端/数据库匹配即可</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># java(bean)开发的话，应该用驼峰，方便和对象对应</span>
+</span></span></code></pre></div><h3 id="请求参数格式">请求参数格式</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 同json数据key格式</span>
+</span></span><span style="display:flex;"><span>http://api.twitter.com/1/statuses/home_timeline.json?since_id<span style="color:#000;font-weight:bold">=</span>12345&amp;<span style="color:#008080">max_id</span><span style="color:#000;font-weight:bold">=</span><span style="color:#099">5432</span>
+</span></span></code></pre></div><h3 id="响应数据格式">响应数据格式</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> <span style="color:#a61717;background-color:#e3d2d2">成功</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;code&#34;</span>: <span style="color:#099">200</span>,
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;message&#34;</span>: <span style="color:#d14">&#34;success&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;data&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&#34;name&#34;</span>: <span style="color:#d14">&#34;小明&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&#34;age&#34;</span>: <span style="color:#099">16</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&#34;sex&#34;</span>: <span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> <span style="color:#a61717;background-color:#e3d2d2">失败</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;code&#34;</span>: <span style="color:#099">401</span>,
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;message&#34;</span>: <span style="color:#d14">&#34;error message&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#000080">&#34;data&#34;</span>: <span style="color:#000;font-weight:bold">null</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="标准参数">标准参数</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://cloud.google.com/apis/design/standard_fields</span>
+</span></span><span style="display:flex;"><span>name	string	name 字段应包含相对资源名称。
+</span></span><span style="display:flex;"><span>parent	string	对于资源定义和 List/Create 请求，parent 字段应包含父级相对资源名称。
+</span></span><span style="display:flex;"><span>create_time	Timestamp	创建实体的时间戳。
+</span></span><span style="display:flex;"><span>update_time	Timestamp	最后更新实体的时间戳。注意：执行 create/patch/delete 操作时会更新 update_time。
+</span></span><span style="display:flex;"><span>delete_time	Timestamp	删除实体的时间戳，仅当它支持保留时才适用。
+</span></span><span style="display:flex;"><span>expire_time	Timestamp	实体到期时的到期时间戳。
+</span></span><span style="display:flex;"><span>start_time	Timestamp	标记某个时间段开始的时间戳。
+</span></span><span style="display:flex;"><span>end_time	Timestamp	标记某个时间段或操作结束的时间戳（无论其成功与否）。
+</span></span><span style="display:flex;"><span>read_time	Timestamp	应读取（如果在请求中使用）或已读取（如果在响应中使用）特定实体的时间戳。
+</span></span><span style="display:flex;"><span>time_zone	string	时区名称。它应该是 IANA TZ 名称，例如“America/Los_Angeles”。如需了解详情，请参阅 https://en.wikipedia.org/wiki/List_of_tz_database_time_zones。
+</span></span><span style="display:flex;"><span>region_code	string	位置的 Unicode 国家/地区代码 <span style="color:#000;font-weight:bold">(</span>CLDR<span style="color:#000;font-weight:bold">)</span>，例如“US”和“419”。如需了解详情，请访问 http://www.unicode.org/reports/tr35/#unicode_region_subtag。
+</span></span><span style="display:flex;"><span>language_code	string	BCP-47 语言代码，例如“en-US”或“sr-Latn”。如需了解详情，请参阅 http://www.unicode.org/reports/tr35/#Unicode_locale_identifier。
+</span></span><span style="display:flex;"><span>mime_type	string	IANA 发布的 MIME 类型（也称为媒体类型）。如需了解详情，请参阅 https://www.iana.org/assignments/media-types/media-types.xhtml。
+</span></span><span style="display:flex;"><span>display_name	string	实体的显示名称。
+</span></span><span style="display:flex;"><span>title	string	实体的官方名称，例如公司名称。它应被视为 display_name 的正式版本。
+</span></span><span style="display:flex;"><span>description	string	实体的一个或多个文本描述段落。
+</span></span><span style="display:flex;"><span>filter	string	List 方法的标准过滤器参数。
+</span></span><span style="display:flex;"><span>query	string	如果应用于搜索方法（即 :search），则与 filter 相同。
+</span></span><span style="display:flex;"><span>page_token	string	List 请求中的分页令牌。
+</span></span><span style="display:flex;"><span>page_size	int32	List 请求中的分页大小。
+</span></span><span style="display:flex;"><span>total_size	int32	列表中与分页无关的项目总数。
+</span></span><span style="display:flex;"><span>next_page_token	string	List 响应中的下一个分页令牌。它应该用作后续请求的 page_token。空值表示不再有结果。
+</span></span><span style="display:flex;"><span>order_by	string	指定 List 请求的结果排序。
+</span></span><span style="display:flex;"><span>request_id	string	用于检测重复请求的唯一字符串 ID。
+</span></span><span style="display:flex;"><span>resume_token	string	用于恢复流式传输请求的不透明令牌。
+</span></span><span style="display:flex;"><span>labels	map&lt;string, string&gt;	表示 Cloud 资源标签。
+</span></span><span style="display:flex;"><span>show_deleted	bool	如果资源允许恢复删除行为，相应的 List 方法必须具有 show_deleted 字段，以便客户端可以发现已删除的资源。
+</span></span><span style="display:flex;"><span>update_mask	FieldMask	它用于 Update 请求消息，该消息用于对资源执行部分更新。此掩码与资源相关，而不是与请求消息相关。
+</span></span><span style="display:flex;"><span>validate_only	bool	如果为 true，则表示仅应验证给定请求，而不执行该请求。
+</span></span></code></pre></div><h3 id="常见校验数据">常见校验数据</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>https<span style="color:#000;font-weight:bold">:</span><span style="color:#998;font-style:italic">//stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> 谷歌邮箱校验
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> validateEmail(email) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">const</span> re <span style="color:#000;font-weight:bold">=</span> <span style="color:#009926">/^(([^&lt;&gt;()[\]\\.,;:\s@&#34;]+(\.[^&lt;&gt;()[\]\\.,;:\s@&#34;]+)*)|(&#34;.+&#34;))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> re.test(<span style="color:#0086b3">String</span>(email).toLowerCase());
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2020/12/25/flask-project-struct.html">https://zazayaya.github.io/2020/12/25/flask-project-struct.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2020/12/03/flask-source-study.html">Flask-WSGI规范</a></li>
+        
+        <li><a href="/2020/12/11/python-3.7-install-doc.html">Python-3.7安装文档</a></li>
+        
+        <li><a href="/2020/12/11/python-2.7-install-doc.html">Python-2.7安装文档</a></li>
+        
+        <li><a href="/2020/12/10/python-logging-multiprocessing.html">Python-多进程日志文件拆分</a></li>
+        
+        <li><a href="/2020/12/08/node-npm-getting-started.html">Node-npm入门教程</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/flask'>flask</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

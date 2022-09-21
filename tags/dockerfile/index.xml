@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dockerfile on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/dockerfile.html</link>
+    <description>Recent content in dockerfile on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 03 Nov 2021 08:53:15 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/dockerfile/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</title>
+      <link>https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html</link>
+      <pubDate>Wed, 03 Nov 2021 08:53:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html</guid>
+      <description>Dockerfile-5.6 基于ubuntu20.04构建ssh和mysql服务的镜像 需要下载：mysql-5.6.36-linux-glibc2.5-x86</description>
+    </item>
+    
+    <item>
+      <title>K8s-构建docker镜像</title>
+      <link>https://zazayaya.github.io/2021/06/04/docker-build-image.html</link>
+      <pubDate>Fri, 04 Jun 2021 13:32:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/04/docker-build-image.html</guid>
+      <description>docker build 依赖 buildkit 命令 BuildKit 是下一代的镜像构建组件，在 https://github.com/moby/buildkit 开源 安装 cd /usr/local/src/ wget https://github.com/moby/buildkit/releases/download/v0.8.3/buildkit-v0.8.3.linux-amd64.tar.gz tar xzf buildkit-v0.8.3.linux-amd64.tar.gz [ -f /usr/bin/buildctl ] || (cp -v bin/buildctl bin/buildkitd /usr/bin/) systemd服务单元配置 cat &amp;gt; /usr/lib/systemd/system/buildkit.service &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; [Unit] Description=Dockerfile-agnostic builder toolkit Documentation=https://github.com/moby/buildkit</description>
+    </item>
+    
+  </channel>
+</rss>

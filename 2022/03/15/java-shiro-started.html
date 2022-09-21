@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Java-Shiro入门学习 | zaza的博客</title>
+    <meta property="og:title" content="Java-Shiro入门学习 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-03-15T16:09:51&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-03-15T16:09:51&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Java-Shiro入门学习">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2022/03/15/java-shiro-started.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安全框架">安全框架</a>
+      <ul>
+        <li><a href="#什么是安全框架">什么是安全框架</a></li>
+        <li><a href="#什么是身份验证">什么是身份验证</a></li>
+        <li><a href="#什么是授权">什么是授权</a></li>
+      </ul>
+    </li>
+    <li><a href="#rbac介绍">RBAC介绍</a>
+      <ul>
+        <li><a href="#rbac是什么">RBAC是什么</a></li>
+        <li><a href="#rbac介绍-1">RBAC介绍</a></li>
+        <li><a href="#授权方式">授权方式</a></li>
+        <li><a href="#数据库设计">数据库设计</a></li>
+        <li><a href="#数据库具体实现">数据库具体实现</a></li>
+        <li><a href="#测试数据">测试数据</a></li>
+        <li><a href="#数据库查询">数据库查询</a></li>
+      </ul>
+    </li>
+    <li><a href="#shiro介绍">Shiro介绍</a></li>
+    <li><a href="#shiro架构">Shiro架构</a></li>
+    <li><a href="#shiro示例">Shiro示例</a></li>
+    <li><a href="#shiro与spring整合核心">Shiro与Spring整合核心</a></li>
+    <li><a href="#jwt是什么">JWT是什么</a></li>
+    <li><a href="#jwt示例">JWT示例</a></li>
+    <li><a href="#shiro和jwt整合">Shiro和JWT整合</a>
+      <ul>
+        <li><a href="#shiro和jwt执行流程">Shiro和JWT执行流程</a></li>
+        <li><a href="#禁用session">禁用session</a></li>
+        <li><a href="#常见过滤器">常见过滤器</a></li>
+        <li><a href="#自定义jwttoken">自定义JWTToken</a></li>
+        <li><a href="#filter执行流程">Filter执行流程</a></li>
+        <li><a href="#自定义的jwtfilter">自定义的JWTFilter</a></li>
+        <li><a href="#调用自定义的jwtfilter">调用自定义的JWTFilter</a></li>
+        <li><a href="#多realm加载">多realm加载</a></li>
+        <li><a href="#jwttoken刷新生命周期">JWTToken刷新生命周期</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考档">参考档</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Java-Shiro入门学习</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年3月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Java'>Java</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="安全框架">安全框架</h2>
+<h3 id="什么是安全框架">什么是安全框架</h3>
+<p>安全框架通常包含：执行身份验证、授权、密码和会话管理等</p>
+<h3 id="什么是身份验证">什么是身份验证</h3>
+<p>身份验证（authentication），用户使用username和password登录认证的过程</p>
+<h3 id="什么是授权">什么是授权</h3>
+<p>授权（authorization），用户身份验证通过后，系统获取用户对应的权限信息进行相关的访问权限控制</p>
+<h2 id="rbac介绍">RBAC介绍</h2>
+<h3 id="rbac是什么">RBAC是什么</h3>
+<p><a href="http://www.sojson.com/tag_rbac.html" target="_blank">RBAC </a>是基于角色的访问控制（<code>Role-Based Access Control</code> ）在<a href="http://www.sojson.com/tag_rbac.html" target="_blank"> RBAC </a>中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。这样管理都是层级相互依赖的，权限赋予给角色，而把角色又赋予用户，这样的权限设计很清楚，管理起来很方便</p>
+<h3 id="rbac介绍-1">RBAC介绍</h3>
+<p><a href="http://www.sojson.com/tag_rbac.html" target="_blank">RBAC </a>认为授权实际上是<code>Who</code> 、<code>What</code> 、<code>How</code> 三元组之间的关系，也就是<code>Who</code> 对<code>What</code> 进行<code>How</code> 的操作，也就是“主体”对“客体”的操作</p>
+<p><strong>Who：是权限的拥有者或主体（如：User，Role）</strong></p>
+<p><strong>What：是操作或对象（operation，object）</strong></p>
+<p><strong>How：具体的权限（Privilege,正向授权与负向授权）</strong></p>
+<h3 id="授权方式">授权方式</h3>
+<ul>
+<li>
+<p>基于角色的访问控制</p>
+<ul>
+<li>
+<p>RBAC基于角色的访问控制（Role-Based Access Control）是以角色为中心进行访问控制</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">hasRole</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;admin&#34;</span><span style="color:#000;font-weight:bold">)){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 操作资源
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>基于资源的访问控制</p>
+<ul>
+<li>
+<p>RBAC基于资源的访问控制（Resource-Based Access Control）是以资源为中心进行访问控制</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// user:find:*    查询用户下的所有资源
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// user:*:01      user实例下的01用户具有任意权限
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// user:update:01 user实例下的01用户具有更新权限
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">isPermission</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;user:*:create&#34;</span><span style="color:#000;font-weight:bold">)){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 对所有的用户具有创建权限
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">isPermission</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;user:update:01&#34;</span><span style="color:#000;font-weight:bold">)){</span> <span style="color:#998;font-style:italic">// 资源实例
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">isPermission</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;user:update:*&#34;</span><span style="color:#000;font-weight:bold">)){</span>  <span style="color:#998;font-style:italic">// 资源类型
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h3 id="数据库设计">数据库设计</h3>
+<p>包含：用户表（users）、角色表（roles）、权限表（permissions）、用户与角色多对多的表（user_roles）、角色表与权限多对多的表（roles_permissions）</p>
+<h3 id="数据库具体实现">数据库具体实现</h3>
+<blockquote>
+<p>数据库规约参考：Java开发手册（嵩山版）.pdf</p>
+<p>表名不使用复数名词</p>
+<p>create_time自动创建、update_time自动更新</p>
+<p>id的bigint已经有长度（8字节）了，在mysql建表中的length，只是用于显示的位数，存储空间不变。</p>
+<p>bigint 带符号的范围是-9223372036854775808到9223372036854775807。无符号的范围是0到18446744073709551615。</p>
+<p>int 普通大小的整数。带符号的范围是-2147483648到2147483647。无符号的范围是0到4294967295。</p>
+<p>UNSIGNED：代表无符号</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- Table structure for user
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- password_salt是每个用户的随机盐，实现password加密算法：hash+salt+散列的md5算法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 实现明文密码一样，加密后的password也是不一样的，增加了社工破解的难度
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">DROP</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IF</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">EXISTS</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">user</span><span style="color:#000;font-weight:bold">`</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">user</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb">  </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span>AUTO_INCREMENT,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>create_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>update_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">UPDATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>username<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">100</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>password<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">100</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>password_salt<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">100</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>uk_username<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>username<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span>ENGINE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>InnoDB<span style="color:#bbb"> </span>AUTO_INCREMENT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">1</span><span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8_general_ci<span style="color:#bbb"> </span>ROW_FORMAT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">Dynamic</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- Table structure for role
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">DROP</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IF</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">EXISTS</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">role</span><span style="color:#000;font-weight:bold">`</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">role</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb">  </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span>AUTO_INCREMENT,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>create_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>update_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">UPDATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">64</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>uk_name<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span>ENGINE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>InnoDB<span style="color:#bbb"> </span>AUTO_INCREMENT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">1</span><span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span>ROW_FORMAT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">Dynamic</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- Table structure for permission
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">DROP</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IF</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">EXISTS</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permission<span style="color:#000;font-weight:bold">`</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb">  </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span>AUTO_INCREMENT,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>create_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>update_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">UPDATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">64</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>url<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">varchar</span>(<span style="color:#099">255</span>)<span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COMMENT</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;资源路径&#39;</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>uk_name<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span>ENGINE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>InnoDB<span style="color:#bbb"> </span>AUTO_INCREMENT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">1</span><span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span>ROW_FORMAT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">Dynamic</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- Table structure for user_role
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- users和roles的多对多关联表
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">DROP</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IF</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">EXISTS</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>user_role<span style="color:#000;font-weight:bold">`</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>user_role<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb">  </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span>AUTO_INCREMENT,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>create_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>update_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">UPDATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>userid<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>idx_userid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>userid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>idx_roleid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>uk_userid_roleid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>userid<span style="color:#000;font-weight:bold">`</span>,<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span>ENGINE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>InnoDB<span style="color:#bbb"> </span>AUTO_INCREMENT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">4</span><span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span>ROW_FORMAT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">Dynamic</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- Table structure for role_permission
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- roles和permissions的多对多关联表
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- ----------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">DROP</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">IF</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">EXISTS</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>role_permission<span style="color:#000;font-weight:bold">`</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>role_permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb">  </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span>AUTO_INCREMENT,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>create_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>update_time<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>datetime(<span style="color:#099">0</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">UPDATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CURRENT_TIMESTAMP</span>(<span style="color:#099">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>permissionid<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#0086b3">bigint</span>(<span style="color:#099">20</span>)<span style="color:#bbb"> </span>UNSIGNED<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>idx_roleid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>idx_permissionid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>permissionid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INDEX</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>uk_roleid_permissionid<span style="color:#000;font-weight:bold">`</span>(<span style="color:#000;font-weight:bold">`</span>roleid<span style="color:#000;font-weight:bold">`</span>,<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permissionid<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">USING</span><span style="color:#bbb"> </span>BTREE<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span>ENGINE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>InnoDB<span style="color:#bbb"> </span>AUTO_INCREMENT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">4</span><span style="color:#bbb"> </span><span style="color:#0086b3">CHARACTER</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">SET</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">COLLATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>utf8mb4_general_ci<span style="color:#bbb"> </span>ROW_FORMAT<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">Dynamic</span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><h3 id="测试数据">测试数据</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 密码：123
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">user</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(username,password,password_salt)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;zaza&#39;</span>,<span style="color:#bbb"> </span><span style="color:#d14">&#39;59f582a8cf5103c1a7d20b464a24c049&#39;</span>,<span style="color:#bbb"> </span><span style="color:#d14">&#39;HIF4JYj*&#39;</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">user</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(username,password,password_salt)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;yaya&#39;</span>,<span style="color:#bbb"> </span><span style="color:#d14">&#39;240b4b724a129d3a49a53504d0e93b24&#39;</span>,<span style="color:#bbb"> </span><span style="color:#d14">&#39;uKqNOihg&#39;</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- 角色
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">role</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;admin&#39;</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">role</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;user&#39;</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span><span style="color:#000;font-weight:bold">role</span><span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;order&#39;</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- 资源权限
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name,url)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;user:*&#39;</span>,<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name,url)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;order:get&#39;</span>,<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(name,url)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#d14">&#39;order:*:01&#39;</span>,<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NULL</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- 用户角色多对多
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- zaza 角色：admin
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- yaya 角色：user,order
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>user_role<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(userid,roleid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">1</span>,<span style="color:#bbb"> </span><span style="color:#099">1</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>user_role<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(userid,roleid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">2</span>,<span style="color:#bbb"> </span><span style="color:#099">2</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>user_role<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(userid,roleid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">2</span>,<span style="color:#bbb"> </span><span style="color:#099">3</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- 角色资源多对多
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 角色admin的资源权限：&#39;user:*&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 角色user的资源权限：&#39;order:get&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 角色order的资源权限：&#39;order:*:01&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>role_permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(roleid,permissionid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">1</span>,<span style="color:#bbb"> </span><span style="color:#099">1</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>role_permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(roleid,permissionid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">2</span>,<span style="color:#bbb"> </span><span style="color:#099">2</span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">INTO</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>role_permission<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(roleid,permissionid)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">VALUES</span><span style="color:#bbb"> </span>(<span style="color:#099">3</span>,<span style="color:#bbb"> </span><span style="color:#099">3</span>);<span style="color:#bbb">
+</span></span></span></code></pre></div><h3 id="数据库查询">数据库查询</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#998;font-style:italic">-- 查询用户的角色信息
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>u.id<span style="color:#bbb"> </span>uid,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>u.username,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>r.id<span style="color:#bbb"> </span>rid,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>r.<span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>rname<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">FROM</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">user</span><span style="color:#bbb"> </span>u<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">LEFT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">JOIN</span><span style="color:#bbb"> </span>user_role<span style="color:#bbb"> </span>ur<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span>u.id<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ur.userid<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">LEFT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">JOIN</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">role</span><span style="color:#bbb"> </span>r<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span>ur.roleid<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>r.id<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">WHERE</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>u.username<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;yaya&#39;</span>;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic">-- 查询角色的权限信息
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>p.id,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>p.<span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>p.url,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>r.name<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">FROM</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">role</span><span style="color:#bbb"> </span>r<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">LEFT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">JOIN</span><span style="color:#bbb"> </span>role_permission<span style="color:#bbb"> </span>rp<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span>r.id<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>rp.roleid<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">LEFT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">JOIN</span><span style="color:#bbb"> </span>permission<span style="color:#bbb"> </span>p<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ON</span><span style="color:#bbb"> </span>rp.permissionid<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>p.id<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">WHERE</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>r.id<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">1</span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><h2 id="shiro介绍">Shiro介绍</h2>
+<p><strong>Apache Shiro™</strong> is a powerful and easy-to-use Java security framework that performs authentication, authorization, cryptography, and session management. With Shiro’s easy-to-understand API, you can quickly and easily secure any application – from the smallest mobile applications to the largest web and enterprise applications.</p>
+<p>Apache Shiro是一个强大且易用的Java安全框架,执行身份验证、授权、密码和会话管理。使用Shiro的易于理解的API,您可以快速、轻松地获得任何应用程序,从最小的移动应用程序到最大的网络和企业应用程序。</p>
+<h2 id="shiro架构">Shiro架构</h2>
+<p>
+        <a data-fancybox="gallery" href="https://shiro.apache.org/images/ShiroArchitecture.png">
+            <img class="mx-auto" alt="" src="https://shiro.apache.org/images/ShiroArchitecture.png" />
+        </a>
+    </p>
+<p><a href="https://shiro.apache.org/get-started.html" target="_blank">https://shiro.apache.org/get-started.html</a></p>
+<h2 id="shiro示例">Shiro示例</h2>
+<blockquote>
+<p>需要配置文件：shiro.ini</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">TesIniShiro</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 1、创建安全管理器对象
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        DefaultSecurityManager defaultSecurityManager <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> DefaultSecurityManager<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 2、创建 iniRealm 实例
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        IniRealm iniRealm <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> IniRealm<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;classpath:shiro.ini&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// IniRealm iniRealm1 = new IniRealm(&#34;classpath:shiro-jdbc-realm.ini&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// 3、给安全管理器设置realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        defaultSecurityManager<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setRealm</span><span style="color:#000;font-weight:bold">(</span>iniRealm<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 引用自定义的 Realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// defaultSecurityManager.setRealm(new DbRealm());
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// 4、给全局安全工具类设置安全管理器
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        SecurityUtils<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setSecurityManager</span><span style="color:#000;font-weight:bold">(</span>defaultSecurityManager<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 5、通过安全管理工具，得到subject
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        Subject subject <span style="color:#000;font-weight:bold">=</span> SecurityUtils<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getSubject</span><span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 6、创建令牌
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        UsernamePasswordToken token <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> UsernamePasswordToken<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;zhang&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;123&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 7、登录，即身份验证，对应：Authentication
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">try</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 登录，即身份验证
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">login</span><span style="color:#000;font-weight:bold">(</span>token<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">catch</span> <span style="color:#000;font-weight:bold">(</span>UnknownAccountException uae<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;用户不存在：&#34;</span> <span style="color:#000;font-weight:bold">+</span> token<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getPrincipal</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">catch</span> <span style="color:#000;font-weight:bold">(</span>IncorrectCredentialsException ice<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;密码错误：&#34;</span> <span style="color:#000;font-weight:bold">+</span> token<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getPrincipal</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">catch</span> <span style="color:#000;font-weight:bold">(</span>LockedAccountException lae<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;账号禁用：&#34;</span> <span style="color:#000;font-weight:bold">+</span> token<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getPrincipal</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">catch</span> <span style="color:#000;font-weight:bold">(</span>AuthenticationException ae<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">throw</span> ae<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;登录成功：&#34;</span> <span style="color:#000;font-weight:bold">+</span> subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getPrincipal</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 授权验证：Authorization
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// Realm realm;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 退出
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        subject<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">logout</span><span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="shiro与spring整合核心">Shiro与Spring整合核心</h2>
+<blockquote>
+<p>每个请求进来时，Shiro作为拦截器（ShiroFilter）进行拦截：认证和授权</p>
+<p>ShiroFilter-&gt;SecurityManager-&gt;Realm-&gt;Mybatis-&gt;jdbc-&gt;数据库</p>
+<p>代码参考：<a href="https://www.bilibili.com/video/BV1uz4y197Zm" target="_blank">【编程不良人】Shiro整合SpringBoot</a></p>
+</blockquote>
+<ol>
+<li>实现自定义Realm，通过数据库查询先关信息</li>
+<li>创建Bean：getRealm-&gt;DefaultWebSecurityManager-&gt;shiroFilterFactoryBean</li>
+</ol>
+<h2 id="jwt是什么">JWT是什么</h2>
+<blockquote>
+<p><a href="https://jwt.io/" target="_blank">https://jwt.io/</a></p>
+<p>JSON Web Tokens，主要用于单点登录，系统之间信息交换</p>
+<p>用于前后端分离系统，集群系统访问</p>
+<p>用户认证通过后，后端生成令牌，返回给前端，令牌由客户端保存</p>
+<p>格式：Header.Payload.Signature</p>
+<p>Payload：不要存放敏感信息，如密码</p>
+<p>Signature：基于Header和Payload数据生成的签名，HMACSHA256(Header, Payload, sign),sign存在于服务器的秘钥</p>
+</blockquote>
+<h2 id="jwt示例">JWT示例</h2>
+<blockquote>
+<p>maven: com.auth0 / java-jwt / 3.3.0</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">com.auth0.jwt.JWT</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">com.auth0.jwt.JWTVerifier</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">com.auth0.jwt.algorithms.Algorithm</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">com.auth0.jwt.interfaces.DecodedJWT</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">java.util.Calendar</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Test</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">main</span><span style="color:#000;font-weight:bold">(</span>String<span style="color:#000;font-weight:bold">[]</span> args<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        String secret <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;KFbNAYVaLHgHiedIbVDk&#34;</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        Calendar instance <span style="color:#000;font-weight:bold">=</span> Calendar<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getInstance</span><span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        instance<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">add</span><span style="color:#000;font-weight:bold">(</span>Calendar<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">SECOND</span><span style="color:#000;font-weight:bold">,</span> 90<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 生成令牌
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        String token <span style="color:#000;font-weight:bold">=</span> JWT<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">create</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">.</span><span style="color:#008080">withClaim</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;username&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;zaza&#34;</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#998;font-style:italic">// 设置自定义用户名
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                <span style="color:#000;font-weight:bold">.</span><span style="color:#008080">withExpiresAt</span><span style="color:#000;font-weight:bold">(</span>instance<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getTime</span><span style="color:#000;font-weight:bold">())</span> <span style="color:#998;font-style:italic">// 设置过期时间
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                <span style="color:#000;font-weight:bold">.</span><span style="color:#008080">sign</span><span style="color:#000;font-weight:bold">(</span>Algorithm<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">HMAC256</span><span style="color:#000;font-weight:bold">(</span>secret<span style="color:#000;font-weight:bold">));</span> <span style="color:#998;font-style:italic">// 设置私钥，保密，密码需要复杂
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span>token<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 创建验证令牌对象
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        JWTVerifier jwtVerifier <span style="color:#000;font-weight:bold">=</span> JWT<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">require</span><span style="color:#000;font-weight:bold">(</span>Algorithm<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">HMAC256</span><span style="color:#000;font-weight:bold">(</span>secret<span style="color:#000;font-weight:bold">)).</span><span style="color:#008080">build</span><span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 验证通过后，生成解码后的DecodedJWT对象
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        DecodedJWT decodedJWT <span style="color:#000;font-weight:bold">=</span> jwtVerifier<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">verify</span><span style="color:#000;font-weight:bold">(</span>token<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;用户名：&#34;</span> <span style="color:#000;font-weight:bold">+</span> decodedJWT<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getClaim</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;username&#34;</span><span style="color:#000;font-weight:bold">).</span><span style="color:#008080">asString</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">out</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;过期时间：&#34;</span> <span style="color:#000;font-weight:bold">+</span> decodedJWT<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getExpiresAt</span><span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="shiro和jwt整合">Shiro和JWT整合</h2>
+<h3 id="shiro和jwt执行流程">Shiro和JWT执行流程</h3>
+<ol>
+<li>通过登录接口认证用户，登录成功则返回token,这里走的是UsernamePasswordToken的UserRealm（实现缓存）</li>
+<li>其它接口通过header携带token，JWTFilter实现过滤，并使用JWTToken的JWTRealm</li>
+<li>ShiroConfig同时配置两个realms</li>
+</ol>
+<h3 id="禁用session">禁用session</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * 关闭shiro自带的session，详情见文档
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * http://shiro.apache.org/session-management.html#SessionManagement-
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * StatelessApplications%28Sessionless%29
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> */</span>
+</span></span><span style="display:flex;"><span>DefaultSubjectDAO subjectDAO <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> DefaultSubjectDAO<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>DefaultSessionStorageEvaluator defaultSessionStorageEvaluator <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> DefaultSessionStorageEvaluator<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>defaultSessionStorageEvaluator<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setSessionStorageEnabled</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>subjectDAO<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setSessionStorageEvaluator</span><span style="color:#000;font-weight:bold">(</span>defaultSessionStorageEvaluator<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>defaultWebSecurityManager<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setSubjectDAO</span><span style="color:#000;font-weight:bold">(</span>subjectDAO<span style="color:#000;font-weight:bold">);</span>
+</span></span></code></pre></div><h3 id="常见过滤器">常见过滤器</h3>
+<p>shiro提供和多个默认的过滤器，我们可以用这些过滤器来配置过滤指定url的访问权限。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">配置缩写</th>
+<th style="text-align:left">对应的过滤器</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">anon</td>
+<td style="text-align:left">AnonymousFilter</td>
+<td style="text-align:left">指定url可以匿名访问</td>
+</tr>
+<tr>
+<td style="text-align:left">authc</td>
+<td style="text-align:left">FormAuthenticationFilter</td>
+<td style="text-align:left">指定url需要form表单登录，默认会从请求中获取username、password,rememberMe等参数并尝试登录，如果登录不了就会跳转到loginUrl配置的路径。我们也可以用这个过滤器做默认的登录逻辑，但是一般都是我们自己在控制器写登录逻辑的，自己写的话出错返回的信息都可以定制嘛。</td>
+</tr>
+<tr>
+<td style="text-align:left">authcBasic</td>
+<td style="text-align:left">BasicHttpAuthenticationFilter</td>
+<td style="text-align:left">指定url需要basic登录</td>
+</tr>
+<tr>
+<td style="text-align:left">logout</td>
+<td style="text-align:left">LogoutFilter</td>
+<td style="text-align:left">登出过滤器，配置指定url就可以实现退出功能，非常方便</td>
+</tr>
+<tr>
+<td style="text-align:left">noSessionCreation</td>
+<td style="text-align:left">NoSessionCreationFilter</td>
+<td style="text-align:left">禁止创建会话</td>
+</tr>
+<tr>
+<td style="text-align:left">perms</td>
+<td style="text-align:left">PermissionsAuthorizationFilter</td>
+<td style="text-align:left">需要指定权限才能访问</td>
+</tr>
+<tr>
+<td style="text-align:left">port</td>
+<td style="text-align:left">PortFilter</td>
+<td style="text-align:left">需要指定端口才能访问</td>
+</tr>
+<tr>
+<td style="text-align:left">rest</td>
+<td style="text-align:left">HttpMethodPermissionFilter</td>
+<td style="text-align:left">将http请求方法转化成相应的动词来构造一个权限字符串，这个感觉意义不大，有兴趣自己看源码的注释</td>
+</tr>
+<tr>
+<td style="text-align:left">roles</td>
+<td style="text-align:left">RolesAuthorizationFilter</td>
+<td style="text-align:left">需要指定角色才能访问</td>
+</tr>
+<tr>
+<td style="text-align:left">ssl</td>
+<td style="text-align:left">SslFilter</td>
+<td style="text-align:left">需要https请求才能访问</td>
+</tr>
+<tr>
+<td style="text-align:left">user</td>
+<td style="text-align:left">UserFilter</td>
+<td style="text-align:left">需要已登录或“记住我”的用户才能访问</td>
+</tr>
+</tbody>
+</table>
+<h3 id="自定义jwttoken">自定义JWTToken</h3>
+<blockquote>
+<p>参考：UsernamePasswordToken实现了HostAuthenticationToken, RememberMeAuthenticationToken
+HostAuthenticationToken扩展了AuthenticationToken，所以JWTToken实现AuthenticationToken即可</p>
+<p>UsernamePasswordToken实现了默认参数处理，可以学习一下</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// UsernamePasswordToken token = new UsernamePasswordToken(&#34;zhang&#34;, &#34;123&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// JWTToken只有token字符串，所以只返回字符串即可？
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">JWTToken</span> <span style="color:#000;font-weight:bold">implements</span> AuthenticationToken <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">private</span> <span style="color:#000;font-weight:bold">static</span> <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">long</span> serialVersionUID <span style="color:#000;font-weight:bold">=</span> 1L<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Key
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">private</span> <span style="color:#000;font-weight:bold">final</span> String token<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#900;font-weight:bold">JWTToken</span><span style="color:#000;font-weight:bold">(</span>String token<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">token</span> <span style="color:#000;font-weight:bold">=</span> token<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#3c5d5d;font-weight:bold">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> Object <span style="color:#900;font-weight:bold">getPrincipal</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> JWTUtils<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getUsername</span><span style="color:#000;font-weight:bold">(</span>token<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#3c5d5d;font-weight:bold">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> Object <span style="color:#900;font-weight:bold">getCredentials</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> token<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h3 id="filter执行流程">Filter执行流程</h3>
+<p>执行流程：preHandle<code>-&gt;</code>isAccessAllowed<code>-&gt;</code>isLoginAttempt<code>-&gt;</code>executeLogin</p>
+<h3 id="自定义的jwtfilter">自定义的JWTFilter</h3>
+<blockquote>
+<p>参考：FormAuthenticationFilter</p>
+<p>FormAuthenticationFilter -&gt; AuthenticatingFilter</p>
+<p>BasicHttpAuthenticationFilter-&gt;HttpAuthenticationFilter-&gt;AuthenticatingFilter</p>
+<p>继承 AuthenticatingFilter 需要实现：createToken、onAccessDenied
+继承 BasicHttpAuthenticationFilter 不需要实现：createToken、onAccessDenied</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">JWTFilter</span> <span style="color:#000;font-weight:bold">extends</span> BasicHttpAuthenticationFilter <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">......</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h3 id="调用自定义的jwtfilter">调用自定义的JWTFilter</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// map.put(&#34;/**&#34;, &#34;authc&#34;); 这个代表调用自带的过滤链：authc
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 添加自己的过滤器并且取名为jwt
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>LinkedHashMap<span style="color:#000;font-weight:bold">&lt;</span>String<span style="color:#000;font-weight:bold">,</span> Filter<span style="color:#000;font-weight:bold">&gt;</span> filterMap <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> LinkedHashMap<span style="color:#000;font-weight:bold">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>filterMap<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">put</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;jwt&#34;</span><span style="color:#000;font-weight:bold">,</span> jwtFilter<span style="color:#000;font-weight:bold">());</span>
+</span></span><span style="display:flex;"><span>shiroFilterFactoryBean<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setFilters</span><span style="color:#000;font-weight:bold">(</span>filterMap<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 过滤链定义，从上向下顺序执行，一般将放在最为下边
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>filterChainDefinitionMap<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">put</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;/**&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#d14">&#34;jwt&#34;</span><span style="color:#000;font-weight:bold">);</span>
+</span></span></code></pre></div><h3 id="多realm加载">多realm加载</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">public</span> <span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">ShiroConfig</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 这个声明集合后，自动加载声明的所有Realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">public</span> DefaultWebSecurityManager <span style="color:#900;font-weight:bold">defaultWebSecurityManager</span><span style="color:#000;font-weight:bold">(</span>Collection<span style="color:#000;font-weight:bold">&lt;</span>Realm<span style="color:#000;font-weight:bold">&gt;</span> realms<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        DefaultWebSecurityManager defaultWebSecurityManager <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> DefaultWebSecurityManager<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 给安全管理器设置 Realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        defaultWebSecurityManager<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setRealms</span><span style="color:#000;font-weight:bold">(</span>realms<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">......</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#3c5d5d;font-weight:bold">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 名字没有影响，实际上类型更重要，通过类型来发现Realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">public</span> Realm <span style="color:#900;font-weight:bold">userRealm</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        UserRealm userRealm <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> UserRealm<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">......</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> userRealm<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#3c5d5d;font-weight:bold">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 名字没有影响，实际上类型更重要，通过类型来发现Realm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">public</span> Realm <span style="color:#900;font-weight:bold">JWTRealm</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// JWTRealm
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        JWTRealm jwtRealm <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> JWTRealm<span style="color:#000;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">......</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> jwtRealm<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h3 id="jwttoken刷新生命周期">JWTToken刷新生命周期</h3>
+<blockquote>
+<p>实现： 用户在线操作不掉线功能</p>
+</blockquote>
+<ol>
+<li>登录成功后将用户的JWT生成的Token作为k、v存储到cache缓存里面(这时候k、v值一样)，缓存有效期设置为Jwt有效时间的2倍</li>
+<li>当该用户再次请求时，通过JWTFilter层层校验之后会进入到doGetAuthenticationInfo进行身份验证</li>
+<li>当该用户这次请求jwt生成的token值已经超时，但该token对应cache中的k还是存在，则表示该用户一直在操作只是JWT的token失效了，程序会给token对应的k映的v值重新生成JWTToken并覆盖v值，该缓存生命周期重新计算 (这里只是处理超时的token刷新，会不会将风险降低？)</li>
+<li>当该用户这次请求jwt在生成的token值已经超时，并在cache中不存在对应的k，则表示该用户账户空闲超时，返回用户信息已失效，请重新登录。
+注意： 前端请求Header中设置Authorization保持不变，校验有效性以缓存中的token为准。 用户过期时间 = Jwt有效时间 * 2。</li>
+</ol>
+<h2 id="参考档">参考档</h2>
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1uz4y197Zm" target="_blank">【编程不良人】2020最新版Shiro教程,整合SpringBoot项目实战教程</a></li>
+<li><a href="https://www.its404.com/article/A233666/113436813" target="_blank">【编程不良人】完整代码</a></li>
+<li><a href="https://codeantenna.com/a/8PYLWqSqOW" target="_blank">多realm处理</a></li>
+<li><a href="https://www.yunlibook.com/article/1414534368122241024" target="_blank">springboot整合shiro多验证登录功能的实现</a></li>
+<li><a href="https://blog.csdn.net/qq_42764468/article/details/107731844" target="_blank">Shiro整合JWT：解决jwt注销和续签的问题-非常不错</a></li>
+<li><a href="https://developer.aliyun.com/article/206244" target="_blank">https://developer.aliyun.com/article/206244</a></li>
+<li><a href="https://programmer.group/spring-boot-plus-integrates-springboot-shiro-jwt-privilege-management.html" target="_blank">https://programmer.group/spring-boot-plus-integrates-springboot-shiro-jwt-privilege-management.html</a></li>
+<li><a href="https://developpaper.com/shiro-jwt-spring-boot-restful-easy-tutorial/" target="_blank">shiro-jwt-整合</a></li>
+<li><a href="http://www.andrew-programming.com/2019/01/23/springboot-integrate-with-jwt-and-apache-shiro/" target="_blank">http://www.andrew-programming.com/2019/01/23/springboot-integrate-with-jwt-and-apache-shiro/</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html">https://zazayaya.github.io/2022/03/15/java-shiro-started.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/12/31/java-getting-started.html">Java-入门学习</a></li>
+        
+        <li><a href="/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a></li>
+        
+        <li><a href="/2021/11/08/elk-insert-nginx-log.html">ELK-nginx数据录入</a></li>
+        
+        <li><a href="/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a></li>
+        
+        <li><a href="/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html">ELK-6.0.0升级到7.15.0</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/java'>java</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

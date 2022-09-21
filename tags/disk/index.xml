@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>disk on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/disk.html</link>
+    <description>Recent content in disk on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 27 Jan 2021 15:08:54 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/disk/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-硬盘io测试</title>
+      <link>https://zazayaya.github.io/2021/01/27/disk-io-test.html</link>
+      <pubDate>Wed, 27 Jan 2021 15:08:54 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/27/disk-io-test.html</guid>
+      <description>硬盘io测试 高IO写测试 # 64k写 mkdir /data1/disk-io fio -name iops -rw=write -bs=64k -runtime=60 -iodepth 32 -filename /data1/disk-io/test.bin -ioengine libaio -direct=1 -size=1g # 查看结果 iostat -x 1 Device: rrqm/s wrqm/s r/s w/s rsec/s wsec/s avgrq-sz avgqu-sz await r_await w_await svctm %util nvme1n1 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00</description>
+    </item>
+    
+    <item>
+      <title>Linux-硬盘操作</title>
+      <link>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</link>
+      <pubDate>Thu, 07 Jan 2021 16:18:04 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</guid>
+      <description>新增swap mkdir /data/.swap dd if=/dev/zero of=/data/.swap/swap bs=1024 count=8192000 mkswap /data/.swap/swap # swapon /data/.swap/swap # vim /etc/fstab # /data/.swap/swap swap swap defaults 0 0 # swapon -a grep &amp;#34;/data/.swap/swap&amp;#34; /etc/fstab || echo &amp;#39;/data/.swap/swap swap swap defaults 0 0&amp;#39; &amp;gt;&amp;gt; /etc/fstab swapon -a ; free -m fdisk模式扩容 1、fdisk删</description>
+    </item>
+    
+  </channel>
+</rss>

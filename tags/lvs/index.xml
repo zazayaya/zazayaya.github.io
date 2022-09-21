@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>lvs on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/lvs.html</link>
+    <description>Recent content in lvs on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 11 Dec 2015 17:22:10 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/lvs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-keepalive-lvs双机高可用负载均衡</title>
+      <link>https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</link>
+      <pubDate>Fri, 11 Dec 2015 17:22:10 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</guid>
+      <description>基于Centos5.7测试通过 一、下载 # 建议安装稳定版本1.2.1 wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz 二、安装LVS管理工具 yum -y install ipvsadm 三、编译安装 # 依赖包 yum -y install popt-devel openssl-devel libnl-devel</description>
+    </item>
+    
+  </channel>
+</rss>

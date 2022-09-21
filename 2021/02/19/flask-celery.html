@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Flask-celery使用文档-实现异步进度条实时显示 | zaza的博客</title>
+    <meta property="og:title" content="Flask-celery使用文档-实现异步进度条实时显示 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-02-19T11:52:36&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-02-19T11:52:36&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Flask-celery使用文档-实现异步进度条实时显示">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/02/19/flask-celery.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#启动注意事项">启动注意事项</a></li>
+    <li><a href="#进度展现">进度展现</a></li>
+    <li><a href="#linux安装依赖包">linux安装依赖包</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#1安装依赖包">1、安装依赖包</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#异步结果查询">异步结果查询</a></li>
+    <li><a href="#完整示例">完整示例</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#代码">代码</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#启动">启动</a></li>
+    <li><a href="#调用">调用</a></li>
+    <li><a href="#进度条测试">进度条测试</a></li>
+    <li><a href="#tqdm上传进度条">tqdm上传进度条</a></li>
+    <li><a href="#ftplib上传进度条">ftplib上传进度条</a></li>
+    <li><a href="#ftplib上传进度条测试">ftplib上传进度条测试</a></li>
+    <li><a href="#vue测试代码">vue测试代码</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Flask-celery使用文档-实现异步进度条实时显示</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年2月19日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Flask'>Flask</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="启动注意事项">启动注意事项</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 任务队列</span>
+</span></span><span style="display:flex;"><span>celery -A tasks worker --loglevel<span style="color:#000;font-weight:bold">=</span>info
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># windows下运行需要添加参数：--pool=solo</span>
+</span></span><span style="display:flex;"><span>celery -A tasks worker --pool<span style="color:#000;font-weight:bold">=</span>solo --loglevel<span style="color:#000;font-weight:bold">=</span>info
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 但是需要说明的是，虽然celery官网提示说，只要在启动worker的时候，指明下类型就行了，但是如果你逻辑里面的模块有些不支持协程 gevent或者是eventlet异步的话，他还是会堵塞的</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># windows下需要patch，否则无法正常消费任务，执行任务也不要使用pythcarm console，否则报错</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 解决方法，加载patch即可</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># from gevent import monkey</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># monkey.patch_all()</span>
+</span></span><span style="display:flex;"><span>celery -A tasks worker --pool<span style="color:#000;font-weight:bold">=</span>solo -P gevent -c <span style="color:#099">10</span> --loglevel<span style="color:#000;font-weight:bold">=</span>info
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Windows启动脚本实例</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> C:<span style="color:#d14">\U</span>sers<span style="color:#d14">\A</span>dministrator<span style="color:#d14">\P</span>ycharmProjects<span style="color:#d14">\c</span>elery
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\U</span>sers<span style="color:#d14">\A</span>dministrator<span style="color:#d14">\P</span>ycharmProjects<span style="color:#d14">\e</span>nv<span style="color:#d14">\c</span>elery<span style="color:#d14">\S</span>cripts<span style="color:#d14">\c</span>elery.exe -A tasks worker --pool<span style="color:#000;font-weight:bold">=</span>solo --loglevel<span style="color:#000;font-weight:bold">=</span>info
+</span></span></code></pre></div><h2 id="进度展现">进度展现</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>On Message：
+</span></span><span style="display:flex;"><span>ftp上传进度、速率显示
+</span></span><span style="display:flex;"><span>https://stackoverflow.com/questions/51684008/show-ftp-download-progress-in-python-progressbar
+</span></span><span style="display:flex;"><span>https://www.coder.work/article/2030979
+</span></span><span style="display:flex;"><span>实现工厂模式
+</span></span><span style="display:flex;"><span>https://www.fythonfang.com/blog/post/37
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">### ansible api异步调用</span>
+</span></span><span style="display:flex;"><span>https://blog.51cto.com/hequan/2071544
+</span></span></code></pre></div><h2 id="linux安装依赖包">linux安装依赖包</h2>
+<h4 id="1安装依赖包">1、安装依赖包</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># pip install &#34;celery[librabbitmq]&#34; 源码编译安装太难了--!</span>
+</span></span><span style="display:flex;"><span>yum install librabbitmq-devel.x86_64 librabbitmq.x86_64
+</span></span><span style="display:flex;"><span>pip install <span style="color:#d14">&#34;celery[auth,msgpack]&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 结果用mysql存储，则需要安装</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># sqlalchemy用于worker，mysqlclient用于实例查看状态</span>
+</span></span><span style="display:flex;"><span>pip install sqlalchemy mysqlclient
+</span></span></code></pre></div><h2 id="异步结果查询">异步结果查询</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">TABLE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>celery_taskmeta<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">int</span>(<span style="color:#099">11</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">AUTO_INCREMENT</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>task_id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">155</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>status<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">50</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>result<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">blob</span>,<span style="color:#bbb">	</span><span style="color:#998;font-style:italic"># 二进制数据，所以不能直接看
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>date_done<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">datetime</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>traceback<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">text</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>name<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">155</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>args<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">blob</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>kwargs<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">blob</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>worker<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">155</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>retries<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">int</span>(<span style="color:#099">11</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">`</span>queue<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">varchar</span>(<span style="color:#099">155</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#008080">NULL</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">PRIMARY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>id<span style="color:#000;font-weight:bold">`</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">UNIQUE</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">KEY</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">`</span>task_id<span style="color:#000;font-weight:bold">`</span><span style="color:#bbb"> </span>(<span style="color:#000;font-weight:bold">`</span>task_id<span style="color:#000;font-weight:bold">`</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">ENGINE</span><span style="color:#000;font-weight:bold">=</span>InnoDB<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">DEFAULT</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">CHARSET</span><span style="color:#000;font-weight:bold">=</span>utf8;<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># 最好的获取方法为通过接口访问
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># from celery.result import AsyncResult
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># res = AsyncResult(&#34;your-task-id&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># app配置了环境，否则AsyncResult报错：NotImplementedError: No result backend is configured.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">from</span><span style="color:#bbb"> </span>tasks<span style="color:#bbb"> </span>import<span style="color:#bbb"> </span>app<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>res<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>app.<span style="color:#900;font-weight:bold">AsyncResult</span>(<span style="color:#d14">&#34;edc1f149-84c9-412d-b0d6-a27c3d7c5afe&#34;</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>res.<span style="color:#900;font-weight:bold">get</span>()<span style="color:#bbb">
+</span></span></span></code></pre></div><h2 id="完整示例">完整示例</h2>
+<h4 id="代码">代码</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">logging</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">celery</span> <span style="color:#000;font-weight:bold">import</span> Celery
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">gevent</span> <span style="color:#000;font-weight:bold">import</span> monkey
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">time</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># windows下需要patch，否则无法正常消费任务，执行任务也不要使用pythcarm console，否则报错</span>
+</span></span><span style="display:flex;"><span>monkey<span style="color:#000;font-weight:bold">.</span>patch_all()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>logger <span style="color:#000;font-weight:bold">=</span> logging<span style="color:#000;font-weight:bold">.</span>getLogger(__name__)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 需要配置为://celery，必须两个/</span>
+</span></span><span style="display:flex;"><span>broker_url <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;amqp://zaza:123456@10.0.26.26:5672//celery&#39;</span>
+</span></span><span style="display:flex;"><span>result_backend <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;db+mysql://celery:123456@10.0.26.26/celery&#39;</span>
+</span></span><span style="display:flex;"><span>app <span style="color:#000;font-weight:bold">=</span> Celery(<span style="color:#d14">&#39;tasks&#39;</span>,
+</span></span><span style="display:flex;"><span>             result_serializer<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;json&#39;</span>,
+</span></span><span style="display:flex;"><span>             <span style="color:#998;font-style:italic"># 状态追中不生效？</span>
+</span></span><span style="display:flex;"><span>             task_track_started<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>             broker<span style="color:#000;font-weight:bold">=</span>broker_url,
+</span></span><span style="display:flex;"><span>             backend<span style="color:#000;font-weight:bold">=</span>result_backend
+</span></span><span style="display:flex;"><span>             )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#3c5d5d;font-weight:bold">@app</span><span style="color:#000;font-weight:bold">.</span>task
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">add</span>(x, y):
+</span></span><span style="display:flex;"><span>    time<span style="color:#000;font-weight:bold">.</span>sleep(<span style="color:#099">60</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> x <span style="color:#000;font-weight:bold">+</span> y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看进度条</span>
+</span></span><span style="display:flex;"><span><span style="color:#3c5d5d;font-weight:bold">@app</span><span style="color:#000;font-weight:bold">.</span>task(bind<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>)
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">upload_files</span>(<span style="color:#999">self</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> i <span style="color:#000;font-weight:bold">in</span> <span style="color:#0086b3">range</span>(<span style="color:#099">100</span>):
+</span></span><span style="display:flex;"><span>        time<span style="color:#000;font-weight:bold">.</span>sleep(<span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>update_state(state<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;PROGRESS&#39;</span>,
+</span></span><span style="display:flex;"><span>                          meta<span style="color:#000;font-weight:bold">=</span>{<span style="color:#d14">&#39;current&#39;</span>: i, <span style="color:#d14">&#39;total&#39;</span>: <span style="color:#099">100</span>})
+</span></span></code></pre></div><h2 id="启动">启动</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Windows启动脚本实例</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> C:<span style="color:#d14">\U</span>sers<span style="color:#d14">\A</span>dministrator<span style="color:#d14">\P</span>ycharmProjects<span style="color:#d14">\c</span>elery
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\U</span>sers<span style="color:#d14">\A</span>dministrator<span style="color:#d14">\P</span>ycharmProjects<span style="color:#d14">\e</span>nv<span style="color:#d14">\c</span>elery<span style="color:#d14">\S</span>cripts<span style="color:#d14">\c</span>elery.exe -A tasks worker --pool<span style="color:#000;font-weight:bold">=</span>solo --loglevel<span style="color:#000;font-weight:bold">=</span>info
+</span></span></code></pre></div><h2 id="调用">调用</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">tasks</span> <span style="color:#000;font-weight:bold">import</span> app, add
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 执行任务</span>
+</span></span><span style="display:flex;"><span>t <span style="color:#000;font-weight:bold">=</span> add<span style="color:#000;font-weight:bold">.</span>delay(<span style="color:#099">4</span>, <span style="color:#099">4</span>)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果</span>
+</span></span><span style="display:flex;"><span>res <span style="color:#000;font-weight:bold">=</span> app<span style="color:#000;font-weight:bold">.</span>AsyncResult(t<span style="color:#000;font-weight:bold">.</span>task_id)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态(执行完成会返回True)</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>ready()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>status
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>state
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果(结果存储在后端的话，必须调用get()或者forget() ，进行资源释放)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关闭继承错误：res.get(propagate=False)</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>get()
+</span></span></code></pre></div><h2 id="进度条测试">进度条测试</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">tasks</span> <span style="color:#000;font-weight:bold">import</span> app, upload_files
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 执行任务</span>
+</span></span><span style="display:flex;"><span>t <span style="color:#000;font-weight:bold">=</span> upload_files<span style="color:#000;font-weight:bold">.</span>delay()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果</span>
+</span></span><span style="display:flex;"><span>res <span style="color:#000;font-weight:bold">=</span> app<span style="color:#000;font-weight:bold">.</span>AsyncResult(t<span style="color:#000;font-weight:bold">.</span>task_id)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态(执行完成会返回True)</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>ready()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>status
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>state
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看进度</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>info
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># {&#39;current&#39;: 28, &#39;total&#39;: 100}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果(结果存储在后端的话，必须调用get()或者forget() ，进行资源释放) Traceback的状态是&#39;FAILURE&#39;</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>get()
+</span></span></code></pre></div><h2 id="tqdm上传进度条">tqdm上传进度条</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议使用tqdm，github星星多很多</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">tqdm</span> <span style="color:#000;font-weight:bold">import</span> tqdm
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">time</span>
+</span></span><span style="display:flex;"><span>pbar <span style="color:#000;font-weight:bold">=</span> tqdm(total<span style="color:#000;font-weight:bold">=</span><span style="color:#099">50005000</span>, unit<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;B&#39;</span>, unit_scale<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>, unit_divisor<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1024</span>, bar_format<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;</span><span style="color:#d14">{percentage:3.2f}</span><span style="color:#d14">% </span><span style="color:#d14">{n_fmt}</span><span style="color:#d14">/</span><span style="color:#d14">{total_fmt}</span><span style="color:#d14"> </span><span style="color:#d14">{elapsed}</span><span style="color:#d14">&lt;</span><span style="color:#d14">{remaining}</span><span style="color:#d14"> </span><span style="color:#d14">{rate_fmt}{postfix}</span><span style="color:#d14">&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">for</span> a <span style="color:#000;font-weight:bold">in</span> <span style="color:#0086b3">range</span>(<span style="color:#099">10000</span>):
+</span></span><span style="display:flex;"><span>    time<span style="color:#000;font-weight:bold">.</span>sleep(<span style="color:#099">0.001</span>)
+</span></span><span style="display:flex;"><span>    pbar<span style="color:#000;font-weight:bold">.</span>update(a<span style="color:#000;font-weight:bold">+</span><span style="color:#099">1</span>)
+</span></span></code></pre></div><h2 id="ftplib上传进度条">ftplib上传进度条</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://stackoverflow.com/questions/35702052/pythons-ftplib-with-tqdm</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#3c5d5d;font-weight:bold">@app</span><span style="color:#000;font-weight:bold">.</span>task(bind<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>)
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">upload_files</span>(<span style="color:#999">self</span>, filename):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ftp <span style="color:#000;font-weight:bold">=</span> FTP()
+</span></span><span style="display:flex;"><span>    ftp<span style="color:#000;font-weight:bold">.</span>set_pasv(<span style="color:#000;font-weight:bold">True</span>)
+</span></span><span style="display:flex;"><span>    ftp<span style="color:#000;font-weight:bold">.</span>connect(host<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;1.1.1.1&#39;</span>, port<span style="color:#000;font-weight:bold">=</span><span style="color:#099">21</span>)
+</span></span><span style="display:flex;"><span>    ftp<span style="color:#000;font-weight:bold">.</span>login(user<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;zaza&#39;</span>, passwd<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;123456&#39;</span>)
+</span></span><span style="display:flex;"><span>    ftp<span style="color:#000;font-weight:bold">.</span>cwd(<span style="color:#d14">&#39;/&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    total <span style="color:#000;font-weight:bold">=</span> os<span style="color:#000;font-weight:bold">.</span>path<span style="color:#000;font-weight:bold">.</span>getsize(filename)
+</span></span><span style="display:flex;"><span>    pbar <span style="color:#000;font-weight:bold">=</span> tqdm(total<span style="color:#000;font-weight:bold">=</span>total, unit<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;B&#39;</span>, unit_scale<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>, unit_divisor<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1024</span>,
+</span></span><span style="display:flex;"><span>                bar_format<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;</span><span style="color:#d14">{percentage:3.2f}</span><span style="color:#d14">% </span><span style="color:#d14">{n_fmt}</span><span style="color:#d14">/</span><span style="color:#d14">{total_fmt}</span><span style="color:#d14"> </span><span style="color:#d14">{elapsed}</span><span style="color:#d14">&lt;</span><span style="color:#d14">{remaining}</span><span style="color:#d14"> </span><span style="color:#d14">{rate_fmt}{postfix}</span><span style="color:#d14">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">callback</span>(block):
+</span></span><span style="display:flex;"><span>        pbar<span style="color:#000;font-weight:bold">.</span>update(<span style="color:#0086b3">len</span>(block))
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># time.sleep(10)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>update_state(state<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;PROGRESS&#39;</span>, meta<span style="color:#000;font-weight:bold">=</span>{<span style="color:#d14">&#39;data&#39;</span>: <span style="color:#0086b3">str</span>(pbar)})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">with</span> <span style="color:#0086b3">open</span>(filename, <span style="color:#d14">&#39;rb&#39;</span>) <span style="color:#000;font-weight:bold">as</span> fd:
+</span></span><span style="display:flex;"><span>        ftp<span style="color:#000;font-weight:bold">.</span>storbinary(<span style="color:#d14">&#39;STOR zaza.test&#39;</span>, fd, callback<span style="color:#000;font-weight:bold">=</span>callback)
+</span></span></code></pre></div><h2 id="ftplib上传进度条测试">ftplib上传进度条测试</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 测试</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">tasks</span> <span style="color:#000;font-weight:bold">import</span> app, upload_files
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 执行任务</span>
+</span></span><span style="display:flex;"><span>t <span style="color:#000;font-weight:bold">=</span> upload_files<span style="color:#000;font-weight:bold">.</span>delay(<span style="color:#d14">&#39;vm.exe&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果</span>
+</span></span><span style="display:flex;"><span>res <span style="color:#000;font-weight:bold">=</span> app<span style="color:#000;font-weight:bold">.</span>AsyncResult(t<span style="color:#000;font-weight:bold">.</span>task_id)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态(执行完成会返回True)</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>ready()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>status
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>state
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看进度</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>info
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># {&#39;data&#39;: &#39;12.74% 79.2M/622M 02:46&lt;15:48 600kB/s&#39;}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看结果(结果存储在后端的话，必须调用get()或者forget() ，进行资源释放)</span>
+</span></span><span style="display:flex;"><span>res<span style="color:#000;font-weight:bold">.</span>get()
+</span></span></code></pre></div><h2 id="vue测试代码">vue测试代码</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#000080">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#000080">el-table</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">:data</span><span style="color:#d14">=&#34;taskData&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008080">style</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;width: 100%&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">:row-class-name</span><span style="color:#d14">=&#34;tableRowClassName&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#000080">el-table-column</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">prop</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;date&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">label</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;日期&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">width</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;180&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">&lt;</span><span style="color:#a61717;background-color:#e3d2d2">/el-table-column&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#000080">el-table-column</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">prop</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;name&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">label</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;姓名&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">width</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;180&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">&lt;</span><span style="color:#a61717;background-color:#e3d2d2">/el-table-column&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#000080">el-table-column</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">prop</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;address&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">label</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;地址&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">width</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;280&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">&lt;</span><span style="color:#a61717;background-color:#e3d2d2">/el-table-column&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#000080">el-table-column</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">label</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;上传进度&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">width</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;330&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#000080">template</span> <span style="color:#008080">slot</span><span style="color:#000080">-scope</span><span style="color:#a61717;background-color:#e3d2d2">=&#34;</span><span style="color:#008080">scope</span><span style="color:#a61717;background-color:#e3d2d2">&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#000080">div</span> <span style="color:#000080">@mouseover</span><span style="color:#d14">=&#34;hover(scope.row.id)&#34;</span> <span style="color:#000080">@mouseleave</span><span style="color:#d14">=&#34;hover(undefined)&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#000080">span</span> <span style="color:#000080">v-if</span><span style="color:#d14">=&#34;hovered === scope.row.id&#34;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">            {{ getProgressData(scope.row.id) }}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">          &lt;/span&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">          &lt;el-progress v-else :text-inside=&#34;true&#34; :update=&#34;update&#34; :percentage=&#34;getProgressPercent(scope.row.id)&#34; :stroke-width=&#34;18&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>          <span style="color:#a61717;background-color:#e3d2d2">&lt;/</span><span style="color:#008080">el</span><span style="color:#000080">-progress</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#000080">div</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#000080">template</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">&lt;</span><span style="color:#a61717;background-color:#e3d2d2">/el-table-column&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">&lt;</span><span style="color:#a61717;background-color:#e3d2d2">/el-table&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#000080">template</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#000080">script</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">default</span> {
+</span></span><span style="display:flex;"><span>  data() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> {
+</span></span><span style="display:flex;"><span>      taskData<span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">null</span>,
+</span></span><span style="display:flex;"><span>      celery_percent<span style="color:#000;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>      celery_detail<span style="color:#000;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>      hovered<span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">undefined</span>,
+</span></span><span style="display:flex;"><span>      update<span style="color:#000;font-weight:bold">:</span> <span style="color:#099">0</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  methods<span style="color:#000;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    hover(id) {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (id <span style="color:#000;font-weight:bold">===</span> <span style="color:#000;font-weight:bold">undefined</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.hovered <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">undefined</span>
+</span></span><span style="display:flex;"><span>      } <span style="color:#000;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">const</span> percent <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">this</span>.celery_percent[id]
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">const</span> detail <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">this</span>.celery_detail[id]
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> (percent <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">100</span>) {
+</span></span><span style="display:flex;"><span>          <span style="color:#000;font-weight:bold">this</span>.hovered <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">undefined</span>
+</span></span><span style="display:flex;"><span>        } <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span> (detail <span style="color:#000;font-weight:bold">!==</span> <span style="color:#000;font-weight:bold">null</span> <span style="color:#000;font-weight:bold">&amp;&amp;</span> detail <span style="color:#000;font-weight:bold">!==</span> <span style="color:#000;font-weight:bold">undefined</span>) {
+</span></span><span style="display:flex;"><span>          <span style="color:#000;font-weight:bold">this</span>.hovered <span style="color:#000;font-weight:bold">=</span> id
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    tableRowClassName({row, rowIndex}) {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (rowIndex <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;warning-row&#39;</span>;
+</span></span><span style="display:flex;"><span>      } <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span> (rowIndex <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">3</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;success-row&#39;</span>;
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">return</span> row;
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    setProgress(row) {
+</span></span><span style="display:flex;"><span>      <span style="color:#998;font-style:italic">// const {id, celery_id} = row
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>      <span style="color:#000;font-weight:bold">const</span> {id} <span style="color:#000;font-weight:bold">=</span> row
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">let</span> detail <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">this</span>.celery_detail[id]
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (detail <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">null</span>){
+</span></span><span style="display:flex;"><span>        detail <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;10.00% 47.7M/47.7M 02:50&lt;00:00 639kB/s&#39;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">let</span> old_percent <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">Number</span>(detail.slice(<span style="color:#099">0</span>, <span style="color:#099">3</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (old_percent <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">100</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">let</span> percent <span style="color:#000;font-weight:bold">=</span> old_percent <span style="color:#000;font-weight:bold">+</span> <span style="color:#0086b3">Math</span>.floor(<span style="color:#0086b3">Math</span>.random() <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">10</span>)
+</span></span><span style="display:flex;"><span>        percent <span style="color:#000;font-weight:bold">=</span> percent <span style="color:#000;font-weight:bold">&lt;=</span> <span style="color:#099">100</span> <span style="color:#000;font-weight:bold">?</span> percent <span style="color:#000;font-weight:bold">:</span> <span style="color:#099">100</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.update <span style="color:#000;font-weight:bold">+=</span> <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.celery_percent[id] <span style="color:#000;font-weight:bold">=</span> percent
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.celery_detail[id] <span style="color:#000;font-weight:bold">=</span> percent <span style="color:#000;font-weight:bold">+</span> detail.slice(<span style="color:#099">2</span>)
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    getProgressPercent(id) {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">this</span>.celery_percent[id]
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    getProgressData(id) {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">this</span>.celery_detail[id]
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    getTaskData() {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">this</span>.taskData <span style="color:#000;font-weight:bold">=</span> [{
+</span></span><span style="display:flex;"><span>        id<span style="color:#000;font-weight:bold">:</span> <span style="color:#099">1</span>,
+</span></span><span style="display:flex;"><span>        date<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;2016-05-02&#39;</span>,
+</span></span><span style="display:flex;"><span>        name<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;王小虎&#39;</span>,
+</span></span><span style="display:flex;"><span>        address<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;上海市普陀区金沙江路 1518 弄&#39;</span>,
+</span></span><span style="display:flex;"><span>        celery_id<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;edc1f149-84c9-412d-b0d6-a27c3d7c1afe&#39;</span>,
+</span></span><span style="display:flex;"><span>      }, {
+</span></span><span style="display:flex;"><span>        id<span style="color:#000;font-weight:bold">:</span> <span style="color:#099">2</span>,
+</span></span><span style="display:flex;"><span>        date<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;2016-05-04&#39;</span>,
+</span></span><span style="display:flex;"><span>        name<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;王小虎&#39;</span>,
+</span></span><span style="display:flex;"><span>        address<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;上海市普陀区金沙江路 1518 弄&#39;</span>,
+</span></span><span style="display:flex;"><span>        celery_id<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;edc1f149-84c9-412d-b0d6-a27c3d7c2afe&#39;</span>,
+</span></span><span style="display:flex;"><span>      }, {
+</span></span><span style="display:flex;"><span>        id<span style="color:#000;font-weight:bold">:</span> <span style="color:#099">3</span>,
+</span></span><span style="display:flex;"><span>        date<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;2016-05-01&#39;</span>,
+</span></span><span style="display:flex;"><span>        name<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;王小虎&#39;</span>,
+</span></span><span style="display:flex;"><span>        address<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;上海市普陀区金沙江路 1518 弄&#39;</span>,
+</span></span><span style="display:flex;"><span>        celery_id<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;edc1f149-84c9-412d-b0d6-a27c3d7c5afe&#39;</span>,
+</span></span><span style="display:flex;"><span>      }, {
+</span></span><span style="display:flex;"><span>        id<span style="color:#000;font-weight:bold">:</span> <span style="color:#099">4</span>,
+</span></span><span style="display:flex;"><span>        date<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;2016-05-03&#39;</span>,
+</span></span><span style="display:flex;"><span>        name<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;王小虎&#39;</span>,
+</span></span><span style="display:flex;"><span>        address<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;上海市普陀区金沙江路 1518 弄&#39;</span>,
+</span></span><span style="display:flex;"><span>        celery_id<span style="color:#000;font-weight:bold">:</span> <span style="color:#d14">&#39;edc1f149-84c9-412d-b0d6-a27c3d7c6afe&#39;</span>,
+</span></span><span style="display:flex;"><span>      }]
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">for</span> (<span style="color:#000;font-weight:bold">const</span> value <span style="color:#000;font-weight:bold">of</span> <span style="color:#000;font-weight:bold">this</span>.taskData) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.setProgress(value)
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    updateData() {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">for</span> (<span style="color:#000;font-weight:bold">const</span> value <span style="color:#000;font-weight:bold">of</span> <span style="color:#000;font-weight:bold">this</span>.taskData) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.setProgress(value)
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    testData() {
+</span></span><span style="display:flex;"><span>      <span style="color:#998;font-style:italic">// console.log(this.celery_status[1][&#39;percent&#39;]);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>      setInterval(() =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">this</span>.updateData()
+</span></span><span style="display:flex;"><span>      }, <span style="color:#099">1000</span>)
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  created() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">this</span>.getTaskData()
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  mounted() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 测试数据刷新
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">this</span>.testData()
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#000080">script</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#000080">style</span>&gt;
+</span></span><span style="display:flex;"><span>.el<span style="color:#000;font-weight:bold">-</span>table .warning<span style="color:#000;font-weight:bold">-</span>row {
+</span></span><span style="display:flex;"><span>  background<span style="color:#000;font-weight:bold">:</span> oldlace;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>.el<span style="color:#000;font-weight:bold">-</span>table .success<span style="color:#000;font-weight:bold">-</span>row {
+</span></span><span style="display:flex;"><span>  background<span style="color:#000;font-weight:bold">:</span> <span style="color:#a61717;background-color:#e3d2d2">#</span>f0f9eb;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#000080">style</span>&gt;
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/02/19/flask-celery.html">https://zazayaya.github.io/2021/02/19/flask-celery.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/01/29/mysql-5.7-json-test.html">Mysql-5.7-json测试</a></li>
+        
+        <li><a href="/2021/01/28/mysql-5.8-install.html">Mysql-8.0安装文档</a></li>
+        
+        <li><a href="/2021/01/27/disk-io-test.html">Linux-硬盘io测试</a></li>
+        
+        <li><a href="/2021/01/15/iredmail-install-tutorial.html">Iredmail-安装指南</a></li>
+        
+        <li><a href="/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html">ES-6新语法糖</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/celery'>celery</a></li>
+                
+                <li><a href='/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1'>进度条</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

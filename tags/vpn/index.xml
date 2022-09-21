@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vpn on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/vpn.html</link>
+    <description>Recent content in vpn on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 12 Jul 2021 10:22:29 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/vpn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-wireguard安装文档</title>
+      <link>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</link>
+      <pubDate>Mon, 12 Jul 2021 10:22:29 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</guid>
+      <description>架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务</description>
+    </item>
+    
+  </channel>
+</rss>

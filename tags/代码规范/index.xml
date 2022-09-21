@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>代码规范 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</link>
+    <description>Recent content in 代码规范 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 30 Jul 2020 16:07:58 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>前端代码规范</title>
+      <link>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</link>
+      <pubDate>Thu, 30 Jul 2020 16:07:58 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</guid>
+      <description>代码规范 1. 概述 欢迎使用品优购代码规范， 这个是我借鉴京东前端代码规范，组织的品优购内部规范。旨在增强团队开发协作、提高代码质量和打造开</description>
+    </item>
+    
+  </channel>
+</rss>

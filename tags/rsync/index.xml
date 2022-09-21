@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rsync on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/rsync.html</link>
+    <description>Recent content in rsync on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 18 Jun 2021 11:15:49 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/rsync/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-rsync基础配置</title>
+      <link>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</link>
+      <pubDate>Fri, 18 Jun 2021 11:15:49 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</guid>
+      <description>配置文件 cat &amp;gt; /etc/rsyncd.conf &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; ###################################### # 全局默认配置文件(可以在模块中覆盖) uid=root gid=root use chroot=no max connections=6000 read only=no list=no ignore errors=yes strict modes =yes log file=/var/log/rsyncd.log pid file=/var/run/rsyncd.pid lock file=/var/run/rsyncd.lock # 账号密码保存位置 secrets file=/etc/rsyncd.secrets # 默认全部拒</description>
+    </item>
+    
+  </channel>
+</rss>

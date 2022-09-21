@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Visual-Studio安装配置 | zaza的博客</title>
+    <meta property="og:title" content="Visual-Studio安装配置 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-06-20T17:02:38&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-06-20T17:02:38&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Visual-Studio安装配置">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#下载-visual-studio">下载 Visual Studio</a></li>
+    <li><a href="#安装-visual-studio">安装 Visual Studio</a></li>
+    <li><a href="#目录调整">目录调整</a></li>
+    <li><a href="#c-包管理工具">C++ 包管理工具</a>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#集成到全局">集成到全局</a></li>
+        <li><a href="#集成到项目">集成到项目</a></li>
+        <li><a href="#安装依赖库">安装依赖库</a></li>
+      </ul>
+    </li>
+    <li><a href="#测试三方包">测试三方包</a>
+      <ul>
+        <li><a href="#创建测试项目">创建测试项目</a></li>
+        <li><a href="#添加源">添加源</a></li>
+        <li><a href="#调整解决方案">调整解决方案</a></li>
+        <li><a href="#自带hello-world">自带hello world</a></li>
+        <li><a href="#三方hello-world">三方hello world</a></li>
+      </ul>
+    </li>
+    <li><a href="#cmake详解">CMake详解</a></li>
+    <li><a href="#经典库">经典库</a>
+      <ul>
+        <li><a href="#boost">boost</a></li>
+      </ul>
+    </li>
+    <li><a href="#常见问题">常见问题</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Visual-Studio安装配置</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年6月20日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Windows'>Windows</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="下载-visual-studio">下载 Visual Studio</h2>
+<p><a href="https://visualstudio.microsoft.com/zh-hans/downloads/" target="_blank">https://visualstudio.microsoft.com/zh-hans/downloads/</a></p>
+<h2 id="安装-visual-studio">安装 Visual Studio</h2>
+<p>通常选择：</p>
+<ul>
+<li>使用 C++ 的桌面开发</li>
+</ul>
+<h2 id="目录调整">目录调整</h2>
+<blockquote>
+<p>默认安装在C目录，如果空间不够用，可以调整到其它目录</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1、先移动目录其它的盘符，示例为E盘</span>
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogram Files<span style="color:#d14">\M</span>icrosoft Visual Studio
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogram Files <span style="color:#000;font-weight:bold">(</span>x86<span style="color:#000;font-weight:bold">)</span><span style="color:#d14">\M</span>icrosoft SDKs
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogram Files <span style="color:#000;font-weight:bold">(</span>x86<span style="color:#000;font-weight:bold">)</span><span style="color:#d14">\M</span>icrosoft Visual Studio
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogram Files <span style="color:#000;font-weight:bold">(</span>x86<span style="color:#000;font-weight:bold">)</span><span style="color:#d14">\W</span>indows Kits
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogramData<span style="color:#d14">\M</span>icrosoft<span style="color:#d14">\V</span>isualStudio
+</span></span><span style="display:flex;"><span>C:<span style="color:#d14">\P</span>rogramData<span style="color:#d14">\P</span>ackage Cache
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 2、创建软连接</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\Program Files\Microsoft Visual Studio&#34;</span> <span style="color:#d14">&#34;E:\Program Files\Microsoft Visual Studio&#34;</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\Program Files (x86)\Microsoft SDKs&#34;</span> <span style="color:#d14">&#34;E:\Program Files (x86)\Microsoft SDKs&#34;</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\Program Files (x86)\Microsoft Visual Studio&#34;</span> <span style="color:#d14">&#34;E:\Program Files (x86)\Microsoft Visual Studio&#34;</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\Program Files (x86)\Windows Kits&#34;</span> <span style="color:#d14">&#34;E:\Program Files (x86)\Windows Kits&#34;</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\ProgramData\Microsoft\VisualStudio&#34;</span> <span style="color:#d14">&#34;E:\ProgramData\Microsoft\VisualStudio&#34;</span>
+</span></span><span style="display:flex;"><span>mklink /d <span style="color:#d14">&#34;C:\ProgramData\Package Cache&#34;</span> <span style="color:#d14">&#34;E:\ProgramData\Package Cache&#34;</span>
+</span></span></code></pre></div><h2 id="c-包管理工具">C++ 包管理工具</h2>
+<p>使用文档：https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md</p>
+<blockquote>
+<p>Visual Studio的三方依赖包管理很麻烦，vcpkg解决了这个痛点</p>
+<p>vcpkg：自动编译安装C/C++包，并自动解决依赖包编译问题</p>
+</blockquote>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议放置到根目录：E:\vcpkg</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议您使用例如 C:\src\vcpkg 或 C:\dev\vcpkg 的安装目录，否则您可能遇到某些库构建系统的路径问题</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/microsoft/vcpkg vcpkg-init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 基础包环境准备</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 模板(主要是网速不给力)：git clone https://github.com/microsoft/vcpkg vcpkg-init</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 进入 vcpkg-init 目录，下载 vcpkg.exe (或者对应其它平台的执行文件)</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\b</span>ootstrap-vcpkg.bat <span style="color:#998;font-style:italic"># 如果下载失败，可以手动下载拷贝到当前目录，这条命令只是用于下载管理命令</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装基础包 fmt，会自动安装依赖包：cmake、PowerShell到：~\downloads\tools</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 也可以添加参数：--only-downloads 用于只下载，这里cmake、PowerShell还是会被安装</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># github下载慢，可以手动下载到对应目录</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg install fmt:x64-windows-static --only-downloads
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 依赖包全部下载完成再安装</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg install fmt:x64-windows-static
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看安装包</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 复制基础包给其它项目使用</span>
+</span></span><span style="display:flex;"><span>vcpkg-init -&gt; <span style="color:#0086b3">test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># PS：如果打算将此 vcpkg 目录作为全局使用，可以将 vcpkg.exe 添加到系统路径</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 相对目录：~\vcpkg.exe</span>
+</span></span></code></pre></div><h3 id="集成到全局">集成到全局</h3>
+<blockquote>
+<p>根据需求是否使用此方案：集成vcpkg.exe到vs全局</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 集成vcpkg.exe到vs全局</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg integrate install
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 编译的时候增加参数即可</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># CMake projects should use: &#34;-DCMAKE_TOOLCHAIN_FILE=E:/vcpkg/test/scripts/buildsystems/vcpkg.cmake&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除集成</span>
+</span></span><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg integrate remove
+</span></span></code></pre></div><h3 id="集成到项目">集成到项目</h3>
+<ol>
+<li>vcpkg.exe 模拟一个 NuGet 的本地源 （.\vcpkg integrate project）</li>
+<li>“NuGet 包管理器 ” 添加 vcpkg.exe 模拟的“源” （对应关联路径：~\scripts\buildsystems）</li>
+<li>不同项目可以选择不同的源 （不同的源可能是依赖包版本不同、项目依赖包列表不同等）</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>.<span style="color:#d14">\v</span>cpkg integrate project
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#################### 重要：NuGet 添加本地源 ####################</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 工具 - NuGet 包管理器 - 程序包源 - 新增 - 源（为下面的路径）</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 推荐名称：vcpkg.E.vcpkg.test</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 路径：E:\Users\Administrator\Visual Studio\vcpkg\test\scripts\buildsystems</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下面是执行 vcpkg integrate project 后 生成的提醒日志</span>
+</span></span><span style="display:flex;"><span>With a project open, go to Tools-&gt;NuGet Package Manager-&gt;Package Manager Console and paste:
+</span></span><span style="display:flex;"><span>    Install-Package vcpkg.E.vcpkg.test -Source <span style="color:#d14">&#34;E:\vcpkg\test\scripts\buildsystems&#34;</span>
+</span></span></code></pre></div><h3 id="安装依赖库">安装依赖库</h3>
+<blockquote>
+<p>根据项目需求安装相关架构的包</p>
+<p><a href="https://vcpkg.io/en/packages.html" target="_blank">https://vcpkg.io/en/packages.html</a></p>
+<p><a href="https://blog.csdn.net/gjy211/article/details/115497755" target="_blank">c++ 之动态库与静态库区别</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># x64 依赖包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># .\vcpkg install fmt:x64-windows-static</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># .\vcpkg install openssl:x64-windows-static</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># x86 依赖包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># .\vcpkg install fmt:x86-windows-static</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># .\vcpkg install openssl:x86-windows-static</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 动态库</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 如果要打包给其它人使用，需要静态包，否则相关dll不会被打入包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># .\vcpkg install fmt:x64-windows</span>
+</span></span></code></pre></div><h2 id="测试三方包">测试三方包</h2>
+<blockquote>
+<p>基于：NuGet 包管理器 测试</p>
+</blockquote>
+<h3 id="创建测试项目">创建测试项目</h3>
+<ul>
+<li>打开vs-创建新项目-空项目</li>
+<li>项目名称：HelloWorld</li>
+<li>勾选：将解决方案和项目放在同一目录</li>
+</ul>
+<h3 id="添加源">添加源</h3>
+<ul>
+<li>参考：集成到项目</li>
+<li>右击项目 -&gt; “管理 NuGet 程序包”</li>
+<li>程序包源 ：vcpkg.E.vcpkg.test</li>
+<li>点击 浏览 -&gt; 选择 “vcpkg.E.vcpkg.test”（多虚拟环境也就实现了） - 安装</li>
+<li>安装包保存在：~\HelloWorld\packages\vcpkg.E.vcpkg.test.1.0.0</li>
+</ul>
+<h3 id="调整解决方案">调整解决方案</h3>
+<ul>
+<li>右击项目 - 属性 - 配置属性 - vcpkg - Use Static Libraries - 改成: 是</li>
+<li>右击项目 - 属性 - 配置属性 - C/C++- 代码生成 - 运行库
+<ul>
+<li>Release 模式选择: 多线程(/MT)</li>
+<li>Debug 模式选择: 多线程调试(/MTd)</li>
+</ul>
+</li>
+</ul>
+<h3 id="自带hello-world">自带hello world</h3>
+<blockquote>
+<p>外部依赖项：正常加载， 因为 vcpkg 的 Use Static Libraries 默认继承父类</p>
+<p>源文件 - 添加 - 新建项 -  main.cpp</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;iostream&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#000;font-weight:bold">::</span>cout <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Hello World!</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="三方hello-world">三方hello world</h3>
+<blockquote>
+<p>测试三方包：.\vcpkg install fmt:x64-windows-static</p>
+<p>外部依赖项：无法正常加载？？？ 因为 vcpkg 的 Use Static Libraries 默认没有使用静态库</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;fmt/core.h&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>  fmt<span style="color:#000;font-weight:bold">::</span>print(<span style="color:#d14">&#34;Hello, world!</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="cmake详解">CMake详解</h2>
+<ul>
+<li><a href="http://t.zoukankan.com/kuliuheng-p-9431275.html" target="_blank">CMake详解</a></li>
+<li><a href="https://cmake.org/cmake/help/v2.8.8/cmake.html#section_Commands" target="_blank">快速命令学习</a></li>
+</ul>
+<h2 id="经典库">经典库</h2>
+<h3 id="boost">boost</h3>
+<blockquote>
+<p>Visual Studio 集成 boost 比较简单，参考：https://blog.csdn.net/loongsking/article/details/80136004</p>
+<p>以下是基于：linux + vs code 测试</p>
+</blockquote>
+<ul>
+<li>
+<p><a href="https://www.boost.org/" target="_blank">boost（C++程序库的总称）</a></p>
+<ul>
+<li><a href="http://t.zoukankan.com/lidabo-p-13801993.html" target="_blank">http://t.zoukankan.com/lidabo-p-13801993.html</a></li>
+<li><a href="https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake" target="_blank">https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake</a></li>
+</ul>
+</li>
+<li>
+<p><a href="https://www.boost.org/doc/libs/1_79_0/more/getting_started/unix-variants.html" target="_blank">安装boost</a></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># linux环境预处理：指定安装路径：相关路径会写入到：project-config.jam和编译生成b2命令</span>
+</span></span><span style="display:flex;"><span>./bootstrap.sh --prefix<span style="color:#000;font-weight:bold">=</span>/usr/local/boost
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># b2生成include和lib，并安装到：/usr/local/boost</span>
+</span></span><span style="display:flex;"><span>./b2 install
+</span></span></code></pre></div></li>
+<li>
+<p>测试</p>
+<ul>
+<li>
+<p>main.cpp</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;boost/lambda/lambda.hpp&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;iostream&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;iterator&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;algorithm&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">using</span> <span style="color:#000;font-weight:bold">namespace</span> boost<span style="color:#000;font-weight:bold">::</span>lambda;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">typedef</span> std<span style="color:#000;font-weight:bold">::</span>istream_iterator<span style="color:#000;font-weight:bold">&lt;</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">&gt;</span> in;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    std<span style="color:#000;font-weight:bold">::</span>for_each(
+</span></span><span style="display:flex;"><span>        in(std<span style="color:#000;font-weight:bold">::</span>cin), in(), std<span style="color:#000;font-weight:bold">::</span>cout <span style="color:#000;font-weight:bold">&lt;&lt;</span> (_1 <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">3</span>) <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34; &#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>CMakeLists.txt</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake_minimum_required<span style="color:#000;font-weight:bold">(</span>VERSION 3.0.0<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>project<span style="color:#000;font-weight:bold">(</span>zaza VERSION 0.1.0<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># debug模式</span>
+</span></span><span style="display:flex;"><span>set<span style="color:#000;font-weight:bold">(</span>Boost_DEBUG ON<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>include<span style="color:#000;font-weight:bold">(</span>CTest<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>enable_testing<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 指定源码也可以使用(适用于本地开发并编译)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 等价于：cmake ../ -DBOOST_ROOT=/mnt/e/boost_1_79_0</span>
+</span></span><span style="display:flex;"><span>SET <span style="color:#000;font-weight:bold">(</span>BOOST_ROOT <span style="color:#d14">&#34;/mnt/e/boost_1_79_0&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 引用线上编译安装的版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 等价于：cmake ../ -DBOOST_INCLUDEDIR=/usr/local/boost/include -DBOOST_LIBRARYDIR=/usr/local/boost/lib</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 也可以设置单独的根目录：SET (BOOST_ROOT &#34;/usr/local/src/boost&#34;)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># SET (BOOST_INCLUDEDIR &#34;/usr/local/boost/include&#34;)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># SET (BOOST_LIBRARYDIR &#34;/usr/local/boost/lib&#34;)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 定义版本号</span>
+</span></span><span style="display:flex;"><span>SET <span style="color:#000;font-weight:bold">(</span>BOOST_MIN_VERSION <span style="color:#d14">&#34;1.79.0&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 等价于：cmake ../ -DBoost_NO_BOOST_CMAKE=BOOL:ON </span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># set (Boost_NO_BOOST_CMAKE ON)   # cmake的忽略系统BoostConfig.cmake</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Boost 版本限制</span>
+</span></span><span style="display:flex;"><span>FIND_PACKAGE<span style="color:#000;font-weight:bold">(</span>Boost <span style="color:#d14">${</span><span style="color:#008080">BOOST_MIN_VERSION</span><span style="color:#d14">}</span> REQUIRED<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>Boost_FOUND<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 添加include的目录，否则报hpp文件无法找到</span>
+</span></span><span style="display:flex;"><span>    include_directories<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">${</span><span style="color:#008080">Boost_INCLUDE_DIRS</span><span style="color:#d14">}</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># MESSAGE( STATUS &#34;Boost_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}.&#34;)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># MESSAGE( STATUS &#34;Boost_LIBRARIES = ${Boost_LIBRARIES}.&#34;)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># MESSAGE( STATUS &#34;Boost_LIB_VERSION = ${Boost_LIB_VERSION}.&#34;)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 定义生成的执行文件为：zaza</span>
+</span></span><span style="display:flex;"><span>    add_executable<span style="color:#000;font-weight:bold">(</span>zaza main.cpp<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 为生成的目标文件添加头文件</span>
+</span></span><span style="display:flex;"><span>    target_link_libraries <span style="color:#000;font-weight:bold">(</span>zaza <span style="color:#d14">${</span><span style="color:#008080">Boost_LIBRARIES</span><span style="color:#d14">}</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>endif<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>set<span style="color:#000;font-weight:bold">(</span>CPACK_PROJECT_NAME <span style="color:#d14">${</span><span style="color:#008080">PROJECT_NAME</span><span style="color:#d14">}</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>set<span style="color:#000;font-weight:bold">(</span>CPACK_PROJECT_VERSION <span style="color:#d14">${</span><span style="color:#008080">PROJECT_VERSION</span><span style="color:#d14">}</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>include<span style="color:#000;font-weight:bold">(</span>CPack<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>编译、运行</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议单独添加目录编译</span>
+</span></span><span style="display:flex;"><span>mkdir build <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">cd</span> build <span style="color:#000;font-weight:bold">&amp;&amp;</span> cmake ../ <span style="color:#000;font-weight:bold">&amp;&amp;</span> make
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 测试</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#099">1</span> <span style="color:#099">2</span> <span style="color:#099">3</span> | ./zaza
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<ul>
+<li>
+<p>加载vspkg库失败
+通过命令 .\vcpkg install fmt:x64-windows-static 安装库后，代码无法正常使用库
+原因：因为vcpkg 默认使用动态库，而上面安装的是静态库
+解决方案：右击项目 - 属性 - 配置属性 - vcpkg - Use Static Libraries - 改成 是</p>
+</li>
+<li>
+<p>LNK2038 检测到“RuntimeLibrary”的不匹配项
+<a href="https://blog.csdn.net/xingkongfenqi/article/details/49180075" target="_blank">https://blog.csdn.net/xingkongfenqi/article/details/49180075</a>
+Release 改成：多线程(/MT) 对应的是MD_StaticRelease
+Debug 改成: 多线程调试(/MTd)</p>
+</li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html">https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2022/04/01/python-storage-by-abs.html">Python-通过抽象基类实现存储抽象化</a></li>
+        
+        <li><a href="/2022/03/15/java-shiro-started.html">Java-Shiro入门学习</a></li>
+        
+        <li><a href="/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a></li>
+        
+        <li><a href="/2021/12/31/java-getting-started.html">Java-入门学习</a></li>
+        
+        <li><a href="/2021/11/08/elk-insert-nginx-log.html">ELK-nginx数据录入</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/Visual-Studio'>Visual Studio</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

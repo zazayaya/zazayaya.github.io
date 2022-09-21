@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>pureftpd on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/pureftpd.html</link>
+    <description>Recent content in pureftpd on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 24 Mar 2021 11:32:10 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/pureftpd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pureftpd-安装文档(基于puredb认证)</title>
+      <link>https://zazayaya.github.io/2021/03/24/pureftpd-install-of-puredb.html</link>
+      <pubDate>Wed, 24 Mar 2021 11:32:10 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/24/pureftpd-install-of-puredb.html</guid>
+      <description>下载 wget -c --no-check-certificate https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.42.tar.gz 编译安装 # 依赖包 yum -y install openssl-devel.x86_64 useradd -M -s /bin/false ftp tar xzf pure-ftpd-1.0.42.tar.gz &amp;amp;&amp;amp; cd pure-ftpd-1.0.42 ./configure --prefix=/usr/local/pureftpd --with-puredb --with-altlog --without-shadow --with-quotas \ --with-cookie --with-virtualchroot --with-language=english --with-rfc2640 --with-peruserlimits --with-tls make install-strip 生成配置文件 # 配置文件 install -o root -g root -m 500 -d /usr/local/pureftpd/etc install -o</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>repos on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/repos.html</link>
+    <description>Recent content in repos on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 08 Jun 2021 17:17:54 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/repos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Centos-6源</title>
+      <link>https://zazayaya.github.io/2021/06/08/centos-6-repos.html</link>
+      <pubDate>Tue, 08 Jun 2021 17:17:54 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/08/centos-6-repos.html</guid>
+      <description>Base源 cat &amp;gt; /etc/yum.repos.d/CentOS-Base.repo &amp;lt;&amp;lt; &amp;#39;EOF&amp;#39; # CentOS-Base.repo # # The mirror system uses the connecting IP address of the client and the # update status of each mirror to pick mirrors that are updated to and # geographically close to the client. You should use this for CentOS updates # unless you are manually picking other mirrors. # # If the</description>
+    </item>
+    
+  </channel>
+</rss>

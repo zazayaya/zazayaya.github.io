@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jumpserver on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/jumpserver.html</link>
+    <description>Recent content in jumpserver on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 25 Apr 2021 14:04:46 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/jumpserver/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Jumpserver-安装文档</title>
+      <link>https://zazayaya.github.io/2021/04/25/jumpserver-install.html</link>
+      <pubDate>Sun, 25 Apr 2021 14:04:46 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/04/25/jumpserver-install.html</guid>
+      <description>最新版本是docker安装，建议centos7+ 数据库安装 略&amp;hellip;&amp;hellip; 安装redis cd /usr/local/src &amp;amp;&amp;amp; wget https://download.redis.io/releases/redis-6.2.2.tar.gz tar xzf redis-6.2.2.tar.gz &amp;amp;&amp;amp; cd redis-6.2.2 make &amp;amp;&amp;amp;</description>
+    </item>
+    
+  </channel>
+</rss>

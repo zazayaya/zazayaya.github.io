@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Iredmail-安装指南 | zaza的博客</title>
+    <meta property="og:title" content="Iredmail-安装指南 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-01-15T09:36:35&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-01-15T09:36:35&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Iredmail-安装指南">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#修改主机名">修改主机名</a></li>
+    <li><a href="#关闭selinux">关闭selinux</a></li>
+    <li><a href="#下载iredmail">下载iredmail</a></li>
+    <li><a href="#安装iredmail">安装iredmail</a></li>
+    <li><a href="#域名解析">域名解析</a></li>
+    <li><a href="#配置修改">配置修改</a></li>
+    <li><a href="#常见问题">常见问题</a>
+      <ul>
+        <li><a href="#投递邮件很慢">投递邮件很慢</a></li>
+        <li><a href="#单个用户无法访问">单个用户无法访问</a></li>
+        <li><a href="#资源消耗过大">资源消耗过大</a></li>
+        <li><a href="#白名单设置">白名单设置</a></li>
+      </ul>
+    </li>
+    <li><a href="#常见端口">常见端口</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Iredmail-安装指南</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <blockquote>
+<p>版本推荐：Centos6.9，0.96，非常稳定，从来没出过任何问题</p>
+</blockquote>
+<h2 id="修改主机名">修改主机名</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#008080">hostname</span><span style="color:#000;font-weight:bold">=</span>mail.zaza.cn
+</span></span><span style="display:flex;"><span>grep -wq <span style="color:#008080">$hostname</span> /etc/hosts <span style="color:#000;font-weight:bold">||</span> sed -i <span style="color:#d14">&#34;s/127.0.0.1/127.0.0.1 </span><span style="color:#008080">$hostname</span><span style="color:#d14">/g&#34;</span> /etc/hosts
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#d14">&#39;s/^HOSTNAME.*$/HOSTNAME=&#39;</span><span style="color:#d14">&#34;</span><span style="color:#008080">$hostname</span><span style="color:#d14">&#34;</span><span style="color:#d14">&#39;/g&#39;</span> /etc/sysconfig/network
+</span></span><span style="display:flex;"><span>hostname <span style="color:#008080">$hostname</span>
+</span></span><span style="display:flex;"><span>ifconfig|grep <span style="color:#d14">&#34;inet addr&#34;</span>
+</span></span></code></pre></div><h2 id="关闭selinux">关闭selinux</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed -i.bak <span style="color:#d14">&#39;s/SELINUX=.*/SELINUX=disabled/g&#39;</span> /etc/selinux/config
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 立即生效</span>
+</span></span><span style="display:flex;"><span>setenforce <span style="color:#099">0</span>
+</span></span></code></pre></div><h2 id="下载iredmail">下载iredmail</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下载地址：https://www.iredmail.org/</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src/
+</span></span><span style="display:flex;"><span>wget https://bitbucket.org/zhb/iredmail/downloads/iRedMail-0.9.9.tar.bz2
+</span></span></code></pre></div><h2 id="安装iredmail">安装iredmail</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议全新系统centos7安装iRedMail</span>
+</span></span><span style="display:flex;"><span>tar xf iRedMail-0.9.9.tar.bz2
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> iRedMail-0.9.9/
+</span></span><span style="display:flex;"><span>bash iRedMail.sh
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># a、除了下面的选择其他为默认选项</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># b、数据库选择：MariaDB，密码可以填写简单的后面再改</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#    first mail domain填写根域名：zaza.cn</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#    管理账户为：postmaster@zaza.cn，密码可以填写简单的后面再改</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># c、组件勾选SOGo</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 输入y开始安装</span>
+</span></span><span style="display:flex;"><span>&lt; Question &gt; Continue? <span style="color:#000;font-weight:bold">[</span>y|N<span style="color:#000;font-weight:bold">]</span>y
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 输入yes重启防火墙(对外了ssh及邮件系统的相关端口)</span>
+</span></span><span style="display:flex;"><span>&lt; Question &gt; Restart firewall now <span style="color:#000;font-weight:bold">(</span>with ssh ports: 22<span style="color:#000;font-weight:bold">)</span>? <span style="color:#000;font-weight:bold">[</span>y|N<span style="color:#000;font-weight:bold">]</span>y
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用iRedMail提供的配置文件</span>
+</span></span><span style="display:flex;"><span>&lt; Question &gt; Would you like to use MySQL configuration file shipped within iRedMail now?
+</span></span><span style="display:flex;"><span>&lt; Question &gt; File: /etc/my.cnf. <span style="color:#000;font-weight:bold">[</span>Y|n<span style="color:#000;font-weight:bold">]</span>y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 杀毒软件比较耗资源，跟进需求看是否需要关闭</span>
+</span></span><span style="display:flex;"><span>systemctl stop clamd@amavisd.service
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 另外一个工具</span>
+</span></span><span style="display:flex;"><span>systemctl stop sogod.service
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件</span>
+</span></span><span style="display:flex;"><span>iRedMail.tips
+</span></span></code></pre></div><h2 id="域名解析">域名解析</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>@	     TXT	    <span style="color:#008080">v</span><span style="color:#000;font-weight:bold">=</span>spf1 include:spf.zaza.cn ~all
+</span></span><span style="display:flex;"><span>spf	     TXT	    <span style="color:#008080">v</span><span style="color:#000;font-weight:bold">=</span>spf1 ip4:1.1.1.1 ~all
+</span></span><span style="display:flex;"><span>mail     A          1.1.1.1
+</span></span><span style="display:flex;"><span>smtp     A          1.1.1.1
+</span></span><span style="display:flex;"><span>pop3     A          1.1.1.1
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认MX指向mx01.zaza.cn，mx01.zaza.cn指向A记录</span>
+</span></span><span style="display:flex;"><span>@        MX         mx01.zaza.cn
+</span></span><span style="display:flex;"><span>mx01     A          1.1.1.1
+</span></span><span style="display:flex;"><span>dkim._domainkey TXT <span style="color:#000;font-weight:bold">(</span>圆括号里面的值即可<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查询dkim的txt记录(圆括号里面的值即可)</span>
+</span></span><span style="display:flex;"><span>amavisd -c /etc/amavisd/amavisd.conf showkeys
+</span></span></code></pre></div><h2 id="配置修改">配置修改</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启110访问</span>
+</span></span><span style="display:flex;"><span>vim /etc/dovecot/dovecot.conf
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ssl改为yes</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ssl</span> <span style="color:#000;font-weight:bold">=</span> yes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 重启才能生效</span>
+</span></span><span style="display:flex;"><span>systemctl restart dovecot.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启25端口(使用postconf命令不用重启服务器)</span>
+</span></span><span style="display:flex;"><span>postconf -e <span style="color:#d14">&#34;smtpd_sasl_auth_enable = yes&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 测试</span>
+</span></span><span style="display:flex;"><span>telnet mail.zaza.cn <span style="color:#099">25</span>
+</span></span><span style="display:flex;"><span>ehlo mail.zaza.cn <span style="color:#998;font-style:italic"># 执行</span>
+</span></span><span style="display:flex;"><span>250-AUTH PLAIN LOGIN <span style="color:#998;font-style:italic"># 内容包含这一行即可</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启465端口</span>
+</span></span><span style="display:flex;"><span>vi /etc/postfix/master.cf
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#smtps     inet  n       -       -       -       -       smtpd</span>
+</span></span><span style="display:flex;"><span>改为:
+</span></span><span style="display:flex;"><span>smtps     inet  n       -       -       -       -       smtpd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 重启</span>
+</span></span><span style="display:flex;"><span>systemctl restart postfix.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 防火墙新增</span>
+</span></span><span style="display:flex;"><span>vim /etc/firewalld/zones/iredmail.xml
+</span></span><span style="display:flex;"><span>&lt;service <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;smtps&#34;</span>/&gt;
+</span></span></code></pre></div><h2 id="常见问题">常见问题</h2>
+<h3 id="投递邮件很慢">投递邮件很慢</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># QQ等邮件系统域名投递到本邮件系统很慢，并报错，日志如下</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># tailf /var/log/maillog</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Recipient address rejected: Intentional policy rejection, please try again later;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 移除灰名单服务</span>
+</span></span><span style="display:flex;"><span>python /opt/iredapd/tools/spf_to_greylist_whitelists.py outlook.com microsoft.com 126.com 163.com qq.com foxmail.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看白名单列表</span>
+</span></span><span style="display:flex;"><span>python /opt/iredapd/tools/greylisting_admin.py --list
+</span></span><span style="display:flex;"><span>python /opt/iredapd/tools/greylisting_admin.py --list-whitelist-domains
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新增域名</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># python /opt/iredapd/tools/greylisting_admin.py --enable --from &#39;@mail.bytedance.net&#39;</span>
+</span></span><span style="display:flex;"><span>python /opt/iredapd/tools/greylisting_admin.py --whitelist-domain --from <span style="color:#d14">&#39;@mail.bytedance.net&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 或者 </span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># python /opt/iredapd/tools/spf_to_whitelist_domains.py --submit mail.bytedance.net</span>
+</span></span></code></pre></div><h3 id="单个用户无法访问">单个用户无法访问</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 速率限制(多次登录后被防火墙挡住了)</span>
+</span></span><span style="display:flex;"><span>iptables -nvL
+</span></span><span style="display:flex;"><span>Chain f2b-dovecot <span style="color:#000;font-weight:bold">(</span><span style="color:#099">1</span> references<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span> pkts bytes target     prot opt in     out     <span style="color:#0086b3">source</span>               destination         
+</span></span><span style="display:flex;"><span>   <span style="color:#099">95</span> <span style="color:#099">19540</span> REJECT     all  --  *      *       2.2.2.2        0.0.0.0/0            reject-with icmp-port-unreachable
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件：/etc/fail2ban/jail.conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># pop3接收服务器连接失败</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 现象：telnet会瞬间被弹出来</span>
+</span></span><span style="display:flex;"><span>telnet pop3.zaza.cn <span style="color:#099">995</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 日志</span>
+</span></span><span style="display:flex;"><span>Feb <span style="color:#099">28</span> 14:43:13 mail fail2ban.filter<span style="color:#000;font-weight:bold">[</span>1718<span style="color:#000;font-weight:bold">]</span>: INFO <span style="color:#000;font-weight:bold">[</span>dovecot-iredmail<span style="color:#000;font-weight:bold">]</span> Found 2.2.2.2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pop3测试：
+</span></span><span style="display:flex;"><span>https://wiki.dovecot.org/TestPop3Installation
+</span></span><span style="display:flex;"><span>imap测试：
+</span></span><span style="display:flex;"><span>https://notes.sagredo.eu/en/qmail-notes-185/testing-dovecot-90.html
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>telnet localhost <span style="color:#099">110</span>
+</span></span><span style="display:flex;"><span>user username
+</span></span><span style="display:flex;"><span>pass password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>telnet localhost <span style="color:#099">110</span>
+</span></span><span style="display:flex;"><span>a login user pass
+</span></span><span style="display:flex;"><span>login test@yourdomain.net <span style="color:#000;font-weight:bold">[</span>PASSWORD<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># pop3s测试</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 现在服务器测试</span>
+</span></span><span style="display:flex;"><span>openssl s_client -connect 127.0.0.1:995
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>openssl s_client -connect <span style="color:#000;font-weight:bold">[</span>your-IP<span style="color:#000;font-weight:bold">]</span>:995
+</span></span></code></pre></div><h3 id="资源消耗过大">资源消耗过大</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 有点耗资源</span>
+</span></span><span style="display:flex;"><span>systemctl stop clamd@amavisd.service
+</span></span><span style="display:flex;"><span>systemctl stop amavisd.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关闭自启动</span>
+</span></span><span style="display:flex;"><span>systemctl disable clamd@amavisd.service
+</span></span><span style="display:flex;"><span>systemctl disable amavisd.service 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>iredmail
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 客户端建议使用Thunderbird测试，协议比较完整</span>
+</span></span></code></pre></div><h3 id="白名单设置">白名单设置</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>DNSBL白名单可以在/etc/postfix/postscreen_access.cidr里设置
+</span></span></code></pre></div><h2 id="常见端口">常见端口</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 邮件系统对外端口</span>
+</span></span><span style="display:flex;"><span>25端口（SMTP）
+</span></span><span style="display:flex;"><span>110端口（POP3）
+</span></span><span style="display:flex;"><span>143端口（IMAP）
+</span></span><span style="display:flex;"><span>465端口（SMTPS） <span style="color:#998;font-style:italic"># iredmail是587(TSL,不是SSL)</span>
+</span></span><span style="display:flex;"><span>995端口（POP3S）
+</span></span><span style="display:flex;"><span>993端口（IMAPS）
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html">https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html">ES-6新语法糖</a></li>
+        
+        <li><a href="/2021/01/07/linux-fdisk.html">Linux-硬盘操作</a></li>
+        
+        <li><a href="/2020/12/25/flask-project-struct.html">Flask-基础框架搭建</a></li>
+        
+        <li><a href="/2020/12/11/python-3.7-install-doc.html">Python-3.7安装文档</a></li>
+        
+        <li><a href="/2020/12/11/python-2.7-install-doc.html">Python-2.7安装文档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/iredmail'>iredmail</a></li>
+                
+                <li><a href='/tags/mail'>mail</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

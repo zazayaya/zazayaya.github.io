@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>树莓派 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html</link>
+    <description>Recent content in 树莓派 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 19 Aug 2021 14:28:56 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>树莓派安装系统</title>
+      <link>https://zazayaya.github.io/2021/08/19/raspberrypi-install-os.html</link>
+      <pubDate>Thu, 19 Aug 2021 14:28:56 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/raspberrypi-install-os.html</guid>
+      <description>以ubuntu为例 下载ubuntu 也可以通过 Raspberry Pi Imager 进行远程下载 https://ubuntu.com/download/raspberry-pi 镜像烧录工具 来自官方：Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.org/software/ 功能： 远程镜像：</description>
+    </item>
+    
+    <item>
+      <title>树莓派LED指示灯状态</title>
+      <link>https://zazayaya.github.io/2021/08/19/raspberrypi-led-status.html</link>
+      <pubDate>Thu, 19 Aug 2021 14:24:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/raspberrypi-led-status.html</guid>
+      <description>LED亮灯状态 LED 颜色 功能 正常状态 ACT 绿色 card status 闪烁：SD卡正在活动（类似电脑的硬盘灯） PWR 红色 power 不闪烁：正常 FDX 橙 full duplex 亮：全双工/不亮：半双</description>
+    </item>
+    
+  </channel>
+</rss>

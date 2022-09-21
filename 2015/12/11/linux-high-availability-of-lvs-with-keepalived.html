@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Linux-keepalive-lvs双机高可用负载均衡 | zaza的博客</title>
+    <meta property="og:title" content="Linux-keepalive-lvs双机高可用负载均衡 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2015-12-11T17:22:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2015-12-11T17:22:10&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Linux-keepalive-lvs双机高可用负载均衡">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一下载">一、下载</a></li>
+    <li><a href="#二安装lvs管理工具">二、安装LVS管理工具</a></li>
+    <li><a href="#三编译安装">三、编译安装</a></li>
+    <li><a href="#四修改防火墙">四、修改防火墙</a></li>
+    <li><a href="#五配置双机高可用负载均衡">五、配置双机高可用负载均衡</a>
+      <ul>
+        <li><a href="#1技术选择">1、技术选择</a></li>
+        <li><a href="#2通过防火墙为每个包打标签">2、通过防火墙为每个包打标签</a></li>
+        <li><a href="#3master配置文件">3、master配置文件</a></li>
+        <li><a href="#4backup配置文件">4、backup配置文件</a></li>
+      </ul>
+    </li>
+    <li><a href="#五启动">五、启动</a></li>
+    <li><a href="#六后端服务器配置">六、后端服务器配置</a>
+      <ul>
+        <li><a href="#1后端脚本">1、后端脚本</a></li>
+        <li><a href="#2授权启动">2、授权、启动</a></li>
+      </ul>
+    </li>
+    <li><a href="#七报警脚本">七、报警脚本</a>
+      <ul>
+        <li><a href="#1服务端配置文件">1、服务端配置文件</a></li>
+        <li><a href="#2脚本示例">2、脚本示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#八测试">八、测试</a>
+      <ul>
+        <li><a href="#1确认脑裂方法">1、确认脑裂方法</a></li>
+        <li><a href="#2测试相关包是否打标记">2、测试相关包是否打标记</a></li>
+        <li><a href="#3测试后端服务器掉线踢出">3、测试后端服务器掉线踢出</a></li>
+        <li><a href="#4测试后端服务器的vip是否ok">4、测试后端服务器的VIP是否OK</a></li>
+        <li><a href="#5ipvsadm显示详细负载连接">5、ipvsadm显示详细负载连接</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考文档">参考文档</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Linux-keepalive-lvs双机高可用负载均衡</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2015年12月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <blockquote>
+<p>基于Centos5.7测试通过</p>
+</blockquote>
+<h2 id="一下载">一、下载</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议安装稳定版本1.2.1</span>
+</span></span><span style="display:flex;"><span>wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz
+</span></span></code></pre></div><h2 id="二安装lvs管理工具">二、安装LVS管理工具</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum -y install ipvsadm
+</span></span></code></pre></div><h2 id="三编译安装">三、编译安装</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 依赖包</span>
+</span></span><span style="display:flex;"><span>yum -y install popt-devel openssl-devel libnl-devel
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 处理Use IPVS Framework       : No问题</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 仍然报错则需要升级kernel，因为kernel和kernel-headers不匹配，注意：此方法需要重启服务器</span>
+</span></span><span style="display:flex;"><span>yum -y install kernel-headers kernel-devel
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看是否匹配，软链接不存在的话，则有问题</span>
+</span></span><span style="display:flex;"><span>ll /lib/modules/<span style="color:#000;font-weight:bold">$(</span>uname -r<span style="color:#000;font-weight:bold">)</span>/build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 不重启线上服务安装对应版本kernel-devel，rpm -e可以删除指定包，不会删除依赖包：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rpm -qa|grep kernel</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rpm -e kernel-devel-2.6.32-573.7.1.el6.x86_64  # 版本过高</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下载/lib/modules/$(uname -r)/build对应的版本并安装</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rpm -ivh kernel-devel-2.6.32-279.el6.x86_64.rpm</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装</span>
+</span></span><span style="display:flex;"><span>tar xzf keepalived-1.2.1.tar.gz 
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> keepalived-1.2.1
+</span></span><span style="display:flex;"><span>./configure --prefix<span style="color:#000;font-weight:bold">=</span>/usr/local/keepalived --with-kernel-dir<span style="color:#000;font-weight:bold">=</span>/lib/modules/<span style="color:#000;font-weight:bold">$(</span>uname -r<span style="color:#000;font-weight:bold">)</span>/build
+</span></span><span style="display:flex;"><span>make <span style="color:#000;font-weight:bold">&amp;&amp;</span> make install
+</span></span><span style="display:flex;"><span>install -o root -g root -m <span style="color:#099">500</span> /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/keepalived
+</span></span><span style="display:flex;"><span>install -o root -g root -m <span style="color:#099">644</span> /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/keepalived
+</span></span><span style="display:flex;"><span>install -o root -g root -d -m <span style="color:#099">755</span> /etc/keepalived
+</span></span><span style="display:flex;"><span>ln -s /usr/local/keepalived/sbin/keepalived /usr/sbin/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件参考：/usr/local/keepalived/etc/keepalived目录下</span>
+</span></span></code></pre></div><h2 id="四修改防火墙">四、修改防火墙</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 官方建议关闭防火墙，如果LVS主机都配置了防火墙，则需要配置以下访问权限</span>
+</span></span><span style="display:flex;"><span>iptables -A INPUT -i eth0 -d 224.0.0.0/8 -j ACCEPT
+</span></span><span style="display:flex;"><span>iptables -A INPUT -i eth0 -p vrrp -j ACCEPT
+</span></span></code></pre></div><h2 id="五配置双机高可用负载均衡">五、配置双机高可用负载均衡</h2>
+<h3 id="1技术选择">1、技术选择</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置virtual_server有三种方式，只有借助iptable的mark才能用于双机高可用案例</span>
+</span></span><span style="display:flex;"><span>virtual_server IP port
+</span></span><span style="display:flex;"><span>virtual_server fwmark int  <span style="color:#998;font-style:italic"># 使用此方法(firewall mark)</span>
+</span></span><span style="display:flex;"><span>virtual_server group string
+</span></span></code></pre></div><h3 id="2通过防火墙为每个包打标签">2、通过防火墙为每个包打标签</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主上面(MAC为备的MAC，标记为3)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># iptables -t mangle -I PREROUTING -d $VIP -p tcp -m tcp --dport $VPORT -m mac \ ! --mac-source $MAC_Director2 -j MARK --set-mark 0x3</span>
+</span></span><span style="display:flex;"><span>iptables -t mangle -I PREROUTING -d 192.168.100.60 -p tcp -m tcp --dport <span style="color:#099">80</span> -m mac ! --mac-source 48:5B:39:12:52:11 -j MARK --set-mark 0x3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 防火墙mangle链实例</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   # Generated by iptables-save v1.3.5 on Fri May 22 14:27:21 2015</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   *mangle</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   :PREROUTING ACCEPT [8501667:1563640067]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   :INPUT ACCEPT [8501361:1563623487]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   :FORWARD ACCEPT [0:0]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   :OUTPUT ACCEPT [9047544:1223155323]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   :POSTROUTING ACCEPT [9047544:1223155323]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   -A PREROUTING -d 192.168.100.60 -p tcp -m tcp --dport 80 -m mac ! --mac-source 48:5B:39:12:52:11 -j MARK --set-mark 0x3</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   COMMIT</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   # Completed on Fri May 22 14:27:21 2015</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#   # Generated by iptables-save v1.3.5 on Fri May 22 14:27:21 2015</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 备上面(MAC为主的MAC，标记为4)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># iptables -t mangle -I PREROUTING -d $VIP -p tcp -m tcp --dport $VPORT -m mac \ ! --mac-source $MAC_Director1 -j MARK --set-mark 0x4</span>
+</span></span><span style="display:flex;"><span>iptables -t mangle -I PREROUTING -d 192.168.100.60 -p tcp -m tcp --dport <span style="color:#099">80</span> -m mac ! --mac-source 00:21:5E:70:AB:C6 -j MARK --set-mark 0x4
+</span></span></code></pre></div><h3 id="3master配置文件">3、master配置文件</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># /etc/keepalived/keepalived.conf</span>
+</span></span><span style="display:flex;"><span>! Configuration File <span style="color:#000;font-weight:bold">for</span> keepalived
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>global_defs <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#998;font-style:italic"># diff router_id</span>
+</span></span><span style="display:flex;"><span>   router_id LVS_1
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_sync_group G1 <span style="color:#000;font-weight:bold">{</span> 
+</span></span><span style="display:flex;"><span>   group <span style="color:#000;font-weight:bold">{</span> 
+</span></span><span style="display:flex;"><span>        VI_1 
+</span></span><span style="display:flex;"><span>   <span style="color:#000;font-weight:bold">}</span> 
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_instance VI_1 <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># diff state</span>
+</span></span><span style="display:flex;"><span>    state MASTER
+</span></span><span style="display:flex;"><span>    interface eth1
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 同一网段包含多组vrrp_instance(或者keepalived)则需要修改virtual_router_id值,且唯一</span>
+</span></span><span style="display:flex;"><span>    virtual_router_id <span style="color:#099">51</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># MASTER bigger priority</span>
+</span></span><span style="display:flex;"><span>    priority <span style="color:#099">150</span>
+</span></span><span style="display:flex;"><span>    advert_int <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>    authentication <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        auth_type PASS
+</span></span><span style="display:flex;"><span>        auth_pass pMP8NsHBsCdF
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    virtual_ipaddress <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        192.168.100.60
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    notify_master <span style="color:#d14">&#34;/oper/script/check_lvs.sh master&#34;</span>
+</span></span><span style="display:flex;"><span>    notify_backup <span style="color:#d14">&#34;/oper/script/check_lvs.sh backup&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># fwmark int</span>
+</span></span><span style="display:flex;"><span>virtual_server fwmark <span style="color:#099">3</span> <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    delay_loop <span style="color:#099">6</span>
+</span></span><span style="display:flex;"><span>    lb_algo wlc
+</span></span><span style="display:flex;"><span>    lb_kind DR
+</span></span><span style="display:flex;"><span>    nat_mask 255.255.255.224
+</span></span><span style="display:flex;"><span>    persistence_timeout <span style="color:#099">50</span>
+</span></span><span style="display:flex;"><span>    protocol TCP
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    real_server 192.168.100.47 <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        weight <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>        TCP_CHECK <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            connect_port <span style="color:#099">80</span>
+</span></span><span style="display:flex;"><span>            connect_timeout <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            nb_get_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            delay_before_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    real_server 192.168.100.59 <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        weight <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>        TCP_CHECK <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            connect_port <span style="color:#099">80</span>
+</span></span><span style="display:flex;"><span>            connect_timeout <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            nb_get_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            delay_before_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h3 id="4backup配置文件">4、backup配置文件</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># /etc/keepalived/keepalived.conf</span>
+</span></span><span style="display:flex;"><span>! Configuration File <span style="color:#000;font-weight:bold">for</span> keepalived
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>global_defs <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#998;font-style:italic"># diff router_id</span>
+</span></span><span style="display:flex;"><span>   router_id LVS_2
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_sync_group G1 <span style="color:#000;font-weight:bold">{</span> 
+</span></span><span style="display:flex;"><span>   group <span style="color:#000;font-weight:bold">{</span> 
+</span></span><span style="display:flex;"><span>        VI_1 
+</span></span><span style="display:flex;"><span>   <span style="color:#000;font-weight:bold">}</span> 
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_instance VI_1 <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># diff state</span>
+</span></span><span style="display:flex;"><span>    state BACKUP
+</span></span><span style="display:flex;"><span>    interface eth1
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 同一网段包含多组vrrp_instance(或者keepalived)则需要修改virtual_router_id值,且唯一</span>
+</span></span><span style="display:flex;"><span>    virtual_router_id <span style="color:#099">51</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># MASTER bigger priority</span>
+</span></span><span style="display:flex;"><span>    priority <span style="color:#099">100</span>
+</span></span><span style="display:flex;"><span>    advert_int <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>    authentication <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        auth_type PASS
+</span></span><span style="display:flex;"><span>        auth_pass pMP8NsHBsCdF
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    virtual_ipaddress <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        192.168.100.60
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    notify_master <span style="color:#d14">&#34;/oper/script/check_lvs.sh master&#34;</span>
+</span></span><span style="display:flex;"><span>    notify_backup <span style="color:#d14">&#34;/oper/script/check_lvs.sh backup&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>virtual_server fwmark <span style="color:#099">4</span> <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    delay_loop <span style="color:#099">6</span>
+</span></span><span style="display:flex;"><span>    lb_algo wlc
+</span></span><span style="display:flex;"><span>    lb_kind DR
+</span></span><span style="display:flex;"><span>    nat_mask 255.255.255.224
+</span></span><span style="display:flex;"><span>    persistence_timeout <span style="color:#099">50</span>
+</span></span><span style="display:flex;"><span>    protocol TCP
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    real_server 192.168.100.47 <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        weight <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>        TCP_CHECK <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            connect_port <span style="color:#099">80</span>
+</span></span><span style="display:flex;"><span>            connect_timeout <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            nb_get_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            delay_before_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    real_server 192.168.100.59 <span style="color:#099">80</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        weight <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>        TCP_CHECK <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            connect_port <span style="color:#099">80</span>
+</span></span><span style="display:flex;"><span>            connect_timeout <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            nb_get_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>            delay_before_retry <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h2 id="五启动">五、启动</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 运行ipvsadm，解决keepalive启动报错(IPVS: Can&#39;t initialize ipvs: Protocol not available)</span>
+</span></span><span style="display:flex;"><span>ipvsadm
+</span></span><span style="display:flex;"><span>/etc/init.d/keepalived start
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动keepalived，默认主从均配置好ipvsadm路由策略，通过下面命令查看(只是VIP接管问题)</span>
+</span></span><span style="display:flex;"><span>ipvsadm
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ActiveConn是活动连接数,也就是tcp连接状态的ESTABLISHED;InActConn是指除了ESTABLISHED以外的,所有的其它状态的tcp连接</span>
+</span></span></code></pre></div><h2 id="六后端服务器配置">六、后端服务器配置</h2>
+<h3 id="1后端脚本">1、后端脚本</h3>
+<blockquote>
+<p><strong>重要：</strong> 没有这个脚本会导致后端服务器无法访问，后端只需要添加这个脚本即可，建议路径：/etc/init.d/lvs_realserver</p>
+</blockquote>
+<blockquote>
+<p>原理：active router收到vip的请求后，将mac地址改成real server的mac地址，并发送给real server ，real server 的链路层收到请求，上传到ip层，这时ip层需要验证目标ip，所以real server 需要一个配置一个vip，否则会拒绝掉这个包,这里使用lo:0,因为eth0:1会和局域网中的vip发生冲突。然后由real server直接回复客户端。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span><span style="color:#998;font-style:italic"># description : start realserver</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">VIP</span><span style="color:#000;font-weight:bold">=</span>192.168.100.60
+</span></span><span style="display:flex;"><span>. /etc/rc.d/init.d/functions
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">case</span> <span style="color:#d14">&#34;</span><span style="color:#008080">$1</span><span style="color:#d14">&#34;</span> in
+</span></span><span style="display:flex;"><span>start<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34; start LVS of REALServer&#34;</span>
+</span></span><span style="display:flex;"><span>    /sbin/ifconfig lo:0 <span style="color:#008080">$VIP</span> broadcast <span style="color:#008080">$VIP</span> netmask 255.255.255.255 up
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;1&#34;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;2&#34;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_announce
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;1&#34;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_ignore
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;2&#34;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_announce
+</span></span><span style="display:flex;"><span>;;
+</span></span><span style="display:flex;"><span>stop<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    /sbin/ifconfig lo:0 down
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;close LVS Directorserver&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;0&#34;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;0&#34;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_announce
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;0&#34;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_ignore
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;0&#34;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_announce
+</span></span><span style="display:flex;"><span>;;
+</span></span><span style="display:flex;"><span>*<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;Usage: </span><span style="color:#008080">$0</span><span style="color:#d14"> {start|stop}&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">exit</span> <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">esac</span>
+</span></span></code></pre></div><h3 id="2授权启动">2、授权、启动</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chmod <span style="color:#099">500</span> /etc/init.d/lvs_realserver
+</span></span><span style="display:flex;"><span>/etc/init.d/lvs_realserver start
+</span></span></code></pre></div><h2 id="七报警脚本">七、报警脚本</h2>
+<blockquote>
+<p>默认的监控报警需要搭建email服务器，但是通常这种邮件服务器会被其它邮件服务器拒绝掉，建议使用邮件客户端设置报警或者短信接口报警，下面为测试脚本示例：</p>
+</blockquote>
+<h3 id="1服务端配置文件">1、服务端配置文件</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主从vrrp_instance下均添加下面两行配置文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># chmod 500 /oper/script/check_lvs.sh</span>
+</span></span><span style="display:flex;"><span>notify_master <span style="color:#d14">&#34;/oper/script/check_lvs.sh master&#34;</span>
+</span></span><span style="display:flex;"><span>notify_backup <span style="color:#d14">&#34;/oper/script/check_lvs.sh backup&#34;</span>
+</span></span></code></pre></div><h3 id="2脚本示例">2、脚本示例</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#999;font-weight:bold;font-style:italic"></span><span style="color:#008080">ctime</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">`</span>date +<span style="color:#d14">&#34;%F %H:%M:%S&#34;</span><span style="color:#d14">`</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ip</span><span style="color:#000;font-weight:bold">=</span>192.168.100.47
+</span></span><span style="display:flex;"><span><span style="color:#008080">msg</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">ctime</span><span style="color:#d14">}</span><span style="color:#d14">: </span><span style="color:#d14">${</span><span style="color:#008080">ip</span><span style="color:#d14">}</span><span style="color:#d14"> change </span><span style="color:#008080">$1</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">logfile</span><span style="color:#000;font-weight:bold">=</span>/var/log/lvs.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 邮件</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">smtp</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;smtp.163.com&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">emailu</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;user&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">emailp</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;passwd&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">senderemail</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;user@163.com&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">toemail</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;aaa@163.com bbb@163.com&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 标题 消息 收件人</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># sendm &#34;${ctime}：keepalive通知&#34; ${scan_result} safe@163.com</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># http://caspian.dotconf.net/menu/Software/SendEmail/sendEmail-v1.56.tar.gz</span>
+</span></span><span style="display:flex;"><span>sendm<span style="color:#000;font-weight:bold">(){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">SUBJECT</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;</span><span style="color:#008080">$1</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">local</span> <span style="color:#008080">msg</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;</span><span style="color:#008080">$2</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">toemail</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;</span><span style="color:#008080">$3</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span>    /usr/local/bin/sendEmail -f <span style="color:#008080">$senderemail</span> -t <span style="color:#008080">$toemail</span> -s <span style="color:#008080">$smtp</span> -u <span style="color:#d14">&#34;</span><span style="color:#008080">$SUBJECT</span><span style="color:#d14">&#34;</span> -xu <span style="color:#008080">$emailu</span> -xp <span style="color:#008080">$emailp</span> -o message-charset<span style="color:#000;font-weight:bold">=</span>gbk -m <span style="color:#d14">${</span><span style="color:#008080">msg</span><span style="color:#d14">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sendm <span style="color:#d14">&#34;keepalive通知&#34;</span> <span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">msg</span><span style="color:#d14">}</span><span style="color:#d14">&#34;</span> <span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">toemail</span><span style="color:#d14">}</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">msg</span><span style="color:#d14">}</span><span style="color:#d14">&#34;</span> &gt;&gt; <span style="color:#d14">${</span><span style="color:#008080">logfile</span><span style="color:#d14">}</span>
+</span></span></code></pre></div><h2 id="八测试">八、测试</h2>
+<h3 id="1确认脑裂方法">1、确认脑裂方法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>a、查看日志<span style="color:#000;font-weight:bold">(</span>tailf /var/log/messages<span style="color:#000;font-weight:bold">)</span>，均声明为MASTER
+</span></span><span style="display:flex;"><span>b、查看虚拟IP<span style="color:#000;font-weight:bold">(</span>ip a<span style="color:#000;font-weight:bold">)</span>，两台机器均包含VIP
+</span></span></code></pre></div><h3 id="2测试相关包是否打标记">2、测试相关包是否打标记</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> <span style="color:#998;font-style:italic"># 主上面查看，远程telnet</span>
+</span></span><span style="display:flex;"><span>telnet 192.168.100.60 <span style="color:#099">80</span>
+</span></span><span style="display:flex;"><span>iptables -t mangle -nvL
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 第一列表示为处理的数据包数，访问没有计数的话，说明没有包打过标记，有问题</span>
+</span></span><span style="display:flex;"><span> pkts bytes target     prot opt in     out     <span style="color:#0086b3">source</span>               destination         
+</span></span><span style="display:flex;"><span> 100K   12M MARK       tcp  --  *      *       0.0.0.0/0            192.168.100.60      tcp dpt:80 MAC ! 48:5B:39:12:52:11 MARK <span style="color:#0086b3">set</span> 0x3
+</span></span></code></pre></div><h3 id="3测试后端服务器掉线踢出">3、测试后端服务器掉线踢出</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>root@test-39 keepalived<span style="color:#000;font-weight:bold">]</span><span style="color:#998;font-style:italic"># ipvsadm</span>
+</span></span><span style="display:flex;"><span>IP Virtual Server version 1.2.1 <span style="color:#000;font-weight:bold">(</span><span style="color:#008080">size</span><span style="color:#000;font-weight:bold">=</span>4096<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>Prot LocalAddress:Port Scheduler Flags
+</span></span><span style="display:flex;"><span>  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+</span></span><span style="display:flex;"><span>TCP  192.168.100.60:http rr persistent <span style="color:#099">50</span>
+</span></span><span style="display:flex;"><span>  -&gt; 192.168.100.59:http          Route   <span style="color:#099">1</span>      <span style="color:#099">0</span>          <span style="color:#099">0</span>         
+</span></span><span style="display:flex;"><span>  -&gt; 192.168.100.47:http          Route   <span style="color:#099">1</span>      <span style="color:#099">0</span>          <span style="color:#099">0</span>         
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>root@test-39 keepalived<span style="color:#000;font-weight:bold">]</span><span style="color:#998;font-style:italic"># ipvsadm     # 关闭59的real_server相关进程后，LVS自动删除相关路由</span>
+</span></span><span style="display:flex;"><span>IP Virtual Server version 1.2.1 <span style="color:#000;font-weight:bold">(</span><span style="color:#008080">size</span><span style="color:#000;font-weight:bold">=</span>4096<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>Prot LocalAddress:Port Scheduler Flags
+</span></span><span style="display:flex;"><span>  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+</span></span><span style="display:flex;"><span>TCP  192.168.100.60:http rr persistent <span style="color:#099">50</span>
+</span></span><span style="display:flex;"><span>  -&gt; 192.168.100.47:http          Route   <span style="color:#099">1</span>      <span style="color:#099">0</span>          <span style="color:#099">0</span>         
+</span></span></code></pre></div><h3 id="4测试后端服务器的vip是否ok">4、测试后端服务器的VIP是否OK</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>root@test-47 public<span style="color:#000;font-weight:bold">]</span><span style="color:#998;font-style:italic"># ip a</span>
+</span></span><span style="display:flex;"><span>1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span style="color:#099">16436</span> qdisc noqueue 
+</span></span><span style="display:flex;"><span>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</span></span><span style="display:flex;"><span>    inet 127.0.0.1/8 scope host lo
+</span></span><span style="display:flex;"><span>    inet 192.168.100.60/32 brd 192.168.100.60 scope global lo:0  <span style="color:#998;font-style:italic"># 此配置用于后端服务器，注意lo下面必须包含了相关虚拟VIP才能正常路由访问</span>
+</span></span><span style="display:flex;"><span>2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#099">1500</span> qdisc pfifo_fast qlen <span style="color:#099">1000</span>
+</span></span><span style="display:flex;"><span>    link/ether 00:21:5e:70:ab:c4 brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>    inet 192.168.3.47/24 brd 192.168.3.255 scope global eth0
+</span></span><span style="display:flex;"><span>3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#099">1500</span> qdisc pfifo_fast qlen <span style="color:#099">1000</span>
+</span></span><span style="display:flex;"><span>    link/ether 00:21:5e:70:ab:c6 brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>    inet 192.168.100.47/27 brd 192.168.100.63 scope global eth1
+</span></span><span style="display:flex;"><span>    inet 192.168.100.60/32 scope global eth1    <span style="color:#998;font-style:italic"># 此配置用于keepalive，MASTER上面才有</span>
+</span></span></code></pre></div><h3 id="5ipvsadm显示详细负载连接">5、ipvsadm显示详细负载连接</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ipvsadm -Lcn
+</span></span></code></pre></div><h2 id="参考文档">参考文档</h2>
+<ul>
+<li><a href="http://www.linuxvirtualserver.org/zh/index.html" target="_blank">lvs中文文档</a></li>
+<li><a href="http://outofmemory.cn/wiki/keepalived-configuration" target="_blank">keepalived工作原理和配置说明</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html">https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/about.html">About</a></li>
+        
+        <li><a href="/archives.html">归档</a></li>
+        
+        <li><a href="/search.html">搜索</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/keepalive'>keepalive</a></li>
+                
+                <li><a href='/tags/lvs'>lvs</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

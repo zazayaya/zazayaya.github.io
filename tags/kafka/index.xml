@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kafka on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/kafka.html</link>
+    <description>Recent content in kafka on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 11 Mar 2021 10:15:42 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/kafka/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kafka-集群安装文档(单机版)</title>
+      <link>https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html</link>
+      <pubDate>Thu, 11 Mar 2021 10:15:42 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html</guid>
+      <description>kafka集群安装文档 一、架构 # zookeeper和kafka架构 producer producer producer | | | -------------------- | zookeeper zookeeper zookeeper (zookeeper支持failover,至</description>
+    </item>
+    
+    <item>
+      <title>Kafka-集群安装文档</title>
+      <link>https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html</link>
+      <pubDate>Mon, 23 Nov 2020 16:13:18 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html</guid>
+      <description>kafka集群安装文档 一、架构 # zookeeper和kafka架构 producer producer producer | | | -------------------- | zookeeper zookeeper zookeeper (zookeeper支持failover,至</description>
+    </item>
+    
+    <item>
+      <title>Kafka-代理(NAT)</title>
+      <link>https://zazayaya.github.io/2020/10/20/kafka-nat.html</link>
+      <pubDate>Tue, 20 Oct 2020 17:03:34 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/20/kafka-nat.html</guid>
+      <description>一、kafka配置 1.1 配置文件修改 vim /usr/local/kafka/config/server.properties listeners=PLAINTEXT://:9092 # 必须声明域名 advertised.listeners=PLAINTEXT://test.kafka:9092 1.2 hosts绑定(必须绑定) # vim /etc/hosts # host 绑定本地内网ip 10.0.26.26 test.kafka 二、nat服务器配置</description>
+    </item>
+    
+    <item>
+      <title>Kafka-单机版安装</title>
+      <link>https://zazayaya.github.io/2020/08/20/kafka-one-instance-install.html</link>
+      <pubDate>Thu, 20 Aug 2020 17:31:47 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/20/kafka-one-instance-install.html</guid>
+      <description>测试环境：Centos6.x 安装 # 依赖环境 yum -y install java-1.8.0-openjdk.x86_64 # 线上版本：kafka_2.11-0.11.0.0.tgz # python2.6支持</description>
+    </item>
+    
+    <item>
+      <title>Kafka-2.2.0-安装</title>
+      <link>https://zazayaya.github.io/2020/03/11/kafka-install.html</link>
+      <pubDate>Wed, 11 Mar 2020 15:14:55 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/03/11/kafka-install.html</guid>
+      <description>版本选择 目前阿里云最新版本是基于2.2.0版本开发 下载 # http://kafka.apache.org/downloads # https://archive.apache.org/dist/kafka/2.2.0/kafka_2.12-2.2.0.tgz tar xzf kafka_2.12-2.2.0.tgz [ -d /usr/local/kafka ] || mv kafka_2.12-2.2.0 /usr/local/kafka 测试 # 创建topic cd /usr/local/kafka # 新版本用的bootst</description>
+    </item>
+    
+  </channel>
+</rss>

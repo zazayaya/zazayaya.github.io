@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>openldap on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/openldap.html</link>
+    <description>Recent content in openldap on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 20 May 2021 13:41:41 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/openldap/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Openldap-教程（centos）</title>
+      <link>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-centos.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-centos.html</guid>
+      <description>源码包版本：2.4.54 系统：centos 6.x 介绍 ldap是什么 LDAP：Lightweight Directory Access Protocol，轻量目录访问协议</description>
+    </item>
+    
+    <item>
+      <title>Openldap-教程（ubuntu）</title>
+      <link>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-ubuntu.html</link>
+      <pubDate>Thu, 20 May 2021 13:41:41 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/20/openldap-tutorial-by-ubuntu.html</guid>
+      <description>源码包版本：2.6.2 系统：ubuntu 20.04 介绍 ldap是什么 LDAP：Lightweight Directory Access Protocol，轻量目录访问协议 L</description>
+    </item>
+    
+  </channel>
+</rss>

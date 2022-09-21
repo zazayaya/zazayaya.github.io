@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>分区 on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html</link>
+    <description>Recent content in 分区 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 07 Jan 2021 16:18:04 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-硬盘操作</title>
+      <link>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</link>
+      <pubDate>Thu, 07 Jan 2021 16:18:04 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/07/linux-fdisk.html</guid>
+      <description>新增swap mkdir /data/.swap dd if=/dev/zero of=/data/.swap/swap bs=1024 count=8192000 mkswap /data/.swap/swap # swapon /data/.swap/swap # vim /etc/fstab # /data/.swap/swap swap swap defaults 0 0 # swapon -a grep &amp;#34;/data/.swap/swap&amp;#34; /etc/fstab || echo &amp;#39;/data/.swap/swap swap swap defaults 0 0&amp;#39; &amp;gt;&amp;gt; /etc/fstab swapon -a ; free -m fdisk模式扩容 1、fdisk删</description>
+    </item>
+    
+  </channel>
+</rss>

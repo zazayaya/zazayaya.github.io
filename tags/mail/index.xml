@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mail on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/mail.html</link>
+    <description>Recent content in mail on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 15 Jan 2021 09:36:35 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/mail/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Iredmail-安装指南</title>
+      <link>https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html</link>
+      <pubDate>Fri, 15 Jan 2021 09:36:35 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html</guid>
+      <description>版本推荐：Centos6.9，0.96，非常稳定，从来没出过任何问题 修改主机名 hostname=mail.zaza.cn grep -wq $hostname /etc/hosts || sed -i &amp;#34;s/127.0.0.1/127.0.0.1 $hostname/g&amp;#34; /etc/hosts sed -i &amp;#39;s/^HOSTNAME.*$/HOSTNAME=&amp;#39;&amp;#34;$hostname&amp;#34;&amp;#39;/g&amp;#39; /etc/sysconfig/network hostname $hostname ifconfig|grep &amp;#34;inet addr&amp;#34; 关闭selin</description>
+    </item>
+    
+  </channel>
+</rss>

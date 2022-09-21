@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>K8s-etcd集群搭建 | zaza的博客</title>
+    <meta property="og:title" content="K8s-etcd集群搭建 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-05-20T11:54:41&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-05-20T11:54:41&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="K8s-etcd集群搭建">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#集群配置">集群配置</a></li>
+    <li><a href="#管理">管理</a>
+      <ul>
+        <li><a href="#配置alias">配置alias</a></li>
+        <li><a href="#查看集群状态">查看集群状态</a></li>
+      </ul>
+    </li>
+    <li><a href="#操作">操作</a>
+      <ul>
+        <li><a href="#写和读">写和读</a></li>
+        <li><a href="#prefix读取">prefix读取</a></li>
+        <li><a href="#删除">删除</a></li>
+        <li><a href="#交互操作事务txn">交互操作（事务（txn）？）</a></li>
+        <li><a href="#监听数据">监听数据</a></li>
+        <li><a href="#生命周期lease">生命周期(lease)</a></li>
+        <li><a href="#锁操作">锁操作</a></li>
+        <li><a href="#选举新的leader">选举新的leader</a></li>
+        <li><a href="#快照snapshot">快照(snapshot)</a></li>
+        <li><a href="#认证">认证</a></li>
+        <li><a href="#查看所有key">查看所有key</a></li>
+      </ul>
+    </li>
+    <li><a href="#问题">问题</a>
+      <ul>
+        <li><a href="#集群id一致并且都是leader">集群ID一致，并且都是leader</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">K8s-etcd集群搭建</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年5月20日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kubernetes'>Kubernetes</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h1 id="etcd">etcd</h1>
+<blockquote>
+<p>etcd 是一个分布式键值对存储，设计用来可靠而快速的保存关键数据并提供访问。通过分布式锁，leader选举和写屏障(write barriers)来实现可靠的分布式协作。etcd集群是为高可用，持久性数据存储和检索而准备。</p>
+</blockquote>
+<p>下面的文章基于Ubuntu20.04安装</p>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改主机名</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># hostnamectl set-hostname test-180</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vim /etc/hosts</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vim /etc/netplan/00-installer-config.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># netplan apply</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># snap为Ubuntu新的包管理软件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认安装就自启动了，但是有个问题启动的时候会生成 ETCD_NAME=&#34;default&#34; 的 默认数据，修改配置后任然无法生效</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改配置后需要清理数据：rm -fr /var/lib/etcd/default/</span>
+</span></span><span style="display:flex;"><span>apt install etcd
+</span></span></code></pre></div><h2 id="集群配置">集群配置</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 等价于 etcd --data-dir=data.etcd --name ${THIS_NAME} \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	--initial-advertise-peer-urls http://${THIS_IP}:2380 --listen-peer-urls http://${THIS_IP}:2380 \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	--advertise-client-urls http://${THIS_IP}:2379 --listen-client-urls http://${THIS_IP}:2379 \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	--initial-cluster ${CLUSTER} \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#	--initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主机：test-180</span>
+</span></span><span style="display:flex;"><span>vim /etc/default/etcd
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_NAME</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-180&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_ADVERTISE_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.180:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.180:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_ADVERTISE_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.180:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.180:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-180=http://10.0.26.180:2380,test-181=http://10.0.26.181:2380,test-182=http://10.0.26.182:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_STATE</span><span style="color:#000;font-weight:bold">=</span>new
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_TOKEN</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;zYpFCSeVWWwmvoryOyhW&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主机：test-181</span>
+</span></span><span style="display:flex;"><span>vim /etc/default/etcd
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_NAME</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-181&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_ADVERTISE_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.181:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.181:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_ADVERTISE_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.181:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.181:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-180=http://10.0.26.180:2380,test-181=http://10.0.26.181:2380,test-182=http://10.0.26.182:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_STATE</span><span style="color:#000;font-weight:bold">=</span>new
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_TOKEN</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;zYpFCSeVWWwmvoryOyhW&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主机：test-182</span>
+</span></span><span style="display:flex;"><span>vim /etc/default/etcd
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_NAME</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-182&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_ADVERTISE_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.182:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_PEER_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.182:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_ADVERTISE_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.182:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_LISTEN_CLIENT_URLS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;http://10.0.26.182:2379&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;test-180=http://10.0.26.180:2380,test-181=http://10.0.26.181:2380,test-182=http://10.0.26.182:2380&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_STATE</span><span style="color:#000;font-weight:bold">=</span>new
+</span></span><span style="display:flex;"><span><span style="color:#008080">ETCD_INITIAL_CLUSTER_TOKEN</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;zYpFCSeVWWwmvoryOyhW&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 重新加载</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 第一次需要删除默认数据</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># member 为 8e9e05c52164694d 是默认名称 ETCD_NAME=&#34;default&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rm -fr /var/lib/etcd/default/</span>
+</span></span><span style="display:flex;"><span>systemctl restart etcd.service
+</span></span><span style="display:flex;"><span>systemctl status etcd.service
+</span></span></code></pre></div><h2 id="管理">管理</h2>
+<h3 id="配置alias">配置alias</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>grep -q etcdctl ~/.bashrc <span style="color:#000;font-weight:bold">||</span> cat &gt;&gt; ~/.bashrc <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">export ETCDCTL_API=3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ENDPOINTS=10.0.26.180:2379,10.0.26.181:2379,10.0.26.182:2379
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># alias etcdctl=&#39;etcdctl --endpoints=${ENDPOINTS} --user=root:123456&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">alias etcdctl=&#39;etcdctl --endpoints=${ENDPOINTS}&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">source</span> ~/.bashrc
+</span></span></code></pre></div><h3 id="查看集群状态">查看集群状态</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看集群leader</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 所有member 为 8e9e05c52164694d 是默认名称default，需要清理数据并重启</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rm -fr /var/lib/etcd/default/</span>
+</span></span><span style="display:flex;"><span>etcdctl --write-out<span style="color:#000;font-weight:bold">=</span>table endpoint status
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># leader宕机后，RAFT TERM会自增1</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看集群状态</span>
+</span></span><span style="display:flex;"><span>etcdctl endpoint health
+</span></span></code></pre></div><h2 id="操作">操作</h2>
+<h3 id="写和读">写和读</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 写入数据</span>
+</span></span><span style="display:flex;"><span>etcdctl put foo <span style="color:#d14">&#34;Hello World!&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 读取数据</span>
+</span></span><span style="display:flex;"><span>etcdctl get foo
+</span></span><span style="display:flex;"><span>etcdctl --write-out<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;json&#34;</span> get foo
+</span></span></code></pre></div><h3 id="prefix读取">prefix读取</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>etcdctl put web1 value1
+</span></span><span style="display:flex;"><span>etcdctl put web2 value2
+</span></span><span style="display:flex;"><span>etcdctl put web3 value3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>etcdctl get web --prefix
+</span></span></code></pre></div><h3 id="删除">删除</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>etcdctl put key myvalue
+</span></span><span style="display:flex;"><span>etcdctl del key
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>etcdctl put k1 value1
+</span></span><span style="display:flex;"><span>etcdctl put k2 value2
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 以k为前缀的全部删除</span>
+</span></span><span style="display:flex;"><span>etcdctl del k --prefix
+</span></span></code></pre></div><h3 id="交互操作事务txn">交互操作（事务（txn）？）</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>etcdctl put user1 bad
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 交互操作</span>
+</span></span><span style="display:flex;"><span>etcdctl txn --interactive
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>compares:
+</span></span><span style="display:flex;"><span>value<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;user1&#34;</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;bad&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>success requests <span style="color:#000;font-weight:bold">(</span>get, put, delete<span style="color:#000;font-weight:bold">)</span>:
+</span></span><span style="display:flex;"><span>del user1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>failure requests <span style="color:#000;font-weight:bold">(</span>get, put, delete<span style="color:#000;font-weight:bold">)</span>:
+</span></span><span style="display:flex;"><span>put user1 good
+</span></span><span style="display:flex;"><span>Watch
+</span></span></code></pre></div><h3 id="监听数据">监听数据</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>etcdctl watch stock1
+</span></span><span style="display:flex;"><span>etcdctl put stock1 <span style="color:#099">1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>etcdctl watch stock --prefix
+</span></span><span style="display:flex;"><span>etcdctl put stock1 <span style="color:#099">10</span>
+</span></span><span style="display:flex;"><span>etcdctl put stock2 <span style="color:#099">20</span>
+</span></span></code></pre></div><h3 id="生命周期lease">生命周期(lease)</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 生命周期为30s</span>
+</span></span><span style="display:flex;"><span>etcdctl lease grant <span style="color:#099">30</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># lease 7ffb79835a629611 granted with TTL(30s)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主要指定lease值，30s中内没有操作的话会被释放(put、get)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># put报错，get为空</span>
+</span></span><span style="display:flex;"><span>etcdctl put sample value --lease<span style="color:#000;font-weight:bold">=</span>7ffb79835a629615
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关闭TTL？</span>
+</span></span><span style="display:flex;"><span>etcdctl lease keep-alive 2be7547fbc6a5afa
+</span></span><span style="display:flex;"><span>etcdctl lease revoke 2be7547fbc6a5afa
+</span></span></code></pre></div><h3 id="锁操作">锁操作</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>etcdctl lock mutex1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># another client with the same name blocks</span>
+</span></span><span style="display:flex;"><span>etcdctl lock mutex1
+</span></span></code></pre></div><h3 id="选举新的leader">选举新的leader</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># etcdctl --write-out=table --endpoints=$ENDPOINTS endpoint status</span>
+</span></span><span style="display:flex;"><span>etcdctl elect one p1
+</span></span></code></pre></div><h3 id="快照snapshot">快照(snapshot)</h3>
+<p>用于备份数据库</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># /snap/bin/etcdctl --endpoints=10.0.26.180:2379 --user=root:123456 snapshot save my.db</span>
+</span></span><span style="display:flex;"><span>/snap/bin/etcdctl --endpoints<span style="color:#000;font-weight:bold">=</span>10.0.26.180:2379 snapshot save my.db
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看快照数据信息</span>
+</span></span><span style="display:flex;"><span>etcdctl --write-out<span style="color:#000;font-weight:bold">=</span>table snapshot status my.db
+</span></span></code></pre></div><h3 id="认证">认证</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意使用新版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">export</span> <span style="color:#008080">ETCDCTL_API</span><span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ENDPOINTS=localhost:2379</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">############### 常见操作</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建角色</span>
+</span></span><span style="display:flex;"><span>etcdctl role add 角色名
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 角色授权</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 给以/foo/开头的所有key赋予读写权限. The prefix is equal to the range [/foo/, /foo0)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 不能用：/foo/*</span>
+</span></span><span style="display:flex;"><span>etcdctl role grant-permission myrolename --prefix<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span> <span style="color:#0086b3">read</span> /foo/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建账号</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># etcdctl --user root --password (root密码) role add xinweiblog</span>
+</span></span><span style="display:flex;"><span>etcdctl user add 用户名
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用户角色关联</span>
+</span></span><span style="display:flex;"><span>etcdctl user grant-role 用户名 角色名
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用户角色取消关联</span>
+</span></span><span style="display:flex;"><span>etcdctl user revoke-role 用户名 角色名
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 激活认证(所有请求都需要认证了)</span>
+</span></span><span style="display:flex;"><span>etcdctl auth <span style="color:#0086b3">enable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">############### 完整实例</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 一、创建角色并授权</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建平台角色：plats，对&#34;/plat/&#34;具有读写</span>
+</span></span><span style="display:flex;"><span>etcdctl role add plats
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 2.0的接口标准 etcdctl role grant plats --path /plat/ --readwrite</span>
+</span></span><span style="display:flex;"><span>etcdctl role grant-permission plats --prefix<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span> readwrite /plat/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建平台客户端角色：platc，对&#34;/plat/&#34;具有读权限</span>
+</span></span><span style="display:flex;"><span>etcdctl role add platc
+</span></span><span style="display:flex;"><span>etcdctl role grant-permission platc --prefix<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span> <span style="color:#0086b3">read</span> /plat/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看角色列表</span>
+</span></span><span style="display:flex;"><span>etcdctl role list
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看权限</span>
+</span></span><span style="display:flex;"><span>etcdctl role get plats
+</span></span><span style="display:flex;"><span>etcdctl role get platc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 二、创建用户并关联角色</span>
+</span></span><span style="display:flex;"><span>etcdctl user add plats
+</span></span><span style="display:flex;"><span>etcdctl user add platc
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 关联角色</span>
+</span></span><span style="display:flex;"><span>etcdctl user grant-role plats plats
+</span></span><span style="display:flex;"><span>etcdctl user grant-role platc platc
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看用户关联的角色信息</span>
+</span></span><span style="display:flex;"><span>etcdctl user get plats
+</span></span><span style="display:flex;"><span>etcdctl user get platc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 激活认证(所有请求都需要认证了)</span>
+</span></span><span style="display:flex;"><span>etcdctl user add root
+</span></span><span style="display:flex;"><span>etcdctl user grant-role root root
+</span></span><span style="display:flex;"><span>etcdctl auth <span style="color:#0086b3">enable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 三、权限测试</span>
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>root:123456 put /foo bar
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 这里报错，账号为空</span>
+</span></span><span style="display:flex;"><span>etcdctl get foo
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>root:123456 get /foo
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>root:123456 get /foo1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>plats:123456 get /foo
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>platc:123456 get /foo
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>plats:123456 put /plat1 bar
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>platc:123456 put /plat/test foo
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>plats:123456 put /plat/test bar
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>plats:123456 get /plat/test
+</span></span><span style="display:flex;"><span>etcdctl --user<span style="color:#000;font-weight:bold">=</span>platc:123456 get /plat/test
+</span></span></code></pre></div><h3 id="查看所有key">查看所有key</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># etcdctl get / --prefix --keys-only</span>
+</span></span><span style="display:flex;"><span>etcdctl get <span style="color:#d14">&#34;&#34;</span> --prefix --keys-only | sed <span style="color:#d14">&#39;/^\s*$/d&#39;</span>
+</span></span></code></pre></div><h2 id="问题">问题</h2>
+<h3 id="集群id一致并且都是leader">集群ID一致，并且都是leader</h3>
+<blockquote>
+<p>因为安装的时候会自启动，生成默认值的数据 ETCD_NAME=&ldquo;default&rdquo;</p>
+<p>对应的ID为8e9e05c52164694d，所有集群需要删除再重启</p>
+<p>rm -fr /var/lib/etcd/default/</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>root@test-180:~# etcdctl --write-out<span style="color:#000;font-weight:bold">=</span>table --endpoints<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">$ENDPOINTS</span> endpoint status
+</span></span><span style="display:flex;"><span>+-----------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+</span></span><span style="display:flex;"><span>|    ENDPOINT     |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
+</span></span><span style="display:flex;"><span>+-----------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+</span></span><span style="display:flex;"><span>| 10.0.26.180:2379 | 8e9e05c52164694d |  3.2.26 |   <span style="color:#099">25</span> kB |      <span style="color:#0086b3">true</span> |      <span style="color:#0086b3">false</span> |         <span style="color:#099">6</span> |         <span style="color:#099">12</span> |                  <span style="color:#099">0</span> |        |
+</span></span><span style="display:flex;"><span>| 10.0.26.181:2379 | 8e9e05c52164694d |  3.2.26 |   <span style="color:#099">25</span> kB |      <span style="color:#0086b3">true</span> |      <span style="color:#0086b3">false</span> |         <span style="color:#099">6</span> |         <span style="color:#099">12</span> |                  <span style="color:#099">0</span> |        |
+</span></span><span style="display:flex;"><span>| 10.0.26.182:2379 | 8e9e05c52164694d |  3.2.26 |   <span style="color:#099">25</span> kB |      <span style="color:#0086b3">true</span> |      <span style="color:#0086b3">false</span> |         <span style="color:#099">5</span> |         <span style="color:#099">10</span> |                  <span style="color:#099">0</span> |        |
+</span></span></code></pre></div><h2 id="参考">参考</h2>
+<ul>
+<li>
+<p><a href="https://etcd.io/docs/next/" target="_blank">https://etcd.io/docs/next/</a></p>
+</li>
+<li>
+<p><a href="https://www.wenjiangs.com/doc/ka01muxat" target="_blank">https://www.wenjiangs.com/doc/ka01muxat</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/C_jian/article/details/108325907" target="_blank">https://blog.csdn.net/C_jian/article/details/108325907</a></p>
+</li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html">https://zazayaya.github.io/2021/05/20/docker-etcd-cluster-install.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/05/12/linux-date.html">Linux-date常见使用</a></li>
+        
+        <li><a href="/2021/05/12/python-contextor.html">Python-上下文管理器</a></li>
+        
+        <li><a href="/2021/05/06/python-time-formatter.html">Python-时间转换</a></li>
+        
+        <li><a href="/2021/04/25/jumpserver-install.html">Jumpserver-安装文档</a></li>
+        
+        <li><a href="/2021/03/30/rabbitmq-durable.html">RabbitMQ-持久化</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/etcd'>etcd</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

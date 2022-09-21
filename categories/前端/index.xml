@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前端 on zaza的博客</title>
+    <link>https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html</link>
+    <description>Recent content in 前端 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 11 Jan 2021 17:15:30 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ES-6新语法糖</title>
+      <link>https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html</link>
+      <pubDate>Mon, 11 Jan 2021 17:15:30 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html</guid>
+      <description>class的语法 类的新申明方式 class Point { // 静态属性，定义在类的最顶层 bar = &amp;#39;hello&amp;#39;; baz = &amp;#39;world&amp;#39;; // 构造器，类似python的__init__ constructor(x, y) { this.x = x;</description>
+    </item>
+    
+    <item>
+      <title>Node-npm入门教程</title>
+      <link>https://zazayaya.github.io/2020/12/08/node-npm-getting-started.html</link>
+      <pubDate>Tue, 08 Dec 2020 09:11:33 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/08/node-npm-getting-started.html</guid>
+      <description>JavaScript经典工具库 https://github.com/sorrycc/awesome-javascript https://www.cnblogs.com/fundebug/p/13_js_utilities_you_need.html Underscore或者Lodash Ramda MathJS Moment &amp;amp; date-fns Sugar Lazy CollectJS ChanceJS ChartJS Polished Mout Voca Licia 常见命令 安装包 # 本地安装 ### # 将安装</description>
+    </item>
+    
+    <item>
+      <title>Axios-学习文档</title>
+      <link>https://zazayaya.github.io/2020/11/10/axios-doc.html</link>
+      <pubDate>Tue, 10 Nov 2020 11:45:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/11/10/axios-doc.html</guid>
+      <description>axios链式请求 const axios = require(&amp;#39;axios&amp;#39;) // 全局配置文件 axios.defaults.baseURL = &amp;#39;https://httpbin.org&amp;#39;; axios.defaults.timeout = 100000; console.log(&amp;#39;第一次异步请求数据：/json&amp;#39;); axios.get(&amp;#39;/json&amp;#39;).then(response</description>
+    </item>
+    
+    <item>
+      <title>ECMAScript6-标准</title>
+      <link>https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html</link>
+      <pubDate>Tue, 27 Oct 2020 15:54:44 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html</guid>
+      <description>环境搭建 创建目录 C:\Users\Administrator\WebstormProjects\es6 项目初始化 # 主要用于生成配置文件 package.json # 静默生成配置文件 # npm init --yes cd es6 &amp;amp;&amp;amp; npm init 安装基础依赖包 常见组件安装 npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/node # npm</description>
+    </item>
+    
+    <item>
+      <title>前端工具</title>
+      <link>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</link>
+      <pubDate>Thu, 22 Oct 2020 10:52:14 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html</guid>
+      <description>diagram-designer 流程图，思维导图，电路图，GUI界面布局设计 Snipaste 一个简单但强大的截图工具 F1可以截图，同时测量大小，设置箭头，书写文字 F3在桌面置顶</description>
+    </item>
+    
+    <item>
+      <title>前端代码规范</title>
+      <link>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</link>
+      <pubDate>Thu, 30 Jul 2020 16:07:58 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/07/30/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html</guid>
+      <description>代码规范 1. 概述 欢迎使用品优购代码规范， 这个是我借鉴京东前端代码规范，组织的品优购内部规范。旨在增强团队开发协作、提高代码质量和打造开</description>
+    </item>
+    
+    <item>
+      <title>Ecmascript-入门教程</title>
+      <link>https://zazayaya.github.io/2020/04/24/node-ecmascript.html</link>
+      <pubDate>Fri, 24 Apr 2020 15:12:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/04/24/node-ecmascript.html</guid>
+      <description>文档 2009年，Node.js 项目诞生，所有模块一律为 CommonJS 格式。 https://www.w3cschool.cn/ecmascript/ et const var的区别 es5时候只有var定义变量，只有全局作用域和函数作</description>
+    </item>
+    
+    <item>
+      <title>Node-安装</title>
+      <link>https://zazayaya.github.io/2019/12/19/node-install.html</link>
+      <pubDate>Thu, 19 Dec 2019 16:01:31 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2019/12/19/node-install.html</guid>
+      <description>window安装 注意执行：Install Additional Tools for Node.js，安装扩展环境，如：node-gyp: Node.js native addon build tool 第一步安装包管理工具：c</description>
+    </item>
+    
+  </channel>
+</rss>

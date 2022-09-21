@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>java on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/java.html</link>
+    <description>Recent content in java on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 15 Mar 2022 16:09:51 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java-Shiro入门学习</title>
+      <link>https://zazayaya.github.io/2022/03/15/java-shiro-started.html</link>
+      <pubDate>Tue, 15 Mar 2022 16:09:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/03/15/java-shiro-started.html</guid>
+      <description>安全框架 什么是安全框架 安全框架通常包含：执行身份验证、授权、密码和会话管理等 什么是身份验证 身份验证（authentication），</description>
+    </item>
+    
+    <item>
+      <title>Java-入门学习</title>
+      <link>https://zazayaya.github.io/2021/12/31/java-getting-started.html</link>
+      <pubDate>Fri, 31 Dec 2021 16:09:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/12/31/java-getting-started.html</guid>
+      <description>名称解释 javaSE：是Java的基础。包含了基础的类库。主要用于程序开发。 javaEE：扩展了javaSE，除了包含se的内容，还</description>
+    </item>
+    
+  </channel>
+</rss>

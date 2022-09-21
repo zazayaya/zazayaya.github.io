@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>RabbitMQ-安装文档 | zaza的博客</title>
+    <meta property="og:title" content="RabbitMQ-安装文档 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-03-30T11:30:27&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-03-30T11:30:27&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="RabbitMQ-安装文档">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#开启管理后台">开启管理后台</a></li>
+    <li><a href="#用户管理">用户管理</a></li>
+    <li><a href="#队列模式">队列模式</a></li>
+    <li><a href="#项目实战">项目实战</a></li>
+    <li><a href="#添加自定义属性">添加自定义属性</a></li>
+    <li><a href="#使用说明">使用说明</a></li>
+    <li><a href="#术语说明">术语说明</a></li>
+    <li><a href="#debug调试">debug调试</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">RabbitMQ-安装文档</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年3月30日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/RabbitMQ'>RabbitMQ</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <blockquote>
+<p>测试环境：Centos6.x</p>
+</blockquote>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装erlang(注意查看支持的系统版本)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://github.com/rabbitmq/erlang-rpm/releases</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意不要选错版本了，el6是centos6，el7是centos7</span>
+</span></span><span style="display:flex;"><span>wget https://github.com/rabbitmq/erlang-rpm/releases/download/v21.2.6/erlang-21.2.6-1.el6.x86_64.rpm
+</span></span><span style="display:flex;"><span>rpm -ivh erlang-21.2.6-1.el6.x86_64.rpm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装rabbitmq依赖包</span>
+</span></span><span style="display:flex;"><span>yum -y install epel-release.noarch
+</span></span><span style="display:flex;"><span>yum -y install socat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装rabbitmq</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://github.com/rabbitmq/rabbitmq-server/releases</span>
+</span></span><span style="display:flex;"><span>wget https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.13/rabbitmq-server-3.7.13-1.el6.noarch.rpm    
+</span></span><span style="display:flex;"><span>rpm -ivh rabbitmq-server-3.7.13-1.el6.noarch.rpm
+</span></span></code></pre></div><h2 id="开启管理后台">开启管理后台</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启管理模块</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看支持的模块列表及安装状态</span>
+</span></span><span style="display:flex;"><span>rabbitmq-plugins list
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启管理模块</span>
+</span></span><span style="display:flex;"><span>rabbitmq-plugins <span style="color:#0086b3">enable</span> rabbitmq_management
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动</span>
+</span></span><span style="display:flex;"><span>/etc/init.d/rabbitmq-server start
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 访问管理端口</span>
+</span></span><span style="display:flex;"><span>http://10.0.26.26:15672/
+</span></span></code></pre></div><h2 id="用户管理">用户管理</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rabbitmqctl和web一样，拥有所有管理功能</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认用户(只能本地访问)</span>
+</span></span><span style="display:flex;"><span>guest guest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加用户(admin权限)</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl add_user zaza <span style="color:#099">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 授权</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl set_user_tags zaza administrator
+</span></span><span style="display:flex;"><span>rabbitmqctl set_permissions -p / zaza <span style="color:#d14">&#34;.*&#34;</span> <span style="color:#d14">&#34;.*&#34;</span> <span style="color:#d14">&#34;.*&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改密码</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rabbitmqctl change_password &lt;USERNAME&gt; &lt;NEWPASSWORD&gt;</span>
+</span></span></code></pre></div><h2 id="队列模式">队列模式</h2>
+<blockquote>
+<p>RabbitMQ的五种队列模式与实例</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 发布者Routing模式(key完整匹配模式)</span>
+</span></span><span style="display:flex;"><span>流程说明：
+</span></span><span style="display:flex;"><span>1、发布者声明交换机及类型
+</span></span><span style="display:flex;"><span>channel.exchange_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;project_ticket&#39;</span>, <span style="color:#008080">exchange_type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;direct&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>2、发布者声明持久化的队列<span style="color:#000;font-weight:bold">(</span>queue为队列名称，durable为持久化<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel.queue_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span>severity, <span style="color:#008080">durable</span><span style="color:#000;font-weight:bold">=</span>True<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>3、发布者绑定队列
+</span></span><span style="display:flex;"><span>channel.queue_bind<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;project_ticket&#39;</span>,
+</span></span><span style="display:flex;"><span>                   <span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span>queue,
+</span></span><span style="display:flex;"><span>                   <span style="color:#008080">routing_key</span><span style="color:#000;font-weight:bold">=</span>queue<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>4、指定发布规则及routing_key
+</span></span><span style="display:flex;"><span>channel.basic_publish<span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;project_ticket&#39;</span>,                             
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">routing_key</span><span style="color:#000;font-weight:bold">=</span>severity, <span style="color:#998;font-style:italic"># 这里指定routing_key，方便路由到指定的queue_name上</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">body</span><span style="color:#000;font-weight:bold">=</span>message,                                     
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">properties</span><span style="color:#000;font-weight:bold">=</span>pika.BasicProperties<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">delivery_mode</span><span style="color:#000;font-weight:bold">=</span>2,<span style="color:#000;font-weight:bold">))</span> <span style="color:#998;font-style:italic"># 这里代表持久化</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看binds命令如下：</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl list_bindings -p /project
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 详细流程看python代码</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 执行流程(第一次执行的数据会丢失，没有客户端绑定)</span>
+</span></span><span style="display:flex;"><span>./projects_direct.py <span style="color:#998;font-style:italic"># queue和routing_key名称一致</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 绑定</span>
+</span></span><span style="display:flex;"><span>./projectc_direct.py 10.0.26.26 10.0.26.26
+</span></span><span style="display:flex;"><span>./projectc_direct.py 10.0.26.208 10.0.26.208
+</span></span><span style="display:flex;"><span>./projectc_direct.py 10.0.26.209 10.0.26.209
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 在队列10.0.26.210上绑定10.0.26.209和10.0.26.210关键字</span>
+</span></span><span style="display:flex;"><span>./projectc_direct.py 10.0.26.210 10.0.26.209 10.0.26.210
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 发布者不指定绑定的话。第一次数据会出现下面的问题</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 上面的流程会创建持久化的交换机以及队列名称，但是因为客户端没有bind队列，</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 因此exchange不能找到routing_key对应的bind，会把所有的数据丢掉</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  x、消费者指定queue以及相关绑定</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 客户端启动一次后会进行相关绑定(也可以在服务端绑定)，此时发布者发布的消息就会路由到相关的queue了</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 绑定如果是唯一的，建议在发布者上面进行绑定(这样的话在发布消息前进行绑定数据就不会丢失了)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  # 消费者queue的可以绑定多个binding(多绑定在客户端进行操作，会比较灵活)，来接收指定的routing_key消息</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  for binding in bindings:</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#      channel.queue_bind(exchange=&#39;project_ticket&#39;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#                         queue=queue_name,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#                         routing_key=binding)</span>
+</span></span></code></pre></div><p>​</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 绑定实际效果</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">(</span>ops<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">[</span>root@zaza-test mq<span style="color:#000;font-weight:bold">]</span><span style="color:#998;font-style:italic"># rabbitmqctl list_bindings -p /project</span>
+</span></span><span style="display:flex;"><span>Listing bindings <span style="color:#000;font-weight:bold">for</span> vhost /project...
+</span></span><span style="display:flex;"><span>source_name	source_kind	destination_name	destination_kind	routing_key	arguments
+</span></span><span style="display:flex;"><span>	exchange	amq.gen-DVvUAYD5UHfu0IqPsRHCxg	queue	amq.gen-DVvUAYD5UHfu0IqPsRHCxg	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	amq.gen-oRnZwTwVjNvMWGp_ij5aOQ	queue	amq.gen-oRnZwTwVjNvMWGp_ij5aOQ	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	amq.gen-BeMy_WBlOUs1Zn6dOqv4Qw	queue	amq.gen-BeMy_WBlOUs1Zn6dOqv4Qw	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	10.0.26.210	queue	10.0.26.210	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	amq.gen-tofXMdYTUBN52OorqW2Mow	queue	amq.gen-tofXMdYTUBN52OorqW2Mow	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	10.0.26.26	queue	10.0.26.26	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	10.0.26.209	queue	10.0.26.209	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>	exchange	10.0.26.208	queue	10.0.26.208	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>project_ticket	exchange	10.0.26.26	queue	10.0.26.26	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>project_ticket	exchange	10.0.26.208	queue	10.0.26.208	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>project_ticket	exchange	10.0.26.209	queue	10.0.26.209	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>project_ticket	exchange	10.0.26.210	queue	10.0.26.209	<span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span>project_ticket	exchange	10.0.26.210	queue	10.0.26.210	<span style="color:#000;font-weight:bold">[]</span>
+</span></span></code></pre></div><h2 id="项目实战">项目实战</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 以project项目为例</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl add_user project <span style="color:#099">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 项目管理权限</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl set_user_tags project management
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建vhosts(类似于单独的数据库，防止项目间受影响)</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl add_vhost /project
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 设置权限</span>
+</span></span><span style="display:flex;"><span>rabbitmqctl set_permissions -p /project project <span style="color:#d14">&#34;.*&#34;</span> <span style="color:#d14">&#34;.*&#34;</span> <span style="color:#d14">&#34;.*&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>| 交换机类型 | 路由 | 绑定 | 队列 |
+</span></span><span style="display:flex;"><span>| ------ | ------ | ------ |
+</span></span><span style="display:flex;"><span>| Exchanges | RouteKey | Binding | Queue |
+</span></span><span style="display:flex;"><span>| Fanout | 忽略 |  | |
+</span></span><span style="display:flex;"><span>| Direct | 匹配 |  | |
+</span></span><span style="display:flex;"><span>| Topic | 模糊匹配 |  |  |
+</span></span><span style="display:flex;"><span>| Headers |  |  |  |
+</span></span></code></pre></div><pre><code>Fanout Exchange --&gt; 直接到绑定的Queue上，没有RouteKey 
+</code></pre>
+<h2 id="添加自定义属性">添加自定义属性</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>比如：consumer<span style="color:#000;font-weight:bold">(</span>消费者<span style="color:#000;font-weight:bold">)</span>需要根据不同的publish<span style="color:#000;font-weight:bold">(</span>发布者<span style="color:#000;font-weight:bold">)</span>进行相关操作
+</span></span><span style="display:flex;"><span>publish_a： 只能操作a方法集
+</span></span><span style="display:flex;"><span>publish_b： 只能操作b方法集
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1、生产者定义身份</span>
+</span></span><span style="display:flex;"><span>channel.basic_publish<span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">properties</span><span style="color:#000;font-weight:bold">=</span>pika.BasicProperties<span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008080">headers</span><span style="color:#000;font-weight:bold">={</span><span style="color:#d14">&#39;remote_add&#39;</span>: <span style="color:#d14">&#39;10.0.0.1&#39;</span><span style="color:#000;font-weight:bold">})</span>,
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 2、消费者获取信息</span>
+</span></span><span style="display:flex;"><span>def callback<span style="color:#000;font-weight:bold">(</span>ch, method, properties, body<span style="color:#000;font-weight:bold">)</span>:
+</span></span><span style="display:flex;"><span>    print<span style="color:#000;font-weight:bold">(</span>properties.headers.get<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;remote_add&#34;</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">remote_add</span> <span style="color:#000;font-weight:bold">=</span> properties.headers.get<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;remote_add&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> <span style="color:#d14">&#34;remote_add&#34;</span> <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#34;ip_a&#34;</span>:
+</span></span><span style="display:flex;"><span>		do_something_a
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> <span style="color:#d14">&#34;remote_add&#34;</span> <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#34;ip_b&#34;</span>:
+</span></span><span style="display:flex;"><span>		do_something_b
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>	do_something_default
+</span></span></code></pre></div><h2 id="使用说明">使用说明</h2>
+<pre><code># 一个connection(TCP连接)，多个channel(channel1、channel2)，channel本身实现自己的绑定
+</code></pre>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>import <span style="color:#0086b3">time</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>def callback<span style="color:#000;font-weight:bold">(</span>ch, method, properties, body<span style="color:#000;font-weight:bold">)</span>:
+</span></span><span style="display:flex;"><span>    print<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34; [x] Received %r&#34;</span> % body<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    time.sleep<span style="color:#000;font-weight:bold">(</span>body.count<span style="color:#000;font-weight:bold">(</span>b<span style="color:#d14">&#39;.&#39;</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>    print<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34; [x] Done&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>import pika
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 密码参数</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">credentials</span> <span style="color:#000;font-weight:bold">=</span> pika.PlainCredentials<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;zaza&#34;</span>, <span style="color:#d14">&#34;111111&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建立连接的参数</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">parameters</span> <span style="color:#000;font-weight:bold">=</span> pika.ConnectionParameters<span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">host</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;10.0.26.26&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">port</span><span style="color:#000;font-weight:bold">=</span>5672,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">virtual_host</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;/&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">credentials</span><span style="color:#000;font-weight:bold">=</span>credentials,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">heartbeat</span><span style="color:#000;font-weight:bold">=</span>0,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">retry_delay</span><span style="color:#000;font-weight:bold">=</span>5,
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">connection_attempts</span><span style="color:#000;font-weight:bold">=</span><span style="color:#099">5</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建立TCP连接(rabbitmqctl list_connections)，每个客户端建立一个连接就行了</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">connection</span> <span style="color:#000;font-weight:bold">=</span> pika.BlockingConnection<span style="color:#000;font-weight:bold">(</span>parameters<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># AMQP 0-9-1连接可被认为是&#34;共享单个TCP连接的轻量级连接&#34;的通道复用</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rabbitmqctl list_channels</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">channel1</span> <span style="color:#000;font-weight:bold">=</span> connection.channel<span style="color:#000;font-weight:bold">()</span>     <span style="color:#998;font-style:italic"># 建立channel1</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">channel2</span> <span style="color:#000;font-weight:bold">=</span> connection.channel<span style="color:#000;font-weight:bold">()</span>     <span style="color:#998;font-style:italic"># 建立channel2</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 每个channel代表一个会话任务(exchange参数用于区分不同项目的数据流)</span>
+</span></span><span style="display:flex;"><span>channel1.exchange_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;exchange_1&#34;</span>, <span style="color:#008080">exchange_type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;fanout&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel1.queue_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_1&#34;</span>, <span style="color:#008080">exclusive</span><span style="color:#000;font-weight:bold">=</span>True<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel1.queue_bind<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;exchange_1&#34;</span>, <span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_1&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 每个channel代表一个会话任务(exchange参数用于区分不同项目的数据流)</span>
+</span></span><span style="display:flex;"><span>channel2.exchange_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;exchange_2&#34;</span>, <span style="color:#008080">exchange_type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;fanout&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel2.queue_declare<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_2&#34;</span>, <span style="color:#008080">exclusive</span><span style="color:#000;font-weight:bold">=</span>True<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel2.queue_bind<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">exchange</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;exchange_2&#34;</span>, <span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_2&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 不同channel可以有自己的任务,通过多进程实现并发</span>
+</span></span><span style="display:flex;"><span>channel1.basic_consume<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_1&#34;</span>, <span style="color:#008080">on_message_callback</span><span style="color:#000;font-weight:bold">=</span>callback, <span style="color:#008080">auto_ack</span><span style="color:#000;font-weight:bold">=</span>True<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel1.start_consuming<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>channel2.basic_consume<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">queue</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;queue_2&#34;</span>, <span style="color:#008080">on_message_callback</span><span style="color:#000;font-weight:bold">=</span>callback, <span style="color:#008080">auto_ack</span><span style="color:#000;font-weight:bold">=</span>True<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>channel2.start_consuming<span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 系统a用channel1、系统b用channel2？ 这样可以独立并发执行？</span>
+</span></span></code></pre></div><h2 id="术语说明">术语说明</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Server<span style="color:#000;font-weight:bold">(</span>Broker<span style="color:#000;font-weight:bold">)</span>:接收客户端连接，实现AMQP协议的消息队列和路由功能的进程；
+</span></span><span style="display:flex;"><span>Virtual Host：虚拟主机的概念，类似权限控制组，一个Virtual Host里可以有多个Exchange和Queue,权限控制的最小丽都是Virtual Host；
+</span></span><span style="display:flex;"><span>Exchange:交换机，接收生产者发送的消息，并根据Routing Key将消息路由到服务器中的队列Queue。
+</span></span><span style="display:flex;"><span>ExchangeType:交换机类型决定了路由消息行为，RabbitMQ中有三种类型Exchange，分别是fanout、direct、topic；
+</span></span><span style="display:flex;"><span>Message Queue：消息队列，用于存储还未被消费者消费的消息；
+</span></span><span style="display:flex;"><span>Message：由Header和body组成，Header是由生产者添加的各种属性的集合，包括Message是否被持久化、优先级是多少、由哪个Message Queue接收等；body是真正需要发送的数据内容；
+</span></span><span style="display:flex;"><span>BindingKey：绑定关键字，将一个特定的Exchange和一个特定的Queue绑定起来。
+</span></span></code></pre></div><h2 id="debug调试">debug调试</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>from kafka import KafkaProducer
+</span></span><span style="display:flex;"><span>import logging
+</span></span><span style="display:flex;"><span>logging.basicConfig<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">level</span><span style="color:#000;font-weight:bold">=</span>logging.DEBUG<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">producer</span> <span style="color:#000;font-weight:bold">=</span> KafkaProducer<span style="color:#000;font-weight:bold">(</span><span style="color:#008080">bootstrap_servers</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#39;10.0.0.166:9092&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>producer.send<span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#39;topic&#39;</span>, b<span style="color:#d14">&#39;hola&#39;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="参考">参考</h2>
+<ol>
+<li>
+<p><a href="http://www.rabbitmq.com/getstarted.html" title="路由官方文档" target="_blank">http://www.rabbitmq.com/getstarted.html</a></p>
+</li>
+<li>
+<p><a href="https://www.jianshu.com/p/80eefec808e5" title="消息队列RabbitMQ入门与5种模式详解" target="_blank">https://www.jianshu.com/p/80eefec808e5</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/zhangweizhong/p/5687457.html" title="RabbitMQ学习系列" target="_blank">https://www.cnblogs.com/zhangweizhong/p/5687457.html</a></p>
+</li>
+</ol>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html">https://zazayaya.github.io/2021/03/30/rabbitmq-tutorial.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/03/24/pureftpd-install-of-puredb.html">Pureftpd-安装文档(基于puredb认证)</a></li>
+        
+        <li><a href="/2021/03/23/python-threading-memory-leak.html">Python-多线程注意事项</a></li>
+        
+        <li><a href="/2021/03/17/python-supervisord.html">Supervisord-使用文档</a></li>
+        
+        <li><a href="/2021/03/11/kafka-one-instance-cluster-install.html">Kafka-集群安装文档(单机版)</a></li>
+        
+        <li><a href="/2021/02/19/flask-celery.html">Flask-celery使用文档-实现异步进度条实时显示</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/rabbitmq'>rabbitmq</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

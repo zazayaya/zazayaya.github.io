@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>elk on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/elk.html</link>
+    <description>Recent content in elk on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 08 Nov 2021 17:00:32 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/elk/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ELK-nginx数据录入</title>
+      <link>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</link>
+      <pubDate>Mon, 08 Nov 2021 17:00:32 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html</guid>
+      <description>需求说明 客户端日志包含多个项目 不同项目request_body分为kv和json格式 nginx日志格式 # request_body为k</description>
+    </item>
+    
+    <item>
+      <title>ELK-6.0.0升级到7.15.0</title>
+      <link>https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html</link>
+      <pubDate>Tue, 12 Oct 2021 17:22:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html</guid>
+      <description>本文基于二进制6.0单节点安装升级到7.15.0 rpm包 基于：Centos6.x 注意：centos6.x只支持 &amp;lt;= 7.10.0 升级策略 7.0–7</description>
+    </item>
+    
+    <item>
+      <title>ELK-基于docker安装</title>
+      <link>https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html</link>
+      <pubDate>Mon, 27 Sep 2021 15:08:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html</guid>
+      <description>测试环境：Ubuntu20.04 环境准备 grep -q vm.max_map_count /etc/sysctl.conf || echo &amp;#34;vm.max_map_count=262144&amp;#34; &amp;gt;&amp;gt; /etc/sysctl.conf sysctl -p | grep vm.max_map_count # 初始化目录 install -o 1000 -g root -d /data/elasticsearch/{data,logs} install -o 1000 -g root -d /data/logstash/pipeline logstash配置 pi</description>
+    </item>
+    
+    <item>
+      <title>ELK-7.10.0安装文档</title>
+      <link>https://zazayaya.github.io/2020/08/19/elk-install.html</link>
+      <pubDate>Wed, 19 Aug 2020 18:50:43 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/19/elk-install.html</guid>
+      <description>测试环境：Centos6.x &amp;lt;=7.10.0，新版本的kibana依赖glibc-2.17 下载地址 https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.0-x86_64.rpm https://artifacts.elastic.co/downloads/logstash/logstash-7.10.0.rpm https://artifacts.elastic.co/downloads/kibana/kibana-7.10.0-x86_64.rpm https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.10.0-x86_64.rpm 依赖环境 yum -y install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 #</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>K8s-docker二进制安装 | zaza的博客</title>
+    <meta property="og:title" content="K8s-docker二进制安装 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-07-23T09:30:18&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-07-23T09:30:18&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="K8s-docker二进制安装">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/07/23/docker-install-by-binary.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#环境准备">环境准备</a></li>
+    <li><a href="#防火墙选择">防火墙选择</a></li>
+    <li><a href="#docker二进制安装">docker二进制安装</a>
+      <ul>
+        <li><a href="#下载安装">下载安装</a></li>
+        <li><a href="#input-权限脚本">INPUT 权限脚本</a></li>
+        <li><a href="#systemd服务单元配置">systemd服务单元配置</a></li>
+        <li><a href="#配置启动依赖">配置启动依赖</a></li>
+        <li><a href="#启动">启动</a></li>
+        <li><a href="#状态检测">状态检测</a></li>
+        <li><a href="#自动补全">自动补全</a></li>
+      </ul>
+    </li>
+    <li><a href="#docker-compose">docker-compose</a>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#自动补全-1">自动补全</a></li>
+      </ul>
+    </li>
+    <li><a href="#buildkit">buildkit</a>
+      <ul>
+        <li><a href="#安装-1">安装</a></li>
+        <li><a href="#systemd服务单元配置-1">systemd服务单元配置</a></li>
+        <li><a href="#启动-1">启动</a></li>
+        <li><a href="#使用">使用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">K8s-docker二进制安装</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kubernetes'>Kubernetes</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="环境准备">环境准备</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启桥接功能</span>
+</span></span><span style="display:flex;"><span>modprobe br_netfilter
+</span></span><span style="display:flex;"><span>cat &gt; /etc/sysctl.d/k8s.conf <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">net.bridge.bridge-nf-call-iptables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">net.ipv4.ip_forward = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>sysctl -p /etc/sysctl.d/k8s.conf
+</span></span></code></pre></div><h2 id="防火墙选择">防火墙选择</h2>
+<blockquote>
+<p><a href="https://docs.docker.com/network/iptables/" target="_blank">集成Firewalld</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认使用 iptables 管理，如果安装了 firewalld ，则通过 firewalld 管理</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># firewalld 的 INPUT_ZONES 会添加 IN_docker 链</span>
+</span></span><span style="display:flex;"><span>apt update <span style="color:#000;font-weight:bold">&amp;&amp;</span> apt -y install firewalld
+</span></span></code></pre></div><h2 id="docker二进制安装">docker二进制安装</h2>
+<h3 id="下载安装">下载安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://download.docker.com/linux/static/stable/x86_64/</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src
+</span></span><span style="display:flex;"><span>wget https://download.docker.com/linux/static/stable/x86_64/docker-20.10.6.tgz
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /usr/bin/docker <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> <span style="color:#000;font-weight:bold">(</span>tar xzf docker-20.10.6.tgz <span style="color:#000;font-weight:bold">&amp;&amp;</span> cp -v docker/* /usr/bin/ <span style="color:#000;font-weight:bold">&amp;&amp;</span> rm -fr docker<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><h3 id="input-权限脚本">INPUT 权限脚本</h3>
+<blockquote>
+<p>iptables管理添加此脚本</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加 INPUT 权限</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/iptables_add_input.sh <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -P INPUT ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -F INPUT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -A INPUT -i lo -j ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -A INPUT -i docker0 -j ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 注意这个公司一定要写正确
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -A INPUT -s 192.168.1.1 -p tcp -j ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># ssh 测试备用，测试通过后可以关闭
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">iptables -P INPUT DROP
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 运行中动态添加防火墙规则</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意添加后需要同事在/etc/iptables_add_input.sh进行添加</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 插入防火墙，确定位置：iptables -nvL --line-number</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># iptables -I INPUT 5 -s 192.168.1.1 -p tcp --dport 10051 -j ACCEPT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除指定id的规则</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># iptables -nvL --line-number</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># iptables -D INPUT 5</span>
+</span></span></code></pre></div><h3 id="systemd服务单元配置">systemd服务单元配置</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt; /usr/lib/systemd/system/docker.service <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Description=Docker Application Container Engine
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Documentation=https://docs.docker.com
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">After=network-online.target firewalld.service
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Wants=network-online.target
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Type=notify
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EnvironmentFile=-/etc/kubernetes/flanneld_docker.env
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 启动之前添加自己的防火墙权限(根据需求是否开启)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># ExecStartPre=bash /etc/iptables_add_input.sh
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ExecStart=/usr/bin/dockerd --default-ulimit nofile=65535:65535 $DOCKER_NETWORK_OPTIONS
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ExecReload=/bin/kill -s HUP $MAINPID
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">LimitNOFILE=infinity
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">LimitNPROC=infinity
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">LimitCORE=infinity
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">TimeoutStartSec=0
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Delegate=yes
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">KillMode=process
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">StartLimitBurst=3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">StartLimitInterval=60s
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h3 id="配置启动依赖">配置启动依赖</h3>
+<blockquote>
+<p>配置文件</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir -pv /etc/docker /data/docker
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># bip 通过 $DOCKER_NETWORK_OPTIONS 读取</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># mirrors 建议配置多个，因为重新配置需要重启docker服务</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/docker/daemon.json <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">{
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;graph&#34;: &#34;/data/docker&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;storage-driver&#34;: &#34;overlay2&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;registry-mirrors&#34;: [&#34;https://hub-mirror.c.163.com&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;live-restore&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h3 id="启动">启动</h3>
+<blockquote>
+<p>修改配置文件后：systemctl daemon-reload</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开机自启动</span>
+</span></span><span style="display:flex;"><span>systemctl <span style="color:#0086b3">enable</span> docker
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动</span>
+</span></span><span style="display:flex;"><span>systemctl start docker
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>systemctl status docker
+</span></span></code></pre></div><h3 id="状态检测">状态检测</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 检查启动情况</span>
+</span></span><span style="display:flex;"><span>docker -v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 检查网络</span>
+</span></span><span style="display:flex;"><span>ip a | grep docker0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看容器运行是否符合配置</span>
+</span></span><span style="display:flex;"><span>docker pull busybox
+</span></span><span style="display:flex;"><span>docker run -it --rm busybox /bin/sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/ <span style="color:#998;font-style:italic"># ip add</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 容器IP为172.26.190.2，符合设置。这样，根据容器ip就可以很容易定位到容器所属主机节点。</span>
+</span></span></code></pre></div><h3 id="自动补全">自动补全</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下载</span>
+</span></span><span style="display:flex;"><span>curl -L https://raw.githubusercontent.com/docker/cli/v<span style="color:#000;font-weight:bold">$(</span>docker version --format <span style="color:#d14">&#39;{{.Server.Version}}&#39;</span> | sed <span style="color:#d14">&#39;s/-.*//&#39;</span><span style="color:#000;font-weight:bold">)</span>/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 加载</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">source</span> /etc/bash_completion.d/docker
+</span></span></code></pre></div><h2 id="docker-compose">docker-compose</h2>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 上github查看最新版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://github.com/docker/compose/releases</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose</span>
+</span></span><span style="display:flex;"><span>curl -L https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x /usr/local/bin/docker-compose
+</span></span><span style="display:flex;"><span>ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+</span></span></code></pre></div><h3 id="自动补全-1">自动补全</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 目前2.x的版本里面还没有自动补全的命令</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://github.com/docker/compose/tree/1.28.x/contrib/completion/bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下载</span>
+</span></span><span style="display:flex;"><span>curl <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -L https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -o /etc/bash_completion.d/docker-compose
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 加载</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">source</span> /etc/bash_completion.d/docker-compose
+</span></span></code></pre></div><h2 id="buildkit">buildkit</h2>
+<blockquote>
+<p>docker build 依赖 buildkit 命令
+<strong>BuildKit</strong> 是下一代的镜像构建组件，在 <a href="https://github.com/moby/buildkit" target="_blank">https://github.com/moby/buildkit</a> 开源</p>
+</blockquote>
+<h3 id="安装-1">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src/
+</span></span><span style="display:flex;"><span>wget https://github.com/moby/buildkit/releases/download/v0.8.3/buildkit-v0.8.3.linux-amd64.tar.gz
+</span></span><span style="display:flex;"><span>tar xzf buildkit-v0.8.3.linux-amd64.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /usr/bin/buildctl <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> <span style="color:#000;font-weight:bold">(</span>cp -v bin/buildctl bin/buildkitd /usr/bin/<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><h3 id="systemd服务单元配置-1">systemd服务单元配置</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt; /usr/lib/systemd/system/buildkit.service <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Description=Dockerfile-agnostic builder toolkit
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Documentation=https://github.com/moby/buildkit
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Type=notify
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">ExecStart=/usr/bin/buildkitd
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h3 id="启动-1">启动</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开机自启动</span>
+</span></span><span style="display:flex;"><span>systemctl <span style="color:#0086b3">enable</span> buildkit.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动</span>
+</span></span><span style="display:flex;"><span>systemctl start buildkit.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 检测状态</span>
+</span></span><span style="display:flex;"><span>systemctl status buildkit.service
+</span></span></code></pre></div><h3 id="使用">使用</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>buildctl build <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --frontend<span style="color:#000;font-weight:bold">=</span>dockerfile.v0 <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --local <span style="color:#008080">context</span><span style="color:#000;font-weight:bold">=</span>. <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --local <span style="color:#008080">dockerfile</span><span style="color:#000;font-weight:bold">=</span>.
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># or</span>
+</span></span><span style="display:flex;"><span>buildctl build <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --frontend<span style="color:#000;font-weight:bold">=</span>dockerfile.v0 <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --local <span style="color:#008080">context</span><span style="color:#000;font-weight:bold">=</span>. <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --local <span style="color:#008080">dockerfile</span><span style="color:#000;font-weight:bold">=</span>. <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --opt <span style="color:#008080">target</span><span style="color:#000;font-weight:bold">=</span>foo <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    --opt build-arg:foo<span style="color:#000;font-weight:bold">=</span>bar
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/07/23/docker-install-by-binary.html">https://zazayaya.github.io/2021/07/23/docker-install-by-binary.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/07/20/docker-health-check.html">K8s-docker健康检查</a></li>
+        
+        <li><a href="/2021/06/16/docker-commands.html">K8s-docker基础命令</a></li>
+        
+        <li><a href="/2021/06/08/containerd-getting-started.html">K8s-containerd基础学习</a></li>
+        
+        <li><a href="/2021/06/04/k8s-install-by-kubeadm.html">K8s-kubernetes基于kubeadm搭建</a></li>
+        
+        <li><a href="/2021/06/02/k8s-install-by-binary.html">K8s-kubernetes基于二进制搭建</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/docker'>docker</a></li>
+                
+                <li><a href='/tags/containerd'>containerd</a></li>
+                
+                <li><a href='/tags/kubernetes'>kubernetes</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

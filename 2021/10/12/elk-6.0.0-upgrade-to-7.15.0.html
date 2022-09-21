@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>ELK-6.0.0升级到7.15.0 | zaza的博客</title>
+    <meta property="og:title" content="ELK-6.0.0升级到7.15.0 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-10-12T17:22:02&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-10-12T17:22:02&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="ELK-6.0.0升级到7.15.0">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#升级策略">升级策略</a></li>
+    <li><a href="#备份">备份</a>
+      <ul>
+        <li><a href="#添加备份路径">添加备份路径</a></li>
+        <li><a href="#注册并备份索引">注册并备份索引</a></li>
+        <li><a href="#备份代码">备份代码</a></li>
+      </ul>
+    </li>
+    <li><a href="#准备">准备</a></li>
+    <li><a href="#升级到68x">升级到6.8.x</a>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#配置">配置</a></li>
+        <li><a href="#运行elasticsearch">运行elasticsearch</a></li>
+        <li><a href="#创建用户">创建用户</a></li>
+        <li><a href="#添加license">添加license</a></li>
+        <li><a href="#运行kibana">运行kibana</a></li>
+      </ul>
+    </li>
+    <li><a href="#升级到7150">升级到7.15.0</a>
+      <ul>
+        <li><a href="#下载">下载</a></li>
+        <li><a href="#elasticsearch">elasticsearch</a>
+          <ul>
+            <li><a href="#安装-1">安装</a></li>
+            <li><a href="#配置-1">配置</a></li>
+            <li><a href="#启动">启动</a></li>
+          </ul>
+        </li>
+        <li><a href="#kibana">kibana</a>
+          <ul>
+            <li><a href="#备份清理数据">备份清理数据</a></li>
+            <li><a href="#安装-2">安装</a></li>
+            <li><a href="#配置-2">配置</a></li>
+            <li><a href="#启动-1">启动</a></li>
+          </ul>
+        </li>
+        <li><a href="#开启相关功能">开启相关功能</a></li>
+        <li><a href="#logstash">logstash</a>
+          <ul>
+            <li><a href="#安装-3">安装</a></li>
+            <li><a href="#logstash配置">logstash配置</a></li>
+            <li><a href="#授权">授权</a></li>
+            <li><a href="#pipelines配置">pipelines配置</a></li>
+            <li><a href="#测试">测试</a></li>
+            <li><a href="#启动-2">启动</a></li>
+          </ul>
+        </li>
+        <li><a href="#filebeat">filebeat</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">ELK-6.0.0升级到7.15.0</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年10月12日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE'>大数据</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <blockquote>
+<p>本文基于二进制6.0单节点安装升级到7.15.0 rpm包
+基于：Centos6.x
+注意：centos6.x只支持 &lt;= 7.10.0</p>
+</blockquote>
+<h2 id="升级策略">升级策略</h2>
+<ul>
+<li>7.0–7.14 -&gt; 7.15.0</li>
+<li>6.8 -&gt; 7.15.0</li>
+<li>6.0–6.7 -&gt; 6.8 -&gt; 7.15.0</li>
+<li>5.6 -&gt; 6.8 -&gt; 7.15.0</li>
+<li>5.0–5.5 - &gt; 5.6 -&gt; 6.8 -&gt; 7.15.0</li>
+</ul>
+<h2 id="备份">备份</h2>
+<h3 id="添加备份路径">添加备份路径</h3>
+<blockquote>
+<p>重启生效</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vim config/elasticsearch.yml</span>
+</span></span><span style="display:flex;"><span>path.repo: /data/backup/elastic
+</span></span></code></pre></div><h3 id="注册并备份索引">注册并备份索引</h3>
+<blockquote>
+<p>Dev Tools -&gt; console</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># console操作</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注册仓库名称为：backup，对应路径为：/data/backup/elastic</span>
+</span></span><span style="display:flex;"><span>PUT _snapshot/backup
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;type&#34;</span>: <span style="color:#d14">&#34;fs&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;settings&#34;</span>: <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;location&#34;</span>: <span style="color:#d14">&#34;/data/backup/elastic&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看仓库</span>
+</span></span><span style="display:flex;"><span>GET _snapshot/backup
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看备份仓库列表</span>
+</span></span><span style="display:flex;"><span>GET _cat/repositories?v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 备份</span>
+</span></span><span style="display:flex;"><span>PUT _snapshot/backup/snapshot_20211012?wait_for_completion<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>GET _snapshot/backup/snapshot_20211012/_status?pretty
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 备份中状态</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;state&#34; : &#34;STARTED&#34;,  # 运行状态</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;shards_stats&#34; : {</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;initializing&#34; : 3044,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;started&#34; : 4,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;finalizing&#34; : 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;done&#34; : 639,  # 完成数量</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;failed&#34; : 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;total&#34; : 3687</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># },</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 完成状态</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;state&#34;: &#34;SUCCESS&#34;, # 完成状态</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;shards_stats&#34;: {</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;initializing&#34;: 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;started&#34;: 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;finalizing&#34;: 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;done&#34;: 3687,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;failed&#34;: 0,</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;total&#34;: 3687</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># },</span>
+</span></span></code></pre></div><h3 id="备份代码">备份代码</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>tar czf /data/backup/elasticsearch_6.0.0.tar.gz /usr/local/elasticsearch
+</span></span></code></pre></div><h2 id="准备">准备</h2>
+<blockquote>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/6.8/rolling-upgrades.html" target="_blank">https://www.elastic.co/guide/en/elasticsearch/reference/6.8/rolling-upgrades.html</a></p>
+<p>具体版本升级准备参考最新的相关文档</p>
+</blockquote>
+<ol>
+<li><strong>Disable shard allocation</strong>.</li>
+<li><strong>Stop non-essential indexing and perform a synced flush.</strong> (Optional)</li>
+<li><strong>Stop any machine learning jobs that are running.</strong></li>
+<li><strong>Shut down a single node</strong>.</li>
+<li><strong>Upgrade the node you shut down.</strong></li>
+<li><strong>Upgrade any plugins.</strong></li>
+<li><strong>Start the upgraded node.</strong></li>
+</ol>
+<h2 id="升级到68x">升级到6.8.x</h2>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># kibana需要升级为elasticsearch同版本(如果纯粹通过api接口升级，可以不安装kibana)</span>
+</span></span><span style="display:flex;"><span>wget https://artifacts.elastic.co/downloads/kibana/kibana-6.8.19-linux-x86_64.tar.gz
+</span></span><span style="display:flex;"><span>tar -xzf kibana-6.8.19-linux-x86_64.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># elasticsearch</span>
+</span></span><span style="display:flex;"><span>wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.8.19.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 因为是升级的临时包，所以放在此位置即可</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意授权为运行用户</span>
+</span></span><span style="display:flex;"><span>tar xzf elasticsearch-6.8.19.tar.gz <span style="color:#000;font-weight:bold">&amp;&amp;</span> chown -R zaza:zaza elasticsearch-6.8.19 <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">cd</span> elasticsearch-6.8.19
+</span></span></code></pre></div><h3 id="配置">配置</h3>
+<blockquote>
+<p>config/elasticsearch.yml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 和6.0的配置一样的</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">cluster.name</span>:<span style="color:#bbb"> </span>plat<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">node.name</span>:<span style="color:#bbb"> </span>node-1<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.data</span>:<span style="color:#bbb"> </span>/data/elastic/data<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.logs</span>:<span style="color:#bbb"> </span>/data/elastic/logs<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.repo</span>:<span style="color:#bbb"> </span>/data/backup/elastic<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">network.host</span>:<span style="color:#bbb"> </span><span style="color:#099">0.0.0.0</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">action.destructive_requires_name</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb"> </span><span style="color:#998;font-style:italic"># 禁止匹配删除</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">bootstrap.system_call_filter</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">false</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># 添加用户</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">xpack.security.enabled</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span></span></span></code></pre></div><blockquote>
+<p>config/kibana.yml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#000080">i18n.locale</span>:<span style="color:#bbb"> </span><span style="color:#d14">&#34;zh-CN&#34;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">server.host</span>:<span style="color:#bbb"> </span><span style="color:#d14">&#34;0.0.0.0&#34;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">elasticsearch.username</span>:<span style="color:#bbb"> </span><span style="color:#d14">&#34;elastic&#34;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">elasticsearch.password</span>:<span style="color:#bbb"> </span><span style="color:#d14">&#34;passwd&#34;</span><span style="color:#bbb">
+</span></span></span></code></pre></div><h3 id="运行elasticsearch">运行elasticsearch</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>su - zaza -c <span style="color:#d14">&#34;/usr/local/src/elasticsearch-6.8.19/bin/elasticsearch&#34;</span>
+</span></span></code></pre></div><h3 id="创建用户">创建用户</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl -XPUT -u elastic:changeme -H <span style="color:#d14">&#39;Content-Type: application/json&#39;</span> <span style="color:#d14">&#39;http://localhost:9200/_xpack/security/user/elastic/_password&#39;</span> -d <span style="color:#d14">&#39;{ &#34;password&#34; : &#34;your_passwd&#34; }&#39;</span>
+</span></span></code></pre></div><h3 id="添加license">添加license</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看集群状态</span>
+</span></span><span style="display:flex;"><span>curl -XGET -u <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#39;http://localhost:9200/_cat/health?v&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看授权（&#34;license&#34; : null这个状态需要添加授权）</span>
+</span></span><span style="display:flex;"><span>curl -XGET -u <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#39;http://localhost:9200/_xpack?pretty&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加基础授权</span>
+</span></span><span style="display:flex;"><span>curl -XPOST -H <span style="color:#d14">&#39;Content-Type: application/json&#39;</span> -u <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#39;http://localhost:9200/_xpack/license/start_basic?acknowledge=true&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 确认授权</span>
+</span></span><span style="display:flex;"><span>curl -X GET -u <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#39;http://localhost:9200/_xpack?pretty&#39;</span>
+</span></span></code></pre></div><h3 id="运行kibana">运行kibana</h3>
+<blockquote>
+<p>依赖license</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 备份 .kibana_2</span>
+</span></span><span style="display:flex;"><span>curl -XPUT -H <span style="color:#d14">&#39;Content-Type: application/json&#39;</span> --user <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#34;localhost:9200/_snapshot/backup/snapshot_kibana_2_20211012?wait_for_completion=false&#34;</span> -d <span style="color:#d14">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">{
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;indices&#34;: &#34;.kibana_2&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看</span>
+</span></span><span style="display:flex;"><span>curl --user <span style="color:#d14">&#39;elastic:passwd&#39;</span> -X GET <span style="color:#d14">&#34;localhost:9200/_snapshot/backup/snapshot_kibana_2_20211012?pretty&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除</span>
+</span></span><span style="display:flex;"><span>curl -XDELETE --user <span style="color:#d14">&#39;elastic:passwd&#39;</span> http://localhost:9200/.kibana_2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src/kibana-6.8.19-linux-x86_64 <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#008080">NODE_OPTIONS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;--max-old-space-size=512&#34;</span> bin/kibana
+</span></span></code></pre></div><h2 id="升级到7150">升级到7.15.0</h2>
+<h3 id="下载">下载</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#0086b3">cd</span> /usr/local/src/
+</span></span><span style="display:flex;"><span>wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.15.0-x86_64.rpm
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># centos6.x只支持kibana-7.10.0-x86_64.rpm</span>
+</span></span><span style="display:flex;"><span>wget https://artifacts.elastic.co/downloads/kibana/kibana-7.15.0-x86_64.rpm
+</span></span><span style="display:flex;"><span>wget https://artifacts.elastic.co/downloads/logstash/logstash-7.15.0-x86_64.rpm
+</span></span></code></pre></div><h3 id="elasticsearch">elasticsearch</h3>
+<h4 id="安装-1">安装</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rpm -ivh elasticsearch-7.15.0-x86_64.rpm
+</span></span></code></pre></div><h4 id="配置-1">配置</h4>
+<blockquote>
+<p>/etc/elasticsearch/elasticsearch.yml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#000080">cluster.name</span>:<span style="color:#bbb"> </span>plat<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">node.name</span>:<span style="color:#bbb"> </span>node-1<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">cluster.initial_master_nodes</span>:<span style="color:#bbb"> </span>[<span style="color:#d14">&#34;node-1&#34;</span>]<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.data</span>:<span style="color:#bbb"> </span>/data/elastic/data<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.logs</span>:<span style="color:#bbb"> </span>/data/elastic/logs<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">path.repo</span>:<span style="color:#bbb"> </span>/data/backup/elastic<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">network.host</span>:<span style="color:#bbb"> </span><span style="color:#099">0.0.0.0</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">action.destructive_requires_name</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb"> </span><span style="color:#998;font-style:italic"># 禁止匹配删除</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">bootstrap.system_call_filter</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">false</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># 密码验证</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">xpack.security.enabled</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">xpack.security.transport.ssl.enabled</span>:<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># 分片数量限制</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">cluster.max_shards_per_node</span>:<span style="color:#bbb"> </span><span style="color:#099">10000</span><span style="color:#bbb">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 内存调整(根据需求调整)</span>
+</span></span><span style="display:flex;"><span>vim /etc/elasticsearch/jvm.options
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 日志调整(根据需求调整)</span>
+</span></span><span style="display:flex;"><span>vim /etc/elasticsearch/log4j2.properties
+</span></span></code></pre></div><h4 id="启动">启动</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改权限</span>
+</span></span><span style="display:flex;"><span>chown -R elasticsearch:elasticsearch /data/elastic/ /data/backup/elastic/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开机自启动</span>
+</span></span><span style="display:flex;"><span>chkconfig --add elasticsearch
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动</span>
+</span></span><span style="display:flex;"><span>service elasticsearch start
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 日志</span>
+</span></span><span style="display:flex;"><span>tailf /data/elastic/logs/plat.log
+</span></span></code></pre></div><h3 id="kibana">kibana</h3>
+<blockquote>
+<p>centos6.x 只支持 &lt;= 7.10.0</p>
+</blockquote>
+<h4 id="备份清理数据">备份清理数据</h4>
+<blockquote>
+<p>因为kibana和elasticsearch版本不匹配，导致403权限报错，如果是同版本，不需要清理数据</p>
+<p>升级elasticsearch会同事升级kibana的数据到对应的版本导致的？</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 备份</span>
+</span></span><span style="display:flex;"><span>curl -XPUT -H <span style="color:#d14">&#39;Content-Type: application/json&#39;</span> --user <span style="color:#d14">&#39;elastic:passwd&#39;</span> <span style="color:#d14">&#34;localhost:9200/_snapshot/backup/snapshot_kibana_2_20211013?wait_for_completion=false&#34;</span> -d <span style="color:#d14">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">{
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  &#34;indices&#34;: &#34;.kibana*&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 查看(这里查看需要清理的索引)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">curl -XGET --user &#39;</span>elastic:passwd<span style="color:#d14">&#39; &#34;localhost:9200/_snapshot/backup/snapshot_kibana_2_20211013?pretty&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 清理(这里可能会丢失索引，如果被删除那么需要重建索引)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">curl -XDELETE --user &#39;</span>elastic:passwd<span style="color:#d14">&#39; http://localhost:9200/.kibana_7.15.0_001
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">curl -XDELETE --user &#39;</span>elastic:passwd<span style="color:#a61717;background-color:#e3d2d2">&#39;</span> http://localhost:9200/.kibana_task_manager_2
+</span></span><span style="display:flex;"><span>......
+</span></span></code></pre></div><h4 id="安装-2">安装</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rpm -ivh kibana-7.10.0-x86_64.rpm
+</span></span></code></pre></div><h4 id="配置-2">配置</h4>
+<blockquote>
+<p>/etc/kibana/kibana.yml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>i18n.locale: <span style="color:#d14">&#34;zh-CN&#34;</span>
+</span></span><span style="display:flex;"><span>server.host: <span style="color:#d14">&#34;0.0.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>elasticsearch.username: <span style="color:#d14">&#34;elastic&#34;</span>
+</span></span><span style="display:flex;"><span>elasticsearch.password: <span style="color:#d14">&#34;passwd&#34;</span>
+</span></span></code></pre></div><h4 id="启动-1">启动</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chkconfig kibana on
+</span></span><span style="display:flex;"><span>/etc/init.d/kibana start
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看日志</span>
+</span></span><span style="display:flex;"><span>tailf /var/log/kibana/kibana.stdout
+</span></span></code></pre></div><h3 id="开启相关功能">开启相关功能</h3>
+<ol start="8">
+<li><strong>Reenable shard allocation.</strong></li>
+<li><strong>Wait for the node to recover.</strong></li>
+<li><strong>Repeat</strong></li>
+<li><strong>Restart machine learning jobs.</strong></li>
+</ol>
+<h3 id="logstash">logstash</h3>
+<h4 id="安装-3">安装</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装</span>
+</span></span><span style="display:flex;"><span>rpm -ivh logstash-7.15.0-x86_64.rpm
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># logstash配置用户密码(elasticsearch生成的用户密码)</span>
+</span></span><span style="display:flex;"><span>cp /etc/logstash/logstash.yml<span style="color:#000;font-weight:bold">{</span>,.bak<span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h4 id="logstash配置">logstash配置</h4>
+<blockquote>
+<p>/etc/logstash/logstash.yml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>path.data: /data/logstash/data
+</span></span><span style="display:flex;"><span>path.logs: /data/logstash/log
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 监控</span>
+</span></span><span style="display:flex;"><span>xpack.monitoring.enabled: <span style="color:#0086b3">true</span>
+</span></span><span style="display:flex;"><span>xpack.monitoring.elasticsearch.username: elastic
+</span></span><span style="display:flex;"><span>xpack.monitoring.elasticsearch.password: password
+</span></span><span style="display:flex;"><span>xpack.monitoring.elasticsearch.hosts: <span style="color:#000;font-weight:bold">[</span><span style="color:#d14">&#34;http://127.0.0.1:9200&#34;</span><span style="color:#000;font-weight:bold">]</span>
+</span></span></code></pre></div><h4 id="授权">授权</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir -pv /data/logstash/data /data/logstash/log
+</span></span><span style="display:flex;"><span>chown -R logstash: /data/logstash
+</span></span></code></pre></div><h4 id="pipelines配置">pipelines配置</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># pipelines配置</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/logstash/pipelines.yml <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">- pipeline.id: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.workers: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.batch.size: 3000
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.batch.delay: 200
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  path.config: /etc/logstash/conf.d/nginx.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">- pipeline.id: php
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.workers: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.batch.size: 3000
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pipeline.batch.delay: 200
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  path.config: /etc/logstash/conf.d/php.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># client配置</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/logstash/conf.d/nginx.conf <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 客户端配置
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">input {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    beats{
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">     port =&gt; 5026
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">filter {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">	......
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">output {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  elasticsearch {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    hosts =&gt; &#34;elasticsearch:9200&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    manage_template =&gt; false
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    index =&gt; &#34;%{project}-%{[fields][document_type]}-%{+YYYY-MM}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    user =&gt; &#34;elastic&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    password =&gt; &#34;123456&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  #stdout{codec =&gt; rubydebug}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># game配置</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/logstash/conf.d/php.conf <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># 配置说:此logstash设计目标适用于所有项目服务端数据录入(应用场景为多项目公用服务器)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># logstash收集各种类型日志-建议使用pipeline
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">input {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  beats {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    port =&gt; 5027
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">filter {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  # 处理消息日志
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  ......
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">output {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  elasticsearch {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    hosts =&gt; &#34;elasticsearch:9200&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    manage_template =&gt; false
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    index =&gt; &#34;%{project}-server-%{+YYYY.MM.dd}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    user =&gt; &#34;elastic&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    password =&gt; &#34;123456&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  #stdout {
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  #  codec =&gt; rubydebug
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  #}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">}
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h4 id="测试">测试</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 测试</span>
+</span></span><span style="display:flex;"><span>/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/nginx.conf -t
+</span></span><span style="display:flex;"><span>/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/php.conf -t
+</span></span></code></pre></div><h4 id="启动-2">启动</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># centos6.x管理脚本</span>
+</span></span><span style="display:flex;"><span>/usr/share/logstash/bin/system-install /etc/logstash/startup.options sysv
+</span></span><span style="display:flex;"><span>chkconfig logstash on
+</span></span><span style="display:flex;"><span>/etc/init.d/logstash start
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看日志</span>
+</span></span><span style="display:flex;"><span>tailf /var/log/logstash-stdout.log
+</span></span></code></pre></div><h3 id="filebeat">filebeat</h3>
+<blockquote>
+<p>暂时使用6.0.0版本，升级到7.15.0的时候注意source字段改成[log][file][path]</p>
+</blockquote>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html" target="_blank">官方升级策略</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html">https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/09/27/elk-install-by-docker.html">ELK-基于docker安装</a></li>
+        
+        <li><a href="/2020/08/19/elk-install.html">ELK-7.10.0安装文档</a></li>
+        
+        <li><a href="/2021/10/09/python-3.8-install-on-centos6.x-doc.html">Python-3.8安装文档</a></li>
+        
+        <li><a href="/2021/08/31/k8s-k3s-install-doc.html">K8s-k3s安装文档</a></li>
+        
+        <li><a href="/2021/08/31/k8s-install-by-rancher.html">K8s-rancher安装文档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/elk'>elk</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

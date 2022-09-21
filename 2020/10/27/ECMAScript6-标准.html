@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>ECMAScript6-标准 | zaza的博客</title>
+    <meta property="og:title" content="ECMAScript6-标准 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-10-27T15:54:44&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-10-27T15:54:44&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="ECMAScript6-标准">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#环境搭建">环境搭建</a>
+      <ul>
+        <li><a href="#创建目录">创建目录</a></li>
+        <li><a href="#项目初始化">项目初始化</a></li>
+        <li><a href="#安装基础依赖包">安装基础依赖包</a>
+          <ul>
+            <li><a href="#常见组件安装">常见组件安装</a></li>
+            <li><a href="#babel">babel</a></li>
+            <li><a href="#polyfill">polyfill</a></li>
+            <li><a href="#es6-的功能侦测库-es-checker">ES6 的功能侦测库 ES-Checker</a></li>
+            <li><a href="#eslint">ESLint</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#class">class</a>
+      <ul>
+        <li><a href="#es5传统方法">es5传统方法</a></li>
+        <li><a href="#es6语法">es6语法</a></li>
+        <li><a href="#类的继承">类的继承</a></li>
+      </ul>
+    </li>
+    <li><a href="#module-的语法">Module 的语法</a>
+      <ul>
+        <li><a href="#常见export方法">常见export方法</a></li>
+        <li><a href="#import-命令">import 命令</a></li>
+        <li><a href="#export-default-命令">export default 命令</a></li>
+        <li><a href="#export注意事项">export注意事项</a></li>
+      </ul>
+    </li>
+    <li><a href="#函数">函数</a>
+      <ul>
+        <li><a href="#箭头函数">箭头函数</a></li>
+        <li><a href="#作用域">作用域</a></li>
+        <li><a href="#const使用">const使用</a></li>
+        <li><a href="#对象增强写法">对象增强写法</a></li>
+        <li><a href="#数组高阶用法">数组高阶用法</a></li>
+        <li><a href="#html之label的好处">html之label的好处</a></li>
+        <li><a href="#语法糖">语法糖</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">ECMAScript6-标准</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年10月27日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%89%8D%E7%AB%AF'>前端</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="环境搭建">环境搭建</h2>
+<h3 id="创建目录">创建目录</h3>
+<pre><code>C:\Users\Administrator\WebstormProjects\es6
+</code></pre>
+<h3 id="项目初始化">项目初始化</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 主要用于生成配置文件 package.json</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 静默生成配置文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm init --yes</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">cd</span> es6 <span style="color:#000;font-weight:bold">&amp;&amp;</span> npm init
+</span></span></code></pre></div><h3 id="安装基础依赖包">安装基础依赖包</h3>
+<h4 id="常见组件安装">常见组件安装</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev @babel/core</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev @babel/preset-env</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev @babel/cli</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev @babel/polyfill</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev @babel/node</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install --save-dev core-js regenerator-runtime</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># babel-node全局安装</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># in .babelrc 必须要配置，否则无效</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用：./node_modules/.bin/babel-node xxx.js</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span>   
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;presets&#34;</span>: <span style="color:#000;font-weight:bold">[</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;@babel/preset-env&#34;</span>   
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">]</span> 
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><h4 id="babel">babel</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1、安装 Babel 转码器</span>
+</span></span><span style="display:flex;"><span>npm install --save-dev @babel/core
+</span></span></code></pre></div><pre><code>2、基础配置文件
+vim .babelrc
+{
+  &quot;presets&quot;: [], // presets字段设定转码规则
+  &quot;plugins&quot;: []
+}
+</code></pre>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>3、安装最新转码规则
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 不要使用：babel-preset-es2015</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 建议使用：babel-preset-env 可以根据运行环境来自动将ES2015+的代码转换为es5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm install --save-dev @babel/preset-env
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>4、修改配置文件
+</span></span><span style="display:flex;"><span>vim .babelrc
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;presets&#34;</span>: <span style="color:#000;font-weight:bold">[</span><span style="color:#d14">&#34;@babel/preset-env&#34;</span><span style="color:#000;font-weight:bold">]</span>, // presets字段设定转码规则
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;plugins&#34;</span>: <span style="color:#000;font-weight:bold">[]</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>5、命令行转码
+</span></span><span style="display:flex;"><span>npm install --save-dev @babel/cli
+</span></span><span style="display:flex;"><span>基本用法如下：
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 转码结果输出到标准输出</span>
+</span></span><span style="display:flex;"><span>npx babel example.js
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 转码结果写入一个文件</span>
+</span></span><span style="display:flex;"><span>npx babel example.js -o compiled.js
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 整个目录转码</span>
+</span></span><span style="display:flex;"><span>npx babel src -d lib
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -s 参数生成source map文件</span>
+</span></span><span style="display:flex;"><span>npx babel src -d lib -s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>6、preset-env 会加载 polyfill
+</span></span><span style="display:flex;"><span>npm install --save-dev @babel/polyfill
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>7、交互式<span style="color:#000;font-weight:bold">(</span>REPL<span style="color:#000;font-weight:bold">)</span>环境
+</span></span><span style="display:flex;"><span>npm install --save-dev @babel/node
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用(和node用法一样，类似python，不跟文件则进入交互式界面，如果有文件，这执行文件)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 和node的主要区别就是：包含Node环境的同时也可以直接运行ES6的代码</span>
+</span></span><span style="display:flex;"><span>babel-node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># node不支持es6 module的 import 和 export方法</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># babel-node命令，提供一个支持 ES6 的 REPL 环境。它支持 Node 的 REPL 环境的所有功能，而且可以直接运行 ES6 代码，所有命令改成下面即可：</span>
+</span></span><span style="display:flex;"><span>执行命令由：
+</span></span><span style="display:flex;"><span>node test.js		// es6的代码会报import错误
+</span></span><span style="display:flex;"><span>改成：
+</span></span><span style="display:flex;"><span>babel-node test.js
+</span></span></code></pre></div><h4 id="polyfill">polyfill</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># vue不需要polyfill</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Babel 默认只转换新的 JavaScript 句法（syntax），而不转换新的 API，比如Iterator、Generator、Set、Map、Proxy、Reflect、Symbol、Promise等全局对象，以及一些定义在全局对象上的方法（比如Object.assign）都不会转码。</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装</span>
+</span></span><span style="display:flex;"><span>npm install --save-dev core-js regenerator-runtime
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用：在脚本头部，加入如下两行代码。</span>
+</span></span><span style="display:flex;"><span>import <span style="color:#d14">&#39;core-js&#39;</span>;
+</span></span><span style="display:flex;"><span>import <span style="color:#d14">&#39;regenerator-runtime/runtime&#39;</span>;
+</span></span></code></pre></div><h4 id="es6-的功能侦测库-es-checker">ES6 的功能侦测库 ES-Checker</h4>
+<pre><code>https://www.cnblogs.com/cag2050/p/7567248.html
+node支持了大部分es6的功能，但还不支持es6模块化(export、import)
+
+npm install -g es-checker
+es-checker
+
+# node不支持es6 module的 import 和 export方法
+执行命令由：node test.js 改成 babel-node test.js
+</code></pre>
+<h4 id="eslint">ESLint</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ESLint 是一个语法规则和代码风格的检查工具，可以用来保证写出语法正确、风格统一的代码</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装</span>
+</span></span><span style="display:flex;"><span>npm install --save-dev eslint
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 初始化配置文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ./node_modules/.bin/eslint --init</span>
+</span></span><span style="display:flex;"><span>eslint --init
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 校验文件</span>
+</span></span><span style="display:flex;"><span>eslint test.js
+</span></span></code></pre></div><h2 id="class">class</h2>
+<h3 id="es5传统方法">es5传统方法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> Point(x, y) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">=</span> x;
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">=</span> y;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Point.prototype.toString <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">function</span> () {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;(&#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;, &#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;)&#39;</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> p <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> Point(<span style="color:#099">1</span>, <span style="color:#099">2</span>);
+</span></span></code></pre></div><h3 id="es6语法">es6语法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 可以看到里面有一个constructor方法，这就是构造方法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 定义(toString)方法的时候，不需要function关键字
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">class</span> Point {
+</span></span><span style="display:flex;"><span>  constructor(x, y) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">=</span> x;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">=</span> y;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  toString() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;(&#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;, &#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;)&#39;</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 在 ES6 的“类”上面继续存在。事实上，类的所有方法都定义在类的prototype属性上面
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">class</span> Point {
+</span></span><span style="display:flex;"><span>  constructor() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  toString() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>Point.prototype <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  constructor() {},
+</span></span><span style="display:flex;"><span>  toString() {},
+</span></span><span style="display:flex;"><span>  toValue() {},
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h3 id="类的继承">类的继承</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> ColorPoint <span style="color:#000;font-weight:bold">extends</span> Point {
+</span></span><span style="display:flex;"><span>  constructor(x, y, color) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">super</span>(x, y); <span style="color:#998;font-style:italic">// 调用父类的constructor(x, y)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">this</span>.color <span style="color:#000;font-weight:bold">=</span> color;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  toString() {  <span style="color:#998;font-style:italic">// 等同于es5： toString：function()
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">this</span>.color <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39; &#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">super</span>.toString(); <span style="color:#998;font-style:italic">// 调用父类的toString()
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="module-的语法">Module 的语法</h2>
+<h3 id="常见export方法">常见export方法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// profile.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">var</span> firstName <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;Michael&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">function</span> f() {};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// profile.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> firstName <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;Michael&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> lastName <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;Jackson&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> year <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1958</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">export</span> { firstName, lastName, year };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// xxx.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">function</span> v1() { ... }
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> v2() { ... }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// v2可以用不同的名字输出两次
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">export</span> {
+</span></span><span style="display:flex;"><span>  v1 as streamV1,
+</span></span><span style="display:flex;"><span>  v2 as streamV2,
+</span></span><span style="display:flex;"><span>  v2 as streamLatestVersion
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ES6模块
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> { stat, exists, readFile } from <span style="color:#d14">&#39;fs&#39;</span>;
+</span></span></code></pre></div><h3 id="import-命令">import 命令</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// main.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> { firstName, lastName, year } from <span style="color:#d14">&#39;./profile.js&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> { lastName as surname } from <span style="color:#d14">&#39;./profile.js&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// .js后缀可以省略
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> { firstName, lastName, year } from <span style="color:#d14">&#39;./profile&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 模块的整体加载
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">*</span> as circle from <span style="color:#d14">&#39;./circle&#39;</span>;
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#d14">&#39;圆面积：&#39;</span> <span style="color:#000;font-weight:bold">+</span> circle.area(<span style="color:#099">4</span>));
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#d14">&#39;圆周长：&#39;</span> <span style="color:#000;font-weight:bold">+</span> circle.circumference(<span style="color:#099">14</span>));
+</span></span></code></pre></div><h3 id="export-default-命令">export default 命令</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 从前面的例子可以看出，使用import命令的时候，用户需要知道所要加载的变量名或函数名，否则无法加载。但是，用户肯定希望快速上手，未必愿意阅读文档，去了解模块有哪些属性和方法。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 为了给用户提供方便，让他们不用阅读文档就能加载模块，就要用到export default命令，为模块指定默认输出。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// export-default.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">default</span> <span style="color:#000;font-weight:bold">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;foo&#39;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 上面代码是一个模块文件export-default.js，它的默认输出是一个函数。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 其他模块加载该模块时，import命令可以为该匿名函数指定任意名字
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// import-default.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> customName from <span style="color:#d14">&#39;./export-default&#39;</span>;
+</span></span><span style="display:flex;"><span>customName(); <span style="color:#998;font-style:italic">// &#39;foo&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// export default命令用在非匿名函数前，也是可以的
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// export-default.js
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">default</span> <span style="color:#000;font-weight:bold">function</span> foo() {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;foo&#39;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 或者写成
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> foo() {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;foo&#39;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">export</span> <span style="color:#000;font-weight:bold">default</span> foo;
+</span></span></code></pre></div><h3 id="export注意事项">export注意事项</h3>
+<pre><code>如果模块只有一个输出值，就使用export default，如果模块有多个输出值，就不使用export default，export default与普通的export不要同时使用。
+
+函数名的首字母应该小写
+类名的首字母应该大写
+模块默认输出一个对象，对象名的首字母应该大写
+</code></pre>
+<h2 id="函数">函数</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> 支持默认值
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> log(x, y <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;World&#39;</span>) {
+</span></span><span style="display:flex;"><span>  console.log(x, y);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="箭头函数">箭头函数</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>https<span style="color:#000;font-weight:bold">:</span><span style="color:#998;font-style:italic">//es6.ruanyifeng.com/?search=%E7%AE%AD%E5%A4%B4&amp;x=0&amp;y=0#docs/function
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ES6 允许使用“箭头”（=&gt;）定义函数。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> f <span style="color:#000;font-weight:bold">=</span> v =&gt; v;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> f <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">function</span> (v) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> v;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 如果箭头函数不需要参数或需要多个参数，就使用一个圆括号代表参数部分。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> f <span style="color:#000;font-weight:bold">=</span> () =&gt; <span style="color:#099">5</span>;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> f <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">function</span> () { <span style="color:#000;font-weight:bold">return</span> <span style="color:#099">5</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> sum <span style="color:#000;font-weight:bold">=</span> (num1, num2) =&gt; num1 <span style="color:#000;font-weight:bold">+</span> num2;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> sum <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">function</span>(num1, num2) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> num1 <span style="color:#000;font-weight:bold">+</span> num2;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 箭头函数可以与变量解构结合使用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> full <span style="color:#000;font-weight:bold">=</span> ({ first, last }) =&gt; first <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39; &#39;</span> <span style="color:#000;font-weight:bold">+</span> last;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">function</span> full(person) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> person.first <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39; &#39;</span> <span style="color:#000;font-weight:bold">+</span> person.last;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 箭头函数使得表达更加简洁
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> isEven <span style="color:#000;font-weight:bold">=</span> n =&gt; n <span style="color:#000;font-weight:bold">%</span> <span style="color:#099">2</span> <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> square <span style="color:#000;font-weight:bold">=</span> n =&gt; n <span style="color:#000;font-weight:bold">*</span> n;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 带参数的立即执行函数可以写成箭头函数的形式
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>((num) =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;Welcome to the Internet.&#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;&#39;</span> <span style="color:#000;font-weight:bold">+</span> num);
+</span></span><span style="display:flex;"><span>})(<span style="color:#099">111</span>);
+</span></span></code></pre></div><h3 id="作用域">作用域</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// https://es6.ruanyifeng.com/?search=export&amp;x=0&amp;y=0#docs/let
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// let用于for和if，控制作用域
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">for</span> (<span style="color:#000;font-weight:bold">let</span> i<span style="color:#000;font-weight:bold">=</span><span style="color:#099">0</span>; <span style="color:#099">0</span> <span style="color:#000;font-weight:bold">&lt;</span> xx.length;i<span style="color:#000;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 大括号是基础作用域块(let声明的变量，只能在大括号里面使用)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>{<span style="color:#000;font-weight:bold">let</span> i<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#000;font-weight:bold">let</span> i<span style="color:#000;font-weight:bold">=</span><span style="color:#099">2</span>}
+</span></span></code></pre></div><h3 id="const使用">const使用</h3>
+<pre tabindex="0"><code>1、赋值后不能修改
+2、必须赋值
+3、常量的含义是指向的对象不能修改，但是可以改变对象内部的属性(其实就是不能修改内存地址的指向)
+const app = new Vue();
+</code></pre><h3 id="对象增强写法">对象增强写法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 理解对象字面量：
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> obj <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> <span style="color:#0086b3">Object</span>();
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> obj <span style="color:#000;font-weight:bold">=</span> {}; <span style="color:#998;font-style:italic">// {}就是字面量写法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 1、属性的增强写法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> name <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;zaza&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> obj <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  name  <span style="color:#998;font-style:italic">// 等价于 name: name
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 2、函数的增强写法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> obj <span style="color:#000;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  run() { <span style="color:#998;font-style:italic">// 等价于es5==&gt; run: function()
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="数组高阶用法">数组高阶用法</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 编程范式：命令式编程/声明式编程
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 编程范式：面向对象编程(第一公民：对象)/函数式编程(第一公民：函数)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// filter/map/reduce
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// filter返回布尔值，true的话返回值，false丢弃值
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">const</span> nums <span style="color:#000;font-weight:bold">=</span> [<span style="color:#099">12</span>, <span style="color:#099">20</span>, <span style="color:#099">111</span>, <span style="color:#099">222</span>, <span style="color:#099">40</span>, <span style="color:#099">50</span>]
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// console.log(nums);
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 1、取所有小于100的数字
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>newNums <span style="color:#000;font-weight:bold">=</span> nums.filter(value =&gt; value <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">100</span>)
+</span></span><span style="display:flex;"><span>console.log(newNums);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 2、取所有小于100的数字进行转化：全部*2
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>nnewNums <span style="color:#000;font-weight:bold">=</span> newNums.map(value =&gt; value <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>)
+</span></span><span style="display:flex;"><span>console.log(nnewNums);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 3、所有数字相加，得到结果
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// console.log(nums.reduce(function (pre,cur) {
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//   return pre + cur
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// }, 0));
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// console.log(nnewNums.reduce((pre, cur) =&gt; pre + cur));
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 第二个参数为是初始值
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>console.log(nnewNums.reduce((preValue, newValue) =&gt; preValue <span style="color:#000;font-weight:bold">+</span> newValue, <span style="color:#099">0</span>));
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 实例场景：
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// [ 24, 40, 80, 100 ]
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 第一次：preValue 0 newValue 24
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 第二次：preValue 24 newValue 40
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 第三次：preValue 64 newValue 80
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 第四次：preValue 144 newValue 100
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 最后结果是：144+100=244
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>console.log(nnewNums.reduce((preValue, newValue) =&gt; preValue <span style="color:#000;font-weight:bold">+</span> newValue, <span style="color:#099">0</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 一条命令实现，小于100，全部转换*2,计算最后的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 一次计算结果
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>console.log(nums.filter(value =&gt; value <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">100</span>).map(value =&gt; value <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>).reduce((pre, n) =&gt; pre <span style="color:#000;font-weight:bold">+</span> n, <span style="color:#099">0</span>))
+</span></span></code></pre></div><h3 id="html之label的好处">html之label的好处</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#998;font-style:italic">&lt;!--label的for值和input的id值一样的时候，点击按钮和&#39;啊啊啊啊&#39;均可以选中对应的input--&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#000080">label</span> <span style="color:#008080">for</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;agree&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#000080">input</span> <span style="color:#008080">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;checkbox&#34;</span> <span style="color:#008080">id</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;agree&#34;</span>&gt;啊啊啊啊
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#000080">label</span>&gt;
+</span></span></code></pre></div><h3 id="语法糖">语法糖</h3>
+<ol>
+<li>ES6语法可以使用``定义字符串，这个是&rsquo;&lsquo;的加强版，支持换行符号</li>
+</ol>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html">https://zazayaya.github.io/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2020/04/24/node-ecmascript.html">Ecmascript-入门教程</a></li>
+        
+        <li><a href="/2019/12/19/node-install.html">Node-安装</a></li>
+        
+        <li><a href="/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a></li>
+        
+        <li><a href="/2020/10/20/kafka-nat.html">Kafka-代理(NAT)</a></li>
+        
+        <li><a href="/2020/10/19/iptables-lock-lock.html">Iptables-芝麻开门</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%89%8D%E7%AB%AF'>前端</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Posts | zaza的博客</title>
+    <meta property="og:title" content="Posts - zaza的博客">
+    <meta property="og:type" content="article">
+        
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Posts">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/posts.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://zazayaya.github.io/posts/index.xml" title="zaza的博客" />
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html" title="Kafka-集群安装文档(单机版)">Kafka-集群安装文档(单机版)</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年3月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kafka'>Kafka</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            kafka集群安装文档 一、架构 # zookeeper和kafka架构 producer producer producer | | | -------------------- | zookeeper zookeeper zookeeper (zookeeper支持failover,至……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/03/11/kafka-one-instance-cluster-install.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/02/19/flask-celery.html" title="Flask-celery使用文档-实现异步进度条实时显示">Flask-celery使用文档-实现异步进度条实时显示</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年2月19日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Flask'>Flask</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            启动注意事项 # 任务队列 celery -A tasks worker --loglevel=info # windows下运行需要添加参数：--pool=solo celery -A tasks worker --pool=solo --loglevel=info # 但是需要说明的是，虽然cel……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/02/19/flask-celery.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/29/mysql-5.7-json-test.html" title="Mysql-5.7-json测试">Mysql-5.7-json测试</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月29日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Mysql'>Mysql</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            创建表 /* create table json_table ( id int unsigned primary key auto_increment comment &#39;主键&#39;, json_info json comment &#39;json数据&#39;, json_id int generated always as (json_info -&gt; &#39;$.id&#39;) comment &#39;json……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/29/mysql-5.7-json-test.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/28/mysql-5.8-install.html" title="Mysql-8.0安装文档">Mysql-8.0安装文档</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月28日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Mysql'>Mysql</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            mysql8.0安装文档 安装 wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.23-1.el6.x86_64.rpm-bundle.tar tar xvf mysql-8.0.23-1.el6.x86_64.rpm-bundle.tar # yum install mysql-community-{server,client,common,libs}-* yum install *rpm 初始化 mysqld --initialize chown -R mysql: /var/lib/mysql 改密码 mysql_secure_installation # shell&gt; grep &#39;temporary password&#39; /var/log/mysqld.log # mysql&gt; ALTER USER &#39;root&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;MyNewPass4!&#39;; 参考 https://learnku.com/articles/38466……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/28/mysql-5.8-install.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/27/disk-io-test.html" title="Linux-硬盘io测试">Linux-硬盘io测试</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月27日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            硬盘io测试 高IO写测试 # 64k写 mkdir /data1/disk-io fio -name iops -rw=write -bs=64k -runtime=60 -iodepth 32 -filename /data1/disk-io/test.bin -ioengine libaio -direct=1 -size=1g # 查看结果 iostat -x 1 Device: rrqm/s wrqm/s r/s w/s rsec/s wsec/s avgrq-sz avgqu-sz await r_await w_await svctm %util nvme1n1 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/27/disk-io-test.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html" title="Iredmail-安装指南">Iredmail-安装指南</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            版本推荐：Centos6.9，0.96，非常稳定，从来没出过任何问题 修改主机名 hostname=mail.zaza.cn grep -wq $hostname /etc/hosts || sed -i &#34;s/127.0.0.1/127.0.0.1 $hostname/g&#34; /etc/hosts sed -i &#39;s/^HOSTNAME.*$/HOSTNAME=&#39;&#34;$hostname&#34;&#39;/g&#39; /etc/sysconfig/network hostname $hostname ifconfig|grep &#34;inet addr&#34; 关闭selin……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html" title="ES-6新语法糖">ES-6新语法糖</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%89%8D%E7%AB%AF'>前端</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            class的语法 类的新申明方式 class Point { // 静态属性，定义在类的最顶层 bar = &#39;hello&#39;; baz = &#39;world&#39;; // 构造器，类似python的__init__ constructor(x, y) { this.x = x;……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/01/07/linux-fdisk.html" title="Linux-硬盘操作">Linux-硬盘操作</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            新增swap mkdir /data/.swap dd if=/dev/zero of=/data/.swap/swap bs=1024 count=8192000 mkswap /data/.swap/swap # swapon /data/.swap/swap # vim /etc/fstab # /data/.swap/swap swap swap defaults 0 0 # swapon -a grep &#34;/data/.swap/swap&#34; /etc/fstab || echo &#39;/data/.swap/swap swap swap defaults 0 0&#39; &gt;&gt; /etc/fstab swapon -a ; free -m fdisk模式扩容 1、fdisk删……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/07/linux-fdisk.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2020/12/25/flask-project-struct.html" title="Flask-基础框架搭建">Flask-基础框架搭建</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年12月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Flask'>Flask</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            说明文档 flask相关 基于restful风格的开发基础环境包 基础依赖包 Flask # 主框架 PyMySQL # SQLAlchemy数据库驱动 5.7k星星(My……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2020/12/25/flask-project-struct.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html" title="Python-3.7安装文档">Python-3.7安装文档</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年12月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Python'>Python</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，则需要卸载) yum -y install gcc gcc-c++ openssl-devel readline-devel bzip2-devel \ sqlite-devel……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html">阅读全文</a></p>
+    </article>
+    
+    
+    
+
+
+
+<ol class="page-navigator">
+    
+    <li class="prev">
+        <a href="https://zazayaya.github.io/posts/page/5.html">上一页</a>
+    </li>
+    
+
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts.html">1</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/2.html">2</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/3.html">3</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/4.html">4</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/5.html">5</a>
+    </li>
+    
+    <li  class="current">
+        <a href="https://zazayaya.github.io/posts/page/6.html">6</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/7.html">7</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/8.html">8</a>
+    </li>
+    
+    <li >
+        <a href="https://zazayaya.github.io/posts/page/9.html">9</a>
+    </li>
+    
+
+    
+    <li class="next">
+        <a href="https://zazayaya.github.io/posts/page/7.html">下一页</a>
+    </li>
+    
+</ol>
+
+
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>K8s-kubernetes Ingress控制器 | zaza的博客</title>
+    <meta property="og:title" content="K8s-kubernetes Ingress控制器 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-08-17T15:27:11&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-08-17T15:27:11&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="K8s-kubernetes Ingress控制器">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/08/17/k8s-ingress.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#应用场景">应用场景</a></li>
+    <li><a href="#数据流">数据流</a></li>
+    <li><a href="#服务访问方式">服务访问方式</a></li>
+    <li><a href="#ingress-nginx">ingress-nginx</a>
+      <ul>
+        <li><a href="#版本对比">版本对比</a></li>
+        <li><a href="#发布安装">发布安装</a></li>
+        <li><a href="#deployyaml-流程说明">deploy.yaml 流程说明</a></li>
+        <li><a href="#双栈-部署ingress-nginx">双栈 部署ingress-nginx</a></li>
+        <li><a href="#helm安装">helm安装</a></li>
+        <li><a href="#ingress-控制器">Ingress 控制器</a></li>
+      </ul>
+    </li>
+    <li><a href="#替代方案">替代方案</a></li>
+    <li><a href="#使用多个-ingress-控制器">使用多个 Ingress 控制器</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">K8s-kubernetes Ingress控制器</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年8月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kubernetes'>Kubernetes</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="应用场景">应用场景</h2>
+<p>Ingress 是 K8S Service 暴露内部服务的一种方式，比起 ClusterIP，NodePort，LoadBalancer等方式，Ingress 具有较多的优势。ClusterIP 仅限集群内部访问，NodePort 需要额外开放较多端口资源，LoadBalancer 需要云服务商提供支持，Ingress 无需云服务商支持，也无需开放太多端口，是比较好的解决方案。</p>
+<ul>
+<li>http同端口暴露服务过多，NodePort<code>和</code>LoadBlancer不能有效管理域名</li>
+<li>快速暴露服务(不需要手动去添加nginx代理文件)</li>
+</ul>
+<h2 id="数据流">数据流</h2>
+<ul>
+<li>Service-NodePort&ndash;&gt; ingress-nginx-controller&ndash;&gt;应用svc&ndash;&gt;pod</li>
+</ul>
+<blockquote>
+<p>pod：通过Deployment类型，动态调整资源，主要用于容器编排</p>
+<p>svc：统一资源，CLUSTER-IP、PORT是固定的，pod调整的时候，svc会动态调整，对用户无感知，端口可以重复</p>
+<p>ingress：ingress-nginx这个其实就是一个代理服务器，将svc进行代理，可以想成负载均衡器？</p>
+<p>Ingress Controller：实际的pod服务，主要是读取ingress配置信息，动态调整控制器配置</p>
+<p>如果Ingress Controller提供的是对外服务， 则实际上实现的是边缘路由器[Endpoint（Pod上）]的功能</p>
+</blockquote>
+<h2 id="服务访问方式">服务访问方式</h2>
+<ul>
+<li>NodePort   通过 kube-proxy 暴露的端口进行访问</li>
+<li>LoadBalancer</li>
+<li>Ingress</li>
+</ul>
+<h2 id="ingress-nginx">ingress-nginx</h2>
+<ul>
+<li>定义Ingress之前，需要先部署Ingress Controller</li>
+<li>controller其实就是一个nginx代理安装在node上面，并且数量是可以控制的(不一定每个node都需要安装)，当性能不够的时候可以新增</li>
+<li>网上很多文档都是基于：nginx-0.26.1/deploy/static/mandatory.yaml，这个版本是最后一个版本将deploy放在代码目录的，后续版本将deploy迁移到新的controller-xxx 分支上面：deploy/static/provider/cloud/deploy.yaml</li>
+<li>新版本的deploy.yaml改动较大，更标准</li>
+<li>私有k8s建议使用：controller-xxx/deploy/static/provider/cloud/deploy.yaml</li>
+<li>因为main版本有可能是开发版本，存在不稳定因素，所以使用controller-xxx版本</li>
+<li>另一个推荐方式：<a href="https://kubernetes.github.io/ingress-nginx/deploy/#using-helm" target="_blank">Using Helm</a> 通过Helm安装</li>
+</ul>
+<h3 id="版本对比">版本对比</h3>
+<blockquote>
+<p>deploy.yaml 包含了 ingress-nginx-controller 的 service声明，但是需要处理一下，因为 type: LoadBalancer 是不支持的</p>
+<p>baremetal 和 main 主要区别就是：type类型</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># main分支</span>
+</span></span><span style="display:flex;"><span>https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># controller-v0.48.1 分支</span>
+</span></span><span style="display:flex;"><span>https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.48.1/deploy/static/provider/cloud/deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># nginx-0.26.1 分支</span>
+</span></span><span style="display:flex;"><span>https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.26.1/deploy/static/mandatory.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># nginx-0.26.2 分支 这里将 deploy 独立拆分为：controller-xxx 分支</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Deployment documentation moved! See /docs/deploy.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 目前使用：controller-v0.48.1分支作为发布，建议使用controller版本，因为main版本有可能是开发版本，存在不稳定因素</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># controller分支和main分支的区别</span>
+</span></span><span style="display:flex;"><span>helm.sh/chart: ingress-nginx-3.34.0 <span style="color:#000;font-weight:bold">==</span>&gt; helm.sh/chart: ingress-nginx-3.35.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># mandatory.yaml和deploy.yaml的区别较大</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新增说明文档</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 标签变更:</span>
+</span></span><span style="display:flex;"><span>app.kubernetes.io/part-of: ingress-nginx <span style="color:#000;font-weight:bold">==</span>&gt; app.kubernetes.io/instance: ingress-nginx
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新增标签</span>
+</span></span><span style="display:flex;"><span>helm.sh/chart: ingress-nginx-3.35.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 命名更加规范了，切此项新增了较多的标签</span>
+</span></span><span style="display:flex;"><span>kind: ServiceAccount
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: nginx-ingress-serviceaccount
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 改为</span>
+</span></span><span style="display:flex;"><span>kind: ServiceAccount
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: ingress-nginx
+</span></span></code></pre></div><h3 id="发布安装">发布安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下载</span>
+</span></span><span style="display:flex;"><span>wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.48.1/deploy/static/provider/cloud/deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单独镜像下载</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># docker pull registry.aliyuncs.com/google_containers/nginx-ingress-controller:v0.48.1@sha256:e9fb216ace49dfa4a5983b183067e97496e7a8b307d2093f4278cd550c303899</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 修改源(k8s.gcr.io被墙，无法下载)，注意版本对应关系</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># k8s.gcr.io/ingress-nginx/controller 对应 registry.aliyuncs.com/google_containers/nginx-ingress-controller</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#d14">&#39;s#k8s.gcr.io/ingress-nginx/controller#registry.aliyuncs.com/google_containers/nginx-ingress-controller#g&#39;</span> deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 发布</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 检测</span>
+</span></span><span style="display:flex;"><span>kubectl get pods -n ingress-nginx <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>  -l app.kubernetes.io/name<span style="color:#000;font-weight:bold">=</span>ingress-nginx --watch -o wide
+</span></span></code></pre></div><h3 id="deployyaml-流程说明">deploy.yaml 流程说明</h3>
+<ol>
+<li>Namespace 创建命名空间，这样可以将相关资源独立出来</li>
+<li>ServiceAccount  Pod中的进程调用Kubernetes API而设计，创建Namespace的时候会生成一个default值 <a href="https://www.cnblogs.com/panwenbin-logs/p/10029834.html" target="_blank">参考</a></li>
+<li>ConfigMap 保存配置文件，查看：kubectl describe configmap ingress-nginx-controller -n ingress-nginx</li>
+<li>ClusterRole 授权，负责整个Kubernetes集群范围内的权限，查看：kubectl describe clusterrole -n ingress-nginx</li>
+<li>ClusterRoleBinding 资源/账号绑定对应的ClusterRole权限 subjects对应的资源具有roleRef对应的权限</li>
+<li>Role 授权，负责命名空间（namespace）内的权限</li>
+<li>RoleBinding 命名空间下的权限绑定</li>
+<li>Service  创建服务：ingress-nginx-controller-admission，type: ClusterIP</li>
+<li>Service  创建服务：ingress-nginx-controller，type: LoadBalancer 这个服务无法申请EXTERNAL-IP，因为没有自建的负载均衡器</li>
+<li>Deployment 创建pod：ingress-nginx</li>
+<li>ValidatingWebhookConfiguration 验证钩子，准入钩子(Admission Webhooks) <a href="https://www.cnblogs.com/tylerzhou/p/11080653.html" target="_blank">动态准入控制</a></li>
+<li>ServiceAccount 创建钩子账号 name: ingress-nginx-admission</li>
+<li>ClusterRole 集群钩子权限</li>
+<li>ClusterRoleBinding 集群钩子权限绑定</li>
+<li>Role 钩子权限</li>
+<li>RoleBinding 钩子权限绑定</li>
+<li>Job name: ingress-nginx-admission-create 创建证书，镜像：kube-webhook-certgen <a href="https://zhuanlan.zhihu.com/p/360824239" target="_blank">工作原理</a></li>
+<li>Job name: ingress-nginx-admission-patch 提取ca并写入指定的admission webhook 镜像：kube-webhook-certgen<a href="https://zhuanlan.zhihu.com/p/360824239" target="_blank">工作原理</a></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 问题（这里没有本地的LoadBalancer服务，所以无法申请到EXTERNAL-IP）</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># kubectl get svc -n ingress-nginx ingress-nginx-controller</span>
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>  ......
+</span></span><span style="display:flex;"><span>  name: ingress-nginx-controller
+</span></span><span style="display:flex;"><span>  namespace: ingress-nginx
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  type: LoadBalancer
+</span></span><span style="display:flex;"><span>  externalTrafficPolicy: Local
+</span></span></code></pre></div><h3 id="双栈-部署ingress-nginx">双栈 部署ingress-nginx</h3>
+<p><a href="https://blog.51cto.com/juestnow/2493608" target="_blank">https://blog.51cto.com/juestnow/2493608</a></p>
+<p><a href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml" target="_blank">https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml</a></p>
+<p><a href="https://jimmysong.io/kubernetes-handbook/concepts/ingress.html" target="_blank">Ingress · Kubernetes Handbook - Kubernetes 中文指南/云原生应用架构实践手册 · Jimmy Song</a></p>
+<h3 id="helm安装">helm安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># nginx可以改成任意自己需要的名称，比如：plat,gm,web，bbs</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 类似云产品的负载均衡器名称</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># controller同样会申请：</span>
+</span></span><span style="display:flex;"><span>helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 导出配置 helm inspect values ingress-nginx/ingress-nginx &gt; values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用：--set 替换为使用 -f values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># externalIPs 指定暴露ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ingressClass 这个注解的值，一般是具体 Ingress Controller 所提供的默认值，如 nginx、gce、traefik、kong 等</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 多个Ingress控制器的时候需要指定</span>
+</span></span><span style="display:flex;"><span>helm install hello-world ingress-nginx/ingress-nginx <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>  --namespace kube-system <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>  --set controller.ingressClass<span style="color:#000;font-weight:bold">=</span>nginx <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>  --set controller.publishService.enabled<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span> <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>  --set controller.service.externalIPs<span style="color:#000;font-weight:bold">={</span>10.0.26.190<span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看</span>
+</span></span><span style="display:flex;"><span>kubectl --namespace kube-system get services -o wide -w hello-world-ingress-nginx-controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 删除</span>
+</span></span><span style="display:flex;"><span>helm uninstall --namespace kube-system hello-world
+</span></span></code></pre></div><p><a href="https://www.cnblogs.com/embedded-linux/p/12657128.html" target="_blank">k8s之PodIP、ClusterIP和ExternalIP</a></p>
+<p><a href="https://cloud.tencent.com/developer/news/299556" target="_blank">Kube：使用IPVS和External IP对K8S集群进行外部负载均衡 - 云+社区 - 腾讯云 (tencent.com)</a></p>
+<p>[<a href="https://www.cnblogs.com/iiiiher/p/8051947.html" target="_blank">k8s]k8s pod的4种网络模式最佳实战(externalIPs ) - _毛台 - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://mp.weixin.qq.com/s/dHaiX3H421jBhnzgCCsktg?" target="_blank">NodePort，LoadBalancer还是Ingress？我该如何选择 (qq.com)</a></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kube-apiserver
+</span></span><span style="display:flex;"><span>--service-cluster-ip-range 10.26.0.0/16  <span style="color:#998;font-style:italic"># 集群网络的ip段，内网任意节点可以访问，外部需要service提供</span>
+</span></span><span style="display:flex;"><span>--service-node-port-range 3000-29999    <span style="color:#998;font-style:italic"># 集群节点的端口段</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>controller-manager
+</span></span><span style="display:flex;"><span>--service-cluster-ip-range<span style="color:#000;font-weight:bold">=</span>10.26.0.0/16
+</span></span><span style="display:flex;"><span>--cluster-cidr<span style="color:#000;font-weight:bold">=</span>172.26.0.0/16     <span style="color:#998;font-style:italic"># 节点网络(CNI使用？)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># flanneld 优先读取 --subnet-file 参数定义的配置文件，如果不存在则读取 etcd 配置的网络信息</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># /etc/kubernetes/flanneld_subnet.env</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">FLANNEL_NETWORK</span><span style="color:#000;font-weight:bold">=</span>172.26.0.0/16	<span style="color:#998;font-style:italic"># CNI大网</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">FLANNEL_SUBNET</span><span style="color:#000;font-weight:bold">=</span>172.26.25.1/24	<span style="color:#998;font-style:italic"># 子网</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># dockerd 读取 flanneld 生成的子网信息：$DOCKER_NETWORK_OPTIONS</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">EnvironmentFile</span><span style="color:#000;font-weight:bold">=</span>-/etc/kubernetes/flanneld_docker.env
+</span></span><span style="display:flex;"><span><span style="color:#008080">ExecStart</span><span style="color:#000;font-weight:bold">=</span>/usr/bin/dockerd <span style="color:#008080">$DOCKER_NETWORK_OPTIONS</span>
+</span></span></code></pre></div><p><a href="https://kubernetes.io/zh/docs/tasks/access-application-cluster/connecting-frontend-backend/" target="_blank">使用 Service 把前端连接到后端 | Kubernetes</a></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 国内无法使用gcr.io，所以使用docker非官方源进行测试</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>docker search hello-go-gke<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># docker pull vaikulkaz/hello-go-gke:1.0</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>gcr.io/google-samples/hello-go-gke:1.0<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#998;font-style:italic"># 改成</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>vaikulkaz/hello-go-gke:1.0<span style="color:#bbb">
+</span></span></span></code></pre></div><p>LoadBalancer服务是发布服务到互联网的标准方式。在GKE中，它会启动一个Network Load Balancer，分配一个单独的IP地址，将所有流量转发到服务中。</p>
+<p>腾讯云叫TKE
+<em>腾讯云</em>容器服务(Tencent Kubernetes Engine ,<em>TKE</em>)基于原生kubernetes提供以容器为核心的、高度可扩展的高性能容器管理服务。</p>
+<p>所以测试网络不要使用：type: LoadBalancer，而是使用：  externalIPs:     - 192.168.2.12 # 这是我的一台node的ip</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#555">---</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">apiVersion</span>:<span style="color:#bbb"> </span>v1<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">kind</span>:<span style="color:#bbb"> </span>Service<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">metadata</span>:<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000080">name</span>:<span style="color:#bbb"> </span>frontend<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#000080">spec</span>:<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000080">selector</span>:<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000080">app</span>:<span style="color:#bbb"> </span>hello<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000080">tier</span>:<span style="color:#bbb"> </span>frontend<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000080">ports</span>:<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>- <span style="color:#000080">protocol</span>:<span style="color:#bbb"> </span><span style="color:#d14">&#34;TCP&#34;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000080">port</span>:<span style="color:#bbb"> </span><span style="color:#099">80</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#000080">targetPort</span>:<span style="color:#bbb"> </span><span style="color:#099">80</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic"># 不是公有云的话，不要使用：type: LoadBalancer，因为此类型是向GKE、TKE申请：EXTERNAL-IP</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#000080">externalIPs</span>:<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>- <span style="color:#099">10.0.26.190</span><span style="color:#bbb"> 	</span><span style="color:#998;font-style:italic"># 其中一个node的ip</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#555">...</span><span style="color:#bbb">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 效果如下</span>
+</span></span><span style="display:flex;"><span>root@k8s-master-01:~# kubectl get service frontend
+</span></span><span style="display:flex;"><span>NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT<span style="color:#000;font-weight:bold">(</span>S<span style="color:#000;font-weight:bold">)</span>   AGE
+</span></span><span style="display:flex;"><span>frontend   ClusterIP   10.26.68.2    10.0.26.190    80/TCP    4s
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 集群内部访问</span>
+</span></span><span style="display:flex;"><span>root@k8s-master-01:~# curl 10.0.26.190
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span><span style="color:#d14">&#34;message&#34;</span>:<span style="color:#d14">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 外部节点访问(缺点：单节点代理访问压力，优点：通过service对后端进行了负载)</span>
+</span></span><span style="display:flex;"><span>root@k8s-master-01:~# curl 10.0.26.190
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span><span style="color:#d14">&#34;message&#34;</span>:<span style="color:#d14">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 浏览器访问</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># http://10.0.26.190/</span>
+</span></span></code></pre></div><h3 id="ingress-控制器">Ingress 控制器</h3>
+<p><a href="https://blog.csdn.net/weixin_39613744/article/details/110831597" target="_blank">ingress控制器那么多，到底该选哪一个？</a></p>
+<p>你必须具有 Ingress 控制器 才能满足 Ingress 的要求。 仅创建 Ingress 资源本身没有任何效果。</p>
+<p>Ingress 控制器：traefik istio nginx enovy</p>
+<p>目前Ingress暴露集群内服务的行内公认最好的方式，不过由于其重要地位，世面上有非常多的Ingres Controller</p>
+<p>这是一个苹果与橘子的比较。</p>
+<p>像Traefik或Nginx这样的边缘代理最好与&ndash;Istio利用的代理进行比较。 Istio会自动安装Envoy代理，并与每个吊舱相邻。</p>
+<p>Istio在Envoy之外提供了几个更高级别的功能，包括路由，ACLing和服务发现和访问策略*，跨越一组服务*。实际上，它将一系列启用Envoy的服务拼接在一起。这种设计模式通常被称为<em>服务网格</em>。</p>
+<p>Istio目前仅限于单个集群中的Kubernetes部署，尽管工作已经到位以及时消除这些限制。</p>
+<ul>
+<li>部署策略：是否支持ab部署、金丝雀部署、蓝绿部署等</li>
+</ul>
+<p>借助Istio Ingress，您可以微调流量路由，服务之间的访问授权，平衡，监控，金丝雀发布等.</p>
+<p>不过社区现在更推荐使用Ingress Gateways。</p>
+<h2 id="替代方案">替代方案</h2>
+<p>你可以通过很多种方式暴露 service 而不必直接使用 ingress：</p>
+<ul>
+<li>使用 <a href="https://kubernetes.io/docs/user-guide/services/#type-loadbalancer" target="_blank">Service.Type=LoadBalancer</a></li>
+<li>使用 <a href="https://kubernetes.io/docs/user-guide/services/#type-nodeport" target="_blank">Service.Type=NodePort</a></li>
+<li>使用 <a href="https://git.k8s.io/contrib/for-demos/proxy-to-service" target="_blank">Port Proxy</a></li>
+<li>部署一个 <a href="https://github.com/kubernetes/contrib/tree/master/service-loadbalancer" target="_blank">Service loadbalancer</a> 这允许你在多个 service 之间共享单个 IP，并通过 Service Annotations 实现更高级的负载平衡。</li>
+</ul>
+<h2 id="使用多个-ingress-控制器">使用多个 Ingress 控制器</h2>
+<p>你可以在集群中部署<a href="https://git.k8s.io/ingress-nginx/docs/user-guide/multiple-ingress.md#multiple-ingress-controllers" target="_blank">任意数量的 ingress 控制器</a>。 创建 ingress 时，应该使用适当的 <a href="https://git.k8s.io/ingress-gce/docs/faq/README.md#how-do-i-run-multiple-ingress-controllers-in-the-same-cluster" target="_blank"><code>ingress.class</code></a> 注解每个 Ingress 以表明在集群中如果有多个 Ingress 控制器时，应该使用哪个 Ingress 控制器。</p>
+<p>如果不定义 <code>ingress.class</code>，云提供商可能使用默认的 Ingress 控制器。</p>
+<p>理想情况下，所有 Ingress 控制器都应满足此规范，但各种 Ingress 控制器的操作略有不同。</p>
+<blockquote>
+<p><strong>说明：</strong> 确保你查看了 ingress 控制器的文档，以了解选择它的注意事项。</p>
+</blockquote>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://blog.51cto.com/legehappy/2721721" target="_blank">kubernetes-ingress 安装</a>：将新加入的Ingress转化成Nginx的配置文件并使之生效</li>
+<li><a href="https://k8s.imroc.io/ingress/nginx-ingress/install-nginx-ingress/" target="_blank">安装 nginx ingress controller (imroc.io)</a></li>
+<li><a href="https://note.youdao.com/ynoteshare1/index.html?id=77f4a5a53a2e84b8fea0fd60afe400d2&amp;type=note" target="_blank">姚大强ingress-nginx</a></li>
+<li><a href="https://github.com/kubernetes/ingress-nginx/" target="_blank">kubernetes/ingress-nginx: NGINX Ingress Controller for Kubernetes (github.com)</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/08/17/k8s-ingress.html">https://zazayaya.github.io/2021/08/17/k8s-ingress.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/06/08/containerd-getting-started.html">K8s-containerd基础学习</a></li>
+        
+        <li><a href="/2021/06/04/k8s-install-by-kubeadm.html">K8s-kubernetes基于kubeadm搭建</a></li>
+        
+        <li><a href="/2021/06/02/k8s-install-by-binary.html">K8s-kubernetes基于二进制搭建</a></li>
+        
+        <li><a href="/2021/05/27/k8s-qa-test.html">K8s-kubernetes异常测试</a></li>
+        
+        <li><a href="/2021/08/17/k8s-doc.html">K8s-kubernetes参考文档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/kubernetes'>kubernetes</a></li>
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

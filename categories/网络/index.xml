@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>网络 on zaza的博客</title>
+    <link>https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html</link>
+    <description>Recent content in 网络 on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 19 Aug 2021 13:30:56 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>网络工具包net-tools和iproute对比</title>
+      <link>https://zazayaya.github.io/2021/08/19/net-tools-vs-iproute.html</link>
+      <pubDate>Thu, 19 Aug 2021 13:30:56 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/19/net-tools-vs-iproute.html</guid>
+      <description>从下面这个图来看，netstat和ss都是网络相关的监控，netstat在协议栈中每一层都可以做监控统计：TCP、路由表、网络接口、</description>
+    </item>
+    
+    <item>
+      <title>Linux-wireguard安装文档</title>
+      <link>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</link>
+      <pubDate>Mon, 12 Jul 2021 10:22:29 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</guid>
+      <description>架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务</description>
+    </item>
+    
+    <item>
+      <title>Network-网络测试工具</title>
+      <link>https://zazayaya.github.io/2020/08/24/network-tools.html</link>
+      <pubDate>Mon, 24 Aug 2020 17:16:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/24/network-tools.html</guid>
+      <description>tcpping 用于测试链路状态，可以展现成图 # 依赖包 yum install tcptraceroute bc # 生成数据文件 # ./tcpping -c 1.1.1.1 22 | tee -a res.txt ./tcpping -c 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # -x重复次数 ./tcpping -c -x 86400 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # 正常</description>
+    </item>
+    
+  </channel>
+</rss>

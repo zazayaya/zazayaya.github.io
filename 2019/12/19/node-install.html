@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Node-安装 | zaza的博客</title>
+    <meta property="og:title" content="Node-安装 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2019-12-19T16:01:31&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2019-12-19T16:01:31&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Node-安装">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2019/12/19/node-install.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#window安装">window安装</a>
+      <ul>
+        <li><a href="#编译环境安装">编译环境安装</a></li>
+        <li><a href="#node版本与node-sass版本不兼容">node版本与node-sass版本不兼容</a></li>
+        <li><a href="#node和npm版本对照表">node和npm版本对照表</a></li>
+        <li><a href="#node-gyp">node-gyp</a></li>
+      </ul>
+    </li>
+    <li><a href="#linux二进制安装">linux二进制安装</a></li>
+    <li><a href="#环境变量">环境变量</a></li>
+    <li><a href="#设置源">设置源</a></li>
+    <li><a href="#常见命令">常见命令</a>
+      <ul>
+        <li><a href="#node">node</a></li>
+        <li><a href="#npm">npm</a>
+          <ul>
+            <li><a href="#webpack">webpack</a></li>
+            <li><a href="#webpack-cli">webpack-cli</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#参考文档">参考文档</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Node-安装</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月19日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%89%8D%E7%AB%AF'>前端</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="window安装">window安装</h2>
+<blockquote>
+<p><del>注意执行：Install Additional Tools for Node.js，安装扩展环境，如：<a href="https://github.com/nodejs/node-gyp#on-windows" target="_blank">node-gyp: Node.js native addon build tool </a></del></p>
+<p>第一步安装包管理工具：choco
+第二步通过choco安装vctools：choco upgrade -y visualstudio2019-workload-vctools</p>
+</blockquote>
+<h3 id="编译环境安装">编译环境安装</h3>
+<blockquote>
+<p>如果有依赖模块：node-sass，则必须安装，npm install不报错，可以不操作：gyp相关步骤</p>
+</blockquote>
+<ul>
+<li>Install Visual C++ Build Environment: <a href="https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools" target="_blank">Visual Studio Build Tools</a> (using &ldquo;Visual C++ build tools&rdquo; workload) or <a href="https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community" target="_blank">Visual Studio Community</a> (using the &ldquo;Desktop development with C++&rdquo; workload)</li>
+</ul>
+<h3 id="node版本与node-sass版本不兼容">node版本与node-sass版本不兼容</h3>
+<blockquote>
+<p>node-sass这个库需要源码编译安装，容易失败</p>
+<p><a href="https://github.com/lenve/vhr/issues/287" target="_blank">windows 10 x64 部署 npm · Issue #287 · lenve/vhr (github.com)</a></p>
+</blockquote>
+<p>node-sass版本兼容性并不好，老项目中依赖的node-sass很可能已经不兼容新的node，对应版本兼容如下(或参考<a href="https://link.segmentfault.com/?enc=6Ar7Y980ScRWXvE7JT3o0w%3D%3D.Nfcra%2BL67pk3enfFCdS0yiv%2FynV%2FZrUq7TmMrIV4ydF5C5AKdumV552tzkjHIGGF" target="_blank">官方仓库</a>)：</p>
+<table>
+<thead>
+<tr>
+<th>NodeJS</th>
+<th>Minimum node-sass version</th>
+<th>Node Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node 13</td>
+<td>4.13+</td>
+<td>79</td>
+</tr>
+<tr>
+<td>Node 12</td>
+<td>4.12+</td>
+<td>72</td>
+</tr>
+<tr>
+<td>Node 11</td>
+<td>4.10+</td>
+<td>67</td>
+</tr>
+<tr>
+<td>Node 10</td>
+<td>4.9+</td>
+<td>64</td>
+</tr>
+<tr>
+<td>Node 8</td>
+<td>4.5.3+</td>
+<td>57</td>
+</tr>
+</tbody>
+</table>
+<h3 id="node和npm版本对照表">node和npm版本对照表</h3>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>LTS</th>
+<th>Date</th>
+<th>V8</th>
+<th>npm</th>
+<th>NODE_MODULE_VERSION[<a href="https://nodejs.org/zh-cn/download/releases/#ref-1" target="_blank">1]</a></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node.js 13.13.0</td>
+<td></td>
+<td>2020-04-14</td>
+<td>7.9.317.25</td>
+<td>6.14.4</td>
+<td>79</td>
+<td><a href="https://nodejs.org/download/release/v13.13.0/" target="_blank">下载 </a><a href="https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V13.md#13.13.0" target="_blank">更新日志 </a><a href="https://nodejs.org/dist/v13.13.0/docs/api/" target="_blank">文档</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>指定版本安装：npm -g install <a href="mailto:npm@6.14.4">npm@6.14.4</a></p>
+</blockquote>
+<h3 id="node-gyp">node-gyp</h3>
+<blockquote>
+<p>npm错误 gyp错误 vs版本不对 msvs_version不兼容</p>
+<p>gyp其实是一个用来生成项目文件的工具，一开始是设计给chromium项目使用的，后来大家发现比较好用就用到了其他地方。生成项目文件后就可以调用GCC, vsbuild, xcode等编译平台来编译。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://github.com/nodejs/node-gyp#on-windows</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 必须安装“Desktop development with C++”</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意：默认的cmd或者powershell vs的版本是错误的</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># running in VS Command Prompt, installation path is:</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &#34;C:\Program Files (x86)\Microsoft Visual Studio 14.0&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 管理员运行：x86 Native Tools Command Prompt for VS 2019</span>
+</span></span><span style="display:flex;"><span>node-gyp rebuild
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 部分工具不支持python3.10，则需要切换，比如：node-sass</span>
+</span></span><span style="display:flex;"><span>node-gyp rebuild --python<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;C:\Python27\python.exe&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># dubug模式</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># node-gyp rebuild --python=&#34;C:\Python27\python.exe&#34; --verbose</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># npm install之前查看版本是否正常</span>
+</span></span><span style="display:flex;"><span>node-gyp -v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># gyp verb check python checking for Python executable &#34;python2&#34; in the PATH</span>
+</span></span><span style="display:flex;"><span>npm config <span style="color:#0086b3">set</span> python c:<span style="color:#d14">\p</span>ython27<span style="color:#d14">\p</span>ython.exe
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装路径不在C盘，则需要指定：</span>
+</span></span><span style="display:flex;"><span>npm config <span style="color:#0086b3">set</span> msbuild_path <span style="color:#d14">&#34;E:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe&#34;</span>
+</span></span></code></pre></div><h2 id="linux二进制安装">linux二进制安装</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># centos6 不支持node-v12 版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># yum -y install xz.x86_64</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wget https://nodejs.org/dist/v8.9.3/node-v8.9.3-linux-x64.tar.xz</span>
+</span></span><span style="display:flex;"><span>wget https://nodejs.org/dist/v12.14.0/node-v12.14.0-linux-x64.tar.xz
+</span></span><span style="display:flex;"><span>tar -xJf node-v12.14.0-linux-x64.tar.xz
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -d /usr/local/node <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> mv -v node-v12.14.0-linux-x64 /usr/local/node
+</span></span></code></pre></div><h2 id="环境变量">环境变量</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;NODE_HOME=/usr/local/node&#39;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;NODE_PATH=$NODE_HOME/lib/node_modules/&#39;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> <span style="color:#d14">&#39;PATH=$NODE_HOME/bin:$NODE_HOME/lib/node_modules/:$PATH&#39;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">source</span> /etc/profile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看nodejs版本</span>
+</span></span><span style="display:flex;"><span>node -v
+</span></span></code></pre></div><h2 id="设置源">设置源</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ~/.npmrc</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 设置镜像方法</span>
+</span></span><span style="display:flex;"><span>npm config <span style="color:#0086b3">set</span> registry https://registry.npm.taobao.org
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看config的registry方法</span>
+</span></span><span style="display:flex;"><span>npm config get registry
+</span></span></code></pre></div><h2 id="常见命令">常见命令</h2>
+<h3 id="node">node</h3>
+<h3 id="npm">npm</h3>
+<blockquote>
+<p>npm 的全称是 Node Package Manager 是 JavaScript 世界的包管理工具,并且是 Node.js 平台的默认包管理工具。通过 npm 可以安装、共享、分发代码,管理项目依赖关系</p>
+</blockquote>
+<h4 id="webpack">webpack</h4>
+<blockquote>
+<p>webpack 是一个模块打包器。webpack 的主要目标是将 JavaScript 文件打包在一起,打包后的文件用于在浏览器中使用,但它也能够胜任转换(transform)、打包(bundle)或&hellip;</p>
+</blockquote>
+<h4 id="webpack-cli">webpack-cli</h4>
+<blockquote>
+<p>webpack命令行管理工具</p>
+</blockquote>
+<h2 id="参考文档">参考文档</h2>
+<ul>
+<li><a href="https://www.liaoxuefeng.com/wiki/1022910821149312" target="_blank">https://www.liaoxuefeng.com/wiki/1022910821149312</a></li>
+<li><a href="https://segmentfault.com/a/1190000020993365" target="_blank">为什么node-sass总是安装失败？</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2019/12/19/node-install.html">https://zazayaya.github.io/2019/12/19/node-install.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2019/02/14/python-project-struct.html">Python-模块编写</a></li>
+        
+        <li><a href="/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html">Linux-keepalive-lvs双机高可用负载均衡</a></li>
+        
+        <li><a href="/about.html">About</a></li>
+        
+        <li><a href="/archives.html">归档</a></li>
+        
+        <li><a href="/search.html">搜索</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%89%8D%E7%AB%AF'>前端</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

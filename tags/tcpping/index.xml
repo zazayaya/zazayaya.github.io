@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tcpping on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/tcpping.html</link>
+    <description>Recent content in tcpping on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 24 Aug 2020 17:16:15 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/tcpping/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Network-网络测试工具</title>
+      <link>https://zazayaya.github.io/2020/08/24/network-tools.html</link>
+      <pubDate>Mon, 24 Aug 2020 17:16:15 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/08/24/network-tools.html</guid>
+      <description>tcpping 用于测试链路状态，可以展现成图 # 依赖包 yum install tcptraceroute bc # 生成数据文件 # ./tcpping -c 1.1.1.1 22 | tee -a res.txt ./tcpping -c 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # -x重复次数 ./tcpping -c -x 86400 1.1.1.1 22 &amp;gt; res_$(date &amp;#39;+%Y-%m-%d-%H-%M-%S&amp;#39;).txt # 正常</description>
+    </item>
+    
+  </channel>
+</rss>

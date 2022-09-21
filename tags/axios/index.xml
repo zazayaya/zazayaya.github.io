@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>axios on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/axios.html</link>
+    <description>Recent content in axios on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 10 Nov 2020 11:45:02 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/axios/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Axios-学习文档</title>
+      <link>https://zazayaya.github.io/2020/11/10/axios-doc.html</link>
+      <pubDate>Tue, 10 Nov 2020 11:45:02 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/11/10/axios-doc.html</guid>
+      <description>axios链式请求 const axios = require(&amp;#39;axios&amp;#39;) // 全局配置文件 axios.defaults.baseURL = &amp;#39;https://httpbin.org&amp;#39;; axios.defaults.timeout = 100000; console.log(&amp;#39;第一次异步请求数据：/json&amp;#39;); axios.get(&amp;#39;/json&amp;#39;).then(response</description>
+    </item>
+    
+  </channel>
+</rss>

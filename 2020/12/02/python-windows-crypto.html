@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Python-Windows安装Crypto | zaza的博客</title>
+    <meta property="og:title" content="Python-Windows安装Crypto - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-12-02T14:40:05&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-12-02T14:40:05&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Python-Windows安装Crypto">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2020/12/02/python-windows-crypto.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#m2crypto-vs-pycrypto-vs-pycryptodome">m2crypto vs pycrypto vs pycryptodome</a></li>
+    <li><a href="#安装m2crypto">安装m2crypto</a>
+      <ul>
+        <li><a href="#通过appveyor资源安装">通过appveyor资源安装</a></li>
+        <li><a href="#项目ci地址">项目CI地址</a></li>
+        <li><a href="#选择和自己匹配的environment">选择和自己匹配的Environment</a></li>
+        <li><a href="#选择artifacts里面的资源">选择artifacts里面的资源</a></li>
+        <li><a href="#编译好的资源">编译好的资源</a></li>
+        <li><a href="#安装">安装</a></li>
+      </ul>
+    </li>
+    <li><a href="#安装pycryptodome">安装pycryptodome</a>
+      <ul>
+        <li><a href="#安装-1">安装</a></li>
+        <li><a href="#加密实现">加密实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Python-Windows安装Crypto</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年12月2日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Python'>Python</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h1 id="windows安装crypto">Windows安装Crypto</h1>
+<h2 id="m2crypto-vs-pycrypto-vs-pycryptodome">m2crypto vs pycrypto vs pycryptodome</h2>
+<ul>
+<li>m2crypto：30+的星星，windows的兼容性较差，pip上面默认的版本不是whl包(是源码包)，导致基本上无法在windows上pip安装，只能借助于appveyor编译好的版本进行安装</li>
+<li>pycrypto：很久没有维护了，最后提交已经是2014年，不建议使用</li>
+<li>pycryptodome：克隆pycrypto的增强版本，1.3k+星星，linux和windows的兼容性较好。建议使用此版本</li>
+</ul>
+<h2 id="安装m2crypto">安装m2crypto</h2>
+<h3 id="通过appveyor资源安装">通过appveyor资源安装</h3>
+<p>pip 默认的包是源码包，windows不可以直接pip安装，只能通过其它办法安装</p>
+<p>appveyor为开源项目Windowsg环境自动构建工具，开源项目包含appveyor.yml，则代表支持自动构建，可以直接在appveyor上下载相关编译好的资源</p>
+<h3 id="项目ci地址">项目CI地址</h3>
+<p><a href="https://ci.appveyor.com/project/m2crypto/m2crypto" target="_blank">https://ci.appveyor.com/project/m2crypto/m2crypto</a></p>
+<h3 id="选择和自己匹配的environment">选择和自己匹配的Environment</h3>
+<p>Environment: 主要是python的版本</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Environment: <span style="color:#008080">PYTHON</span><span style="color:#000;font-weight:bold">=</span>C:<span style="color:#d14">\P</span>ython37-x64, <span style="color:#008080">PYTHON_VERSION</span><span style="color:#000;font-weight:bold">=</span>3.7.x, <span style="color:#008080">PYTHON_ARCH</span><span style="color:#000;font-weight:bold">=</span>64, <span style="color:#008080">OPENSSL_PATH</span><span style="color:#000;font-weight:bold">=</span>C:<span style="color:#d14">\O</span>penSSL-1-1-Win64, <span style="color:#008080">PYWIN32</span><span style="color:#000;font-weight:bold">=</span>pywin32-222.win-amd64-py3.7.exe, <span style="color:#008080">PYWIN32_RELEASE</span><span style="color:#000;font-weight:bold">=</span>b222, <span style="color:#008080">APPVEYOR_BUILD_WORKER_IMAGE</span><span style="color:#000;font-weight:bold">=</span>Visual Studio <span style="color:#099">2019</span>
+</span></span></code></pre></div><h3 id="选择artifacts里面的资源">选择artifacts里面的资源</h3>
+<p><a href="https://ci.appveyor.com/project/m2crypto/m2crypto/build/job/6l7jos7oylu9exmy/artifacts" target="_blank">https://ci.appveyor.com/project/m2crypto/m2crypto/build/job/6l7jos7oylu9exmy/artifacts</a></p>
+<h3 id="编译好的资源">编译好的资源</h3>
+<p><a href="https://ci.appveyor.com/api/buildjobs/6l7jos7oylu9exmy/artifacts/dist%2FM2Crypto-0.36.0-cp37-cp37m-win_amd64.whl" target="_blank">https://ci.appveyor.com/api/buildjobs/6l7jos7oylu9exmy/artifacts/dist%2FM2Crypto-0.36.0-cp37-cp37m-win_amd64.whl</a></p>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># pip install https://ci.appveyor.com/api/buildjobs/6l7jos7oylu9exmy/artifacts/dist%2FM2Crypto-0.36.0-cp37-cp37m-win_amd64.whl</span>
+</span></span><span style="display:flex;"><span>pip install M2Crypto-0.36.0-cp37-cp37m-win_amd64.whl
+</span></span></code></pre></div><h2 id="安装pycryptodome">安装pycryptodome</h2>
+<p><a href="https://ci.appveyor.com/project/Legrandin/pycryptodome" target="_blank">https://ci.appveyor.com/project/Legrandin/pycryptodome</a></p>
+<h3 id="安装-1">安装</h3>
+<p>pip 默认的包是whl，windows可以直接pip安装</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pip install pycryptodome
+</span></span></code></pre></div><h3 id="加密实现">加密实现</h3>
+<p>参考文档：https://gist.github.com/Frizz925/ac0fb026314807959db5685ac149ed67</p>
+<p>下面的加密主要实现了：</p>
+<ul>
+<li>将原密码进行md5计算：实现了密码的兼用性</li>
+<li>iv的随机性</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#998;font-style:italic">#!/usr/bin/env python</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># -*- coding:utf-8 -*-</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># @Time    : 2020-09-01 14:26</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># @Author  : zaza</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># @Email   : 260458726@qq.com</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># @File    : crypto.py</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">random</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">string</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">base64</span> <span style="color:#000;font-weight:bold">import</span> b64encode, b64decode
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">Crypto.Cipher</span> <span style="color:#000;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">Crypto.Util</span> <span style="color:#000;font-weight:bold">import</span> Padding
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">hashlib</span> <span style="color:#000;font-weight:bold">import</span> md5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">SymmetricEncryption</span>(<span style="color:#0086b3">object</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # 加、解密测试
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s = SymmetricEncryption(key=&#39;zaza&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # 加密
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; data = s.encrypt(&#39;zaza&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # 解密
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s.decrypt(data)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &#39;zaza&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # 自定义向量加、解密测试
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s = SymmetricEncryption(key=&#39;yaya&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; data = s.encrypt(&#39;yaya&#39;, &#39;47a79039cc54d688&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; print(data)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    w9Nd2IHjHgCU8QaD4txfYw==.NDdhNzkwMzljYzU0ZDY4OA==
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s.decrypt(data)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &#39;yaya&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # key长度正常测试
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s = SymmetricEncryption(key=&#39;YWySvcV)k6Y!lcgd2njF*OqJW^uiz&amp;qG&#39;, md5_key=False)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; data = s.encrypt(&#39;zaza&#39;, &#39;47a79039cc54d688&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; print(data)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    Ec7rjeW7uP0J5ps9U+MLTg==.NDdhNzkwMzljYzU0ZDY4OA==
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s.decrypt(data)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &#39;zaza&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; # key长度异常测试
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s = SymmetricEncryption(key=&#39;yaya&#39;, md5_key=False)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &gt;&gt;&gt; s.encrypt(&#39;zaza&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    Traceback (most recent call last):
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">      ...
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    ValueError: Incorrect AES key length (4 bytes)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">def</span> __init__(<span style="color:#999">self</span>, key, md5_key<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        对称加密，使用aes_256_cbc进行加解密
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param key: 支持string和bytes类型
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param md5_key: 将key进行md5计算，成为最终的加密key，经过md5计算保证了key长度为32位
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        __key <span style="color:#000;font-weight:bold">=</span> key <span style="color:#000;font-weight:bold">if</span> <span style="color:#0086b3">type</span>(key) <span style="color:#000;font-weight:bold">is</span> <span style="color:#0086b3">bytes</span> <span style="color:#000;font-weight:bold">else</span> key<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> md5_key:
+</span></span><span style="display:flex;"><span>            <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>key <span style="color:#000;font-weight:bold">=</span> md5(__key)<span style="color:#000;font-weight:bold">.</span>hexdigest()<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>key <span style="color:#000;font-weight:bold">=</span> __key
+</span></span><span style="display:flex;"><span>        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>mode <span style="color:#000;font-weight:bold">=</span> AES<span style="color:#000;font-weight:bold">.</span>MODE_CBC
+</span></span><span style="display:flex;"><span>        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>bs <span style="color:#000;font-weight:bold">=</span> AES<span style="color:#000;font-weight:bold">.</span>block_size
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#3c5d5d;font-weight:bold">@staticmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">generate_key</span>(length<span style="color:#000;font-weight:bold">=</span><span style="color:#099">32</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        密码生成器
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param length: 默认为32位长度
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :return: 返回随机字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        chars <span style="color:#000;font-weight:bold">=</span> string<span style="color:#000;font-weight:bold">.</span>ascii_letters <span style="color:#000;font-weight:bold">+</span> string<span style="color:#000;font-weight:bold">.</span>digits <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;!@#$%^&amp;*()&#39;</span>
+</span></span><span style="display:flex;"><span>        rnd <span style="color:#000;font-weight:bold">=</span> random<span style="color:#000;font-weight:bold">.</span>SystemRandom()
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;&#39;</span><span style="color:#000;font-weight:bold">.</span>join(rnd<span style="color:#000;font-weight:bold">.</span>choice(chars) <span style="color:#000;font-weight:bold">for</span> i <span style="color:#000;font-weight:bold">in</span> <span style="color:#0086b3">range</span>(length))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">encrypt</span>(<span style="color:#999">self</span>, plaintext, iv<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">None</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        将明文转换为加密字符串：&#34;</span><span style="color:#d14">{0}</span><span style="color:#d14">.</span><span style="color:#d14">{1}</span><span style="color:#d14">&#34;.format(body, iv)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        解密数据为：由点进行数据分隔，body,iv数据为base64的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param plaintext: 需要加密的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param iv: 初始化向量，长度为16位
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :return: &#34;</span><span style="color:#d14">{0}</span><span style="color:#d14">.</span><span style="color:#d14">{1}</span><span style="color:#d14">&#34;.format(body, iv)
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        plaintext <span style="color:#000;font-weight:bold">=</span> plaintext <span style="color:#000;font-weight:bold">if</span> <span style="color:#0086b3">type</span>(plaintext) <span style="color:#000;font-weight:bold">is</span> <span style="color:#0086b3">bytes</span> <span style="color:#000;font-weight:bold">else</span> plaintext<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> iv <span style="color:#000;font-weight:bold">is</span> <span style="color:#000;font-weight:bold">None</span>:
+</span></span><span style="display:flex;"><span>            iv <span style="color:#000;font-weight:bold">=</span> <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>generate_key(length<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16</span>)<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">else</span>:
+</span></span><span style="display:flex;"><span>            iv <span style="color:#000;font-weight:bold">=</span> iv <span style="color:#000;font-weight:bold">if</span> <span style="color:#0086b3">type</span>(iv) <span style="color:#000;font-weight:bold">is</span> <span style="color:#0086b3">bytes</span> <span style="color:#000;font-weight:bold">else</span> iv<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        plaintext <span style="color:#000;font-weight:bold">=</span> Padding<span style="color:#000;font-weight:bold">.</span>pad(plaintext, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>bs)
+</span></span><span style="display:flex;"><span>        cipher <span style="color:#000;font-weight:bold">=</span> AES<span style="color:#000;font-weight:bold">.</span>new(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>key, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>mode, iv)
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic"># 将body，iv转换成base64的字符串类型</span>
+</span></span><span style="display:flex;"><span>        body <span style="color:#000;font-weight:bold">=</span> b64encode(cipher<span style="color:#000;font-weight:bold">.</span>encrypt(plaintext))<span style="color:#000;font-weight:bold">.</span>decode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        iv <span style="color:#000;font-weight:bold">=</span> b64encode(iv)<span style="color:#000;font-weight:bold">.</span>decode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        result <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;</span><span style="color:#d14">{0}</span><span style="color:#d14">.</span><span style="color:#d14">{1}</span><span style="color:#d14">&#34;</span><span style="color:#000;font-weight:bold">.</span>format(body, iv)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">decrypt</span>(<span style="color:#999">self</span>, ciphertext):
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        数据格式：&#34;</span><span style="color:#d14">{0}</span><span style="color:#d14">.</span><span style="color:#d14">{1}</span><span style="color:#d14">&#34;.format(body, iv) 数据为base64的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        解密数据为：由点进行数据分隔，body,iv数据为base64的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :param ciphertext:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        :return:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        body, iv <span style="color:#000;font-weight:bold">=</span> ciphertext<span style="color:#000;font-weight:bold">.</span>split(<span style="color:#d14">&#34;.&#34;</span>)
+</span></span><span style="display:flex;"><span>        body <span style="color:#000;font-weight:bold">=</span> b64decode(body<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>))
+</span></span><span style="display:flex;"><span>        iv <span style="color:#000;font-weight:bold">=</span> b64decode(iv<span style="color:#000;font-weight:bold">.</span>encode(<span style="color:#d14">&#39;utf-8&#39;</span>))
+</span></span><span style="display:flex;"><span>        cipher <span style="color:#000;font-weight:bold">=</span> AES<span style="color:#000;font-weight:bold">.</span>new(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>key, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>mode, iv)
+</span></span><span style="display:flex;"><span>        body <span style="color:#000;font-weight:bold">=</span> Padding<span style="color:#000;font-weight:bold">.</span>unpad(cipher<span style="color:#000;font-weight:bold">.</span>decrypt(body), <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>bs)<span style="color:#000;font-weight:bold">.</span>decode(<span style="color:#d14">&#39;utf-8&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> body
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">if</span> __name__ <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">import</span> <span style="color:#555">doctest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    doctest<span style="color:#000;font-weight:bold">.</span>testmod(verbose<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">True</span>)
+</span></span></code></pre></div><h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://stackoverflow.com/questions/25110774/how-to-install-m2crypto-on-windows" target="_blank">https://stackoverflow.com/questions/25110774/how-to-install-m2crypto-on-windows</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2020/12/02/python-windows-crypto.html">https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2019/02/14/python-project-struct.html">Python-模块编写</a></li>
+        
+        <li><a href="/2020/11/23/kafka-cluster-install.html">Kafka-集群安装文档</a></li>
+        
+        <li><a href="/2020/11/10/axios-doc.html">Axios-学习文档</a></li>
+        
+        <li><a href="/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html">ECMAScript6-标准</a></li>
+        
+        <li><a href="/2020/10/22/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/python'>python</a></li>
+                
+                <li><a href='/tags/crypto'>crypto</a></li>
+                
+                <li><a href='/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0'>加密实现</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

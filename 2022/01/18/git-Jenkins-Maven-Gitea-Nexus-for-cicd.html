@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境 | zaza的博客</title>
+    <meta property="og:title" content="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-01-18T15:33:16&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-01-18T15:33:16&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装-jenkins">安装 Jenkins</a>
+      <ul>
+        <li><a href="#docker安装">docker安装</a></li>
+        <li><a href="#二进制安装">二进制安装</a></li>
+        <li><a href="#安装gitea插件">安装gitea插件</a></li>
+        <li><a href="#安装docker-插件">安装Docker 插件</a></li>
+      </ul>
+    </li>
+    <li><a href="#安装nexus">安装Nexus</a>
+      <ul>
+        <li><a href="#常见地址">常见地址</a></li>
+        <li><a href="#mvn配置">mvn配置</a></li>
+        <li><a href="#发布">发布</a></li>
+      </ul>
+    </li>
+    <li><a href="#安装gitea">安装gitea</a></li>
+    <li><a href="#安装maven">安装maven</a></li>
+    <li><a href="#cicd搭建">CICD搭建</a>
+      <ul>
+        <li><a href="#原理">原理</a></li>
+        <li><a href="#创建gitea用户组织团队">创建Gitea用户、组织、团队</a></li>
+        <li><a href="#jenkins添加gitea认证源">Jenkins添加Gitea认证源</a></li>
+        <li><a href="#新建任务0-文件夹">新建任务：{0} 文件夹</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年1月18日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Git'>Git</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="安装-jenkins">安装 Jenkins</h2>
+<blockquote>
+<p>SCM, 全称Source Coce Management, 主要作用是监视&quot;版本控制系统&quot;(比如gitlab).</p>
+<p>Blue Ocean 重新思考Jenkins的用户体验，从头开始设计<a href="https://www.jenkins.io/zh/doc/book/pipeline/" target="_blank">Jenkins Pipeline</a>, 但仍然与自由式作业兼容，Jenkins是同步的</p>
+</blockquote>
+<h3 id="docker安装">docker安装</h3>
+<blockquote>
+<p>注意不要使用：jenkins:2.60.3-alpine 而是 jenkins/jenkins:lts</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 老版本：jenkins:2.60.3-alpine 三年未更新</span>
+</span></span><span style="display:flex;"><span>https://hub.docker.com/_/jenkins
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># DEPRECATED; use &#34;jenkins/jenkins:lts&#34; instead 首页已经建议使用：jenkins/jenkins:lts</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 新版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://hub.docker.com/r/jenkins/jenkins/tags</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># lts版本，可以使用docker调用系统的docker服务</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># docker run -u 0 --privileged \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -d --name blueocean \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -u root \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -p 8081:8080 \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -v /data/blueocean_home:/var/jenkins_home \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -v /var/run/docker.sock:/var/run/docker.sock \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -v $(which docker):/usr/bin/docker \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     -v &#34;$HOME&#34;:/home \</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#     jenkinsci/blueocean</span>
+</span></span><span style="display:flex;"><span>docker run -u <span style="color:#099">0</span> --privileged <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -d --name myjenkins <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -p 8080:8080 -p 50000:50000 <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -v /data/jenkins_home:/var/jenkins_home <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -v /var/run/docker.sock:/var/run/docker.sock <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    -v <span style="color:#000;font-weight:bold">$(</span>which docker<span style="color:#000;font-weight:bold">)</span>:/usr/bin/docker <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    jenkins/jenkins:lts-jdk11
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 进入docker</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># docker exec -it myjenkins /bin/bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看密码</span>
+</span></span><span style="display:flex;"><span>docker <span style="color:#0086b3">exec</span> myjenkins cat /var/jenkins_home/secrets/initialAdminPassword
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># c9323a6749124818ae8f379df3568af8</span>
+</span></span><span style="display:flex;"><span>http://192.168.1.180:8080/
+</span></span></code></pre></div><h3 id="二进制安装">二进制安装</h3>
+<blockquote>
+<p><a href="https://www.jenkins.io/download/" target="_blank">包下载地址</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat /var/lib/jenkins/secrets/initialAdminPassword
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1969111886f84dccad1d850a229ff8bd</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 授权：jenkins /var/run/docker.sock: connect: permission denied</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 如果docker有自己的用户组，则为：usermod -a -G docker jenkins</span>
+</span></span><span style="display:flex;"><span>usermod -a -G root jenkins
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 临时测试：chmod 666 /var/run/docker.sock</span>
+</span></span></code></pre></div><h3 id="安装gitea插件">安装gitea插件</h3>
+<blockquote>
+<p><code>gitea</code></p>
+<p><a href="https://plugins.jenkins.io/gitea/" target="_blank">Gitea | Jenkins plugin</a></p>
+</blockquote>
+<h3 id="安装docker-插件">安装Docker 插件</h3>
+<blockquote>
+<p><code>Docker</code> 和 <code>Docker Pipeline</code></p>
+</blockquote>
+<h2 id="安装nexus">安装Nexus</h2>
+<blockquote>
+<p><a href="https://www.sonatype.com/thanks/repo-oss" target="_blank">下载地址</a></p>
+</blockquote>
+<h3 id="常见地址">常见地址</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 中央仓库客户端请求的时候，自动缓存</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-central/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 私有快照</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-snapshots/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 私有发布版本</span>
+</span></span><span style="display:flex;"><span>http://localhost:8081/repository/maven-releases/
+</span></span></code></pre></div><h3 id="mvn配置">mvn配置</h3>
+<blockquote>
+<p>pom.xml</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;project&gt;</span>
+</span></span><span style="display:flex;"><span>......
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;distributionManagement&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;repository&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;name&gt;</span>Releases<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-releases<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/repository&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;snapshotRepository&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;name&gt;</span>Snapshot<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-snapshots<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/snapshotRepository&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/distributionManagement&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/project&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p>~/.m2/settings.xml</p>
+<p>作为私有仓库，同时作为central的镜像节点</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#000080">&lt;settings&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;mirrors&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;mirror&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;name&gt;</span>zaza<span style="color:#000080">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;mirrorOf&gt;</span>central<span style="color:#000080">&lt;/mirrorOf&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- 国内推荐阿里云的Maven镜像 --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">&lt;!-- &lt;url&gt;https://maven.aliyun.com/repository/central&lt;/url&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000080">&lt;url&gt;</span>http://localhost:8081/repository/maven-central/<span style="color:#000080">&lt;/url&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;/mirror&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;/mirrors&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000080">&lt;servers&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;server&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;id&gt;</span>zaza<span style="color:#000080">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;username&gt;</span>admin<span style="color:#000080">&lt;/username&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000080">&lt;password&gt;</span>71382b73-942a-4328-99d2-0d83155fa83b<span style="color:#000080">&lt;/password&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#000080">&lt;/server&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000080">&lt;/servers&gt;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#000080">&lt;/settings&gt;</span>
+</span></span></code></pre></div><h3 id="发布">发布</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mvn deploy
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 快照版本 &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 正式版本 &lt;version&gt;1.0.0&lt;/version&gt;</span>
+</span></span></code></pre></div><h2 id="安装gitea">安装gitea</h2>
+<blockquote>
+<p><a href="https://docs.gitea.io/zh-cn/" target="_blank">官方文档</a></p>
+</blockquote>
+<h2 id="安装maven">安装maven</h2>
+<blockquote>
+<p><a href="https://maven.apache.org/" target="_blank">Maven – Welcome to Apache Maven</a></p>
+</blockquote>
+<h2 id="cicd搭建">CICD搭建</h2>
+<h3 id="原理">原理</h3>
+<ol>
+<li>开发人员</li>
+<li>提交到gitea</li>
+<li>Jenkins定期扫描</li>
+<li>Jenkins读取版本库的Jenkinsfile文件</li>
+<li>管道方式执行Jenkinsfile</li>
+<li>Jenkinsfile可以将代码发布到Nexus私有仓库</li>
+</ol>
+<h3 id="创建gitea用户组织团队">创建Gitea用户、组织、团队</h3>
+<ol>
+<li>login to your Gitea instance with an administrator account.  管理员账号登录</li>
+<li>create a new user, e.g. &ldquo;jenkins&rdquo;. Set password to something secure - you will not need it for login. 创建用户：jenkins</li>
+<li>add the jenkins user to the organization you want to build projects for in jenkins (either by adding him to an existing team or adding a new &ldquo;ci&rdquo;-team). Make sure that team is associated to the repositories you want to build. 创建组织： 组织名称：ops    可见性：私有 ，新建团队（主要用于权限管理）：ci ，ci团队权限：只需要访问代码即可， 并将用户jenkins加入ci团队，  通常建议组织由管理员创建？ 注意：这里需要将私有仓库迁移至组织下</li>
+<li>log out of Gitea. 退出管理员账号</li>
+<li>log back in as the new &ldquo;jenkins&rdquo; user. jenkins 账号登录</li>
+<li>in user profile settings, go to &ldquo;application&rdquo; and add a new access token. Make sure to note the token shown. 创建token</li>
+</ol>
+<p>创建jenkins用户，重新登录并生成jenkins账户token：329bc5907bd7e690e553647bae29003d31b3f836</p>
+<h3 id="jenkins添加gitea认证源">Jenkins添加Gitea认证源</h3>
+<blockquote>
+<p><a href="https://plugins.jenkins.io/gitea/#documentation" target="_blank">Gitea | Jenkins plugin</a></p>
+<p>This is only necessary when using branch-api plugin version &gt;=2.7.0</p>
+<ol>
+<li>When configuring the new item, select &ldquo;Repository Sources&rdquo;</li>
+<li>In the &ldquo;Gitea organzations&rdquo; section, add a new credential of type &ldquo;Gitea personal access token&rdquo;.</li>
+<li>Add the access token created before for the jenkins user in Gitea. Ignore the error about the token not having the correct length.</li>
+<li>In the &ldquo;Owner&rdquo; field, add the name of the organization in Gitea you want to build projects for (not the full name).</li>
+<li>Fill the rest of the form as required. Click &ldquo;Save&rdquo;. The following scan should list the repositories that the jenkins user can see in the organization selected.</li>
+</ol>
+</blockquote>
+<p>系统管理-&gt;系统设置-&gt;Gitea Servers-&gt;新增：这里主要添加认证，注意Gitea的仓库需要授权给jenkins，才能正常访问</p>
+<p>Name：Gitea</p>
+<p>Server URL：http://192.168.1.180:3000/</p>
+<p>勾选Manage hooks-&gt;Credentials-&gt;添加-&gt;Jenkins:</p>
+<p>类型(Kind)：<strong>Gitea Personal Access Token</strong></p>
+<p>范围(Scope)：系统(<strong>System</strong>)</p>
+<p>Token(Gitea生成的)：这里是Gitea用户生成的token 329bc5907bd7e690e553647bae29003d31b3f836</p>
+<h3 id="新建任务0-文件夹">新建任务：{0} 文件夹</h3>
+<blockquote>
+<p>这个方案适用于自动扫描组织下面所有的版本库和版本分支</p>
+</blockquote>
+<p><strong>{0} 文件夹</strong>(Organization Folder)：</p>
+<p>创建后-&gt;Projects-&gt;Repository Sources</p>
+<p>Gitea Organization：这个是对应的Gitea服务器</p>
+<p>Credentials：保存到对应的任务名里面，这里是Gitea用户生成的token 329bc5907bd7e690e553647bae29003d31b3f836</p>
+<p>Owner：ops  Gitea对应的组织名称</p>
+<p>扫描 Gitea Organization 触发器：5min</p>
+<p>Child Scan Triggers：5min</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://www.cnblogs.com/mic112/p/15792567.html" target="_blank">基于Jenkins+Maven+Gitea+Nexus从0到1搭建CICD环</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html">https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/12/31/java-getting-started.html">Java-入门学习</a></li>
+        
+        <li><a href="/2021/11/08/elk-insert-nginx-log.html">ELK-nginx数据录入</a></li>
+        
+        <li><a href="/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a></li>
+        
+        <li><a href="/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html">ELK-6.0.0升级到7.15.0</a></li>
+        
+        <li><a href="/2021/10/09/python-3.8-install-on-centos6.x-doc.html">Python-3.8安装文档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/ci/cd'>ci/cd</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

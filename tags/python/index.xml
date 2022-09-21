@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/python.html</link>
+    <description>Recent content in python on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 Apr 2022 11:33:27 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python-通过抽象基类实现存储抽象化</title>
+      <link>https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html</link>
+      <pubDate>Fri, 01 Apr 2022 11:33:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html</guid>
+      <description>应用场景 场景： 张三需要将数据推送到rsync服务，于是通过rsync类进行推送 李四更喜欢ftp，于是又新增ftp类，修改rsync调</description>
+    </item>
+    
+    <item>
+      <title>Python-3.8安装文档</title>
+      <link>https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html</link>
+      <pubDate>Sat, 09 Oct 2021 11:08:58 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html</guid>
+      <description>测试环境：centos6.8 安装依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，</description>
+    </item>
+    
+    <item>
+      <title>Python-上下文管理器</title>
+      <link>https://zazayaya.github.io/2021/05/12/python-contextor.html</link>
+      <pubDate>Wed, 12 May 2021 09:57:27 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/12/python-contextor.html</guid>
+      <description>原理 执行 contextor 以获取上下文管理器 加载上下文管理器的 exit() 方法以备稍后调用 调用上下文管理器的 enter() 方法 如果有 as var 从句，则将 enter() 方法的返回值赋给 var 执行</description>
+    </item>
+    
+    <item>
+      <title>Python-时间转换</title>
+      <link>https://zazayaya.github.io/2021/05/06/python-time-formatter.html</link>
+      <pubDate>Thu, 06 May 2021 14:52:04 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/05/06/python-time-formatter.html</guid>
+      <description>掌握几种对象及其关系 了解每类对象的基本操作方法 通过转化关系转化 time对象 datetime &amp;gt;&amp;gt;&amp;gt; import datetime &amp;gt;&amp;gt;&amp;gt; now = datetime.datetime.now() &amp;gt;&amp;gt;&amp;gt; now datetime.datetime(2015, 1, 12, 23, 9, 12, 946118) &amp;gt;&amp;gt;&amp;gt; type(now) &amp;lt;type &amp;#39;datetime.datetime&amp;#39;&amp;gt; timestamp &amp;gt;&amp;gt;&amp;gt; import time &amp;gt;&amp;gt;&amp;gt; time.time() 1421075455.568243 time</description>
+    </item>
+    
+    <item>
+      <title>Supervisord-使用文档</title>
+      <link>https://zazayaya.github.io/2021/03/17/python-supervisord.html</link>
+      <pubDate>Wed, 17 Mar 2021 11:07:51 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/03/17/python-supervisord.html</guid>
+      <description>环境依赖 # python2.7版本 # supervisord支持include功能 安装 # 建议最新版本 pip install supervisor==4.1.0 配置 # /root/.virtualenvs/test/bin/echo_supervisord_conf # 如果是virtual</description>
+    </item>
+    
+    <item>
+      <title>Python-3.7安装文档</title>
+      <link>https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html</link>
+      <pubDate>Fri, 11 Dec 2020 16:11:00 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html</guid>
+      <description>依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，则需要卸载) yum -y install gcc gcc-c++ openssl-devel readline-devel bzip2-devel \ sqlite-devel</description>
+    </item>
+    
+    <item>
+      <title>Python-2.7安装文档</title>
+      <link>https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html</link>
+      <pubDate>Fri, 11 Dec 2020 16:10:47 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html</guid>
+      <description>测试环境：Centos6.x 安装 #依赖包 yum -y install gcc gcc-c++ openssl-devel bzip2-devel sqlite-devel libffi-devel # python2.7最新版本自带pip cd /usr/local/src wget https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tgz tar xzf Python-2.7.17.tgz &amp;amp;&amp;amp; cd Python-2.7.17 ./configure --with-ensurepip --enable-shared make &amp;amp;&amp;amp; make install #</description>
+    </item>
+    
+    <item>
+      <title>Python-多进程日志文件拆分</title>
+      <link>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</link>
+      <pubDate>Thu, 10 Dec 2020 11:32:19 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/10/python-logging-multiprocessing.html</guid>
+      <description>import logging import colorlog import time from multiprocessing import Process, current_process def _job(event_id): [logging.root.removeHandler(handler) for handler in logging.root.handlers[:]] colorlog.basicConfig( level=logging.DEBUG, format=&amp;#34;[%(asctime)s%(log_color)s%(levelname)-8s%(reset)s%(processName)spid:%(process)d] %(message)s&amp;#34; &amp;#34;%(name)s:%(lineno)d&amp;#34;, filename=&amp;#34;main_{0}.log&amp;#34;.format(event_id), filemode=&amp;#39;a+&amp;#39;, ) count = 0 while True: time.sleep(0.1) logger = logging.getLogger(__name__) logger.error(&amp;#34;fuck: {0}{1}&amp;#34;.format(id(logger), event_id)) count += 1 if count == 100: break if __name__ == &amp;#39;__main__&amp;#39;: jobs = [] # 生成 for _event_id in range(10): _p = Process(target=_job, name=&amp;#34;{0}_{1}&amp;#34;.format(current_process().name, _event_id), args=(_event_id,))</description>
+    </item>
+    
+    <item>
+      <title>Python-Windows安装Crypto</title>
+      <link>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</link>
+      <pubDate>Wed, 02 Dec 2020 14:40:05 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/12/02/python-windows-crypto.html</guid>
+      <description>Windows安装Crypto m2crypto vs pycrypto vs pycryptodome m2crypto：30+的星星，windows的兼容性较差，pip上面默认的版本不是whl包</description>
+    </item>
+    
+    <item>
+      <title>Python-模块编写</title>
+      <link>https://zazayaya.github.io/2019/02/14/python-project-struct.html</link>
+      <pubDate>Thu, 14 Feb 2019 16:27:46 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2019/02/14/python-project-struct.html</guid>
+      <description>目录结构 (ops) [root@zaza-test ~]# tree opsutil/ opsutil ├── README.rst ├── setup.py ├── src │ ├── ftp.py │ ├── __init__.py # 可以添加类似内容：from .ftp import Ftp，实现from opsutil import Ftp导入类</description>
+    </item>
+    
+  </channel>
+</rss>

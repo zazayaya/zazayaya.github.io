@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ceph on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/ceph.html</link>
+    <description>Recent content in ceph on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 25 Aug 2021 15:16:26 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/ceph/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s-ceph分布式存储</title>
+      <link>https://zazayaya.github.io/2021/08/25/ceph-getting-started.html</link>
+      <pubDate>Wed, 25 Aug 2021 15:16:26 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/08/25/ceph-getting-started.html</guid>
+      <description>测试环境：Ubuntu20.04 版本 v14.2.22 Nautilus released v15.2.14 Octopus released v16.2.5 Pacific released 最新版本，建议使用此版本？ This is the fifth backport release in the Pacific series. We recommend all Pacific users update to this release. 概念介绍 什么是</description>
+    </item>
+    
+  </channel>
+</rss>

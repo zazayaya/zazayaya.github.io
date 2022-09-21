@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>samba on zaza的博客</title>
+    <link>https://zazayaya.github.io/tags/samba.html</link>
+    <description>Recent content in samba on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 17 Jun 2021 11:07:39 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/tags/samba/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-samba安装</title>
+      <link>https://zazayaya.github.io/2021/06/17/linux-samba-install.html</link>
+      <pubDate>Thu, 17 Jun 2021 11:07:39 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2021/06/17/linux-samba-install.html</guid>
+      <description>测试环境：Centos6.x 安装 yum -y install python-devel gnutls-devel libacl-devel pam-devel openldap-devel # 默认路径就是：/usr/local/samba ./configure make &amp;amp;&amp;amp; make install mkdir -pv /var/log/samba mkdir -pv /usr/local/samba/etc/user mkdir -pv /data/smb 配置 cat &amp;gt;</description>
+    </item>
+    
+  </channel>
+</rss>

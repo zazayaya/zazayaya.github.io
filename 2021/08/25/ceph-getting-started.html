@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>K8s-ceph分布式存储 | zaza的博客</title>
+    <meta property="og:title" content="K8s-ceph分布式存储 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-08-25T15:16:26&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-08-25T15:16:26&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="K8s-ceph分布式存储">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/08/25/ceph-getting-started.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#版本">版本</a></li>
+    <li><a href="#概念介绍">概念介绍</a></li>
+    <li><a href="#ceph介绍">ceph介绍</a></li>
+    <li><a href="#cephadm介绍">cephadm介绍</a></li>
+    <li><a href="#环境准备">环境准备</a></li>
+    <li><a href="#cephadm依赖">cephadm依赖</a></li>
+    <li><a href="#cephadm安装">cephadm安装</a></li>
+    <li><a href="#引导新的群集">引导新的群集</a></li>
+    <li><a href="#添加主机">添加主机</a></li>
+    <li><a href="#添加osd">添加OSD</a></li>
+    <li><a href="#查看服务类型">查看服务类型</a></li>
+    <li><a href="#部署rgw">部署RGW</a></li>
+    <li><a href="#部署cephfs">部署Cephfs</a></li>
+    <li><a href="#授权并挂载cephfs">授权并挂载Cephfs</a></li>
+    <li><a href="#部署nfs">部署NFS</a></li>
+    <li><a href="#将cephfs映射到nfs">将CephFS映射到nfs</a></li>
+    <li><a href="#挂载nfs">挂载NFS</a></li>
+    <li><a href="#部署iscsi">部署iSCSi</a></li>
+    <li><a href="#部署rbd-mirror">部署rbd-mirror</a></li>
+    <li><a href="#部署cephfs-mirror">部署Cephfs-mirror</a></li>
+    <li><a href="#查看所有服务">查看所有服务</a></li>
+    <li><a href="#添加rgw-ingress">添加rgw-ingress</a></li>
+    <li><a href="#添加nfs-ingress">添加nfs-ingress</a></li>
+    <li><a href="#重置dashboard密码">重置dashboard密码</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">K8s-ceph分布式存储</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年8月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kubernetes'>Kubernetes</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <blockquote>
+<p>测试环境：Ubuntu20.04</p>
+</blockquote>
+<h2 id="版本">版本</h2>
+<ul>
+<li>v14.2.22 Nautilus released</li>
+<li>v15.2.14 Octopus released</li>
+<li>v16.2.5 Pacific released  最新版本，建议使用此版本？</li>
+</ul>
+<p>This is the fifth backport release in the Pacific series. We recommend all Pacific users update to this release.</p>
+<h2 id="概念介绍">概念介绍</h2>
+<p><a href="https://blog.csdn.net/ling_76539446/article/details/103834767" target="_blank">什么是Ceph存储？什么是分布式存储？</a></p>
+<h2 id="ceph介绍">ceph介绍</h2>
+<p>Ceph 独一无二地在一个统一的系统中同时提供了<strong>对象、块、和文件存储功能</strong>。</p>
+<p>RGW、RBD、CephFS ==&gt; RADOS ==&gt; librados</p>
+<ul>
+<li>CEPH 对象存储</li>
+<li>CEPH 块设备</li>
+<li>CEPH 文件系统</li>
+</ul>
+<h2 id="cephadm介绍">cephadm介绍</h2>
+<p>Cephadm 是随着 Ceph 新版本 v15.2.0(Octopus)发布的安装工具，并且不支持 Ceph 的旧版本，Ceph 中已经 Cephadm 不依赖于外部配置工具，如 Ansible、 Rook 和 Salt，它通过 SSH 将管理器守护进程连接到主机来实现这一点。管理器守护进程可以添加、删除和更新 Ceph 容器。类似迷你版本的kubernetes，cephadm实际上就是一个编排工具。</p>
+<h2 id="环境准备">环境准备</h2>
+<p>节点规划：</p>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>public-ip</th>
+<th>cluster-ip</th>
+<th>磁盘</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ceph1</td>
+<td>10.0.26.180</td>
+<td>172.0.26.180</td>
+<td>系统盘: sda<!-- raw HTML omitted -->osd盘: sdb</td>
+<td>cephadm,monitor,mgr,rgw,mds,osd,nfs</td>
+</tr>
+<tr>
+<td>ceph2</td>
+<td>10.0.26.190</td>
+<td>172.0.26.190</td>
+<td>系统盘: sda<!-- raw HTML omitted -->osd盘: sdb</td>
+<td>monitor,mgr,rgw,mds,osd,nfs</td>
+</tr>
+<tr>
+<td>ceph3</td>
+<td>10.0.26.191</td>
+<td>172.0.26.191</td>
+<td>系统盘: sda<!-- raw HTML omitted -->osd盘: sdb</td>
+<td>monitor,mgr,rgw,mds,osd,nfs</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 分别设置主机名</span>
+</span></span><span style="display:flex;"><span>hostnamectl set-hostname ceph1
+</span></span><span style="display:flex;"><span>hostnamectl set-hostname ceph2
+</span></span><span style="display:flex;"><span>hostnamectl set-hostname ceph3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 增加解析</span>
+</span></span><span style="display:flex;"><span>cat &gt;&gt; /etc/hosts <span style="color:#d14">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">172.0.26.180 ceph1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">172.0.26.190 ceph2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">172.0.26.191 ceph3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span></code></pre></div><h2 id="cephadm依赖">cephadm依赖</h2>
+<blockquote>
+<p>所有节点都需要安装依赖环境，因为cephadm类似k8s，通过容器进行管理</p>
+</blockquote>
+<ul>
+<li>Python3</li>
+<li>Systemd</li>
+<li>Podman or Docker（直接使用Docker就行了）</li>
+<li>chrony or NTP</li>
+<li>LVM2</li>
+</ul>
+<h2 id="cephadm安装">cephadm安装</h2>
+<blockquote>
+<p><a href="https://docs.ceph.com/en/latest/cephadm/install/" target="_blank">https://docs.ceph.com/en/latest/cephadm/install/</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 官方文档中还提到了另一种安装cephadm方式，就是通过apt install -y cephadm安装，实践证明最好不要使用这种方式，这种方式安装的cephadm可能不是最新版本的，但cephadm去拉的容器版本又是最新的，会导致两个版本不一致！</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># cephadm：基于 python3 编写的一个脚本</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># --location 用于处理重定向</span>
+</span></span><span style="display:flex;"><span>curl -o cephadm --location https://github.com/ceph/ceph/raw/pacific/src/cephadm/cephadm
+</span></span><span style="display:flex;"><span>chmod +x cephadm
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 指定最新发布的版本为：pacific，其实就是新增源，不同的系统自动指定：/etc/apt/sources.list.d/ceph.list</span>
+</span></span><span style="display:flex;"><span>./cephadm add-repo --release pacific
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装指定版本的cephadm到/usr/sbin/cephadm</span>
+</span></span><span style="display:flex;"><span>./cephadm install <span style="color:#000;font-weight:bold">&amp;&amp;</span> rm -fv ./cephadm
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用新安装指定版本的cephadm安装ceph所有命令行</span>
+</span></span><span style="display:flex;"><span>cephadm install ceph-common
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># apt install -y cephadm依赖包</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># The following additional packages will be installed:</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#  bridge-utils containerd dns-root-data dnsmasq-base docker.io libidn11 pigz runc ubuntu-fan</span>
+</span></span></code></pre></div><h2 id="引导新的群集">引导新的群集</h2>
+<p>cephadm bootstrap的处理步骤如下：</p>
+<ul>
+<li>Create a monitor and manager daemon for the new cluster on the local host.</li>
+<li>Generate a new SSH key for the Ceph cluster and add it to the root user’s <code>/root/.ssh/authorized_keys</code> file.</li>
+<li>Write a copy of the public key to <code>/etc/ceph/ceph.pub</code>.</li>
+<li>Write a minimal configuration file to <code>/etc/ceph/ceph.conf</code>. This file is needed to communicate with the new cluster.</li>
+<li>Write a copy of the <code>client.admin</code> administrative (privileged!) secret key to <code>/etc/ceph/ceph.client.admin.keyring</code>.</li>
+<li>Add the <code>_admin</code> label to the bootstrap host. By default, any host with this label will (also) get a copy of <code>/etc/ceph/ceph.conf</code> and <code>/etc/ceph/ceph.client.admin.keyring</code>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 初始化集群，注意留意生成的 web 账号信息，默认是ceph网络的ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通常不会使用root用户，具有sudo免密的用户即可</span>
+</span></span><span style="display:flex;"><span>cephadm bootstrap --mon-ip 172.0.26.180 --ssh-user zaza
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph网络的ip可能无法直接访问</span>
+</span></span><span style="display:flex;"><span>https://172.0.26.180:8443/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看镜像</span>
+</span></span><span style="display:flex;"><span>docker images
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看容器</span>
+</span></span><span style="display:flex;"><span>docker ps
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看所有组件状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ps
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看某个组件运行状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ps --daemon-type mds
+</span></span><span style="display:flex;"><span>ceph orch ps --daemon-type mgr
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看集群状态</span>
+</span></span><span style="display:flex;"><span>ceph status
+</span></span></code></pre></div><h2 id="添加主机">添加主机</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通常不会使用root账号，具有sudo免密的账号即可</span>
+</span></span><span style="display:flex;"><span>ssh-copy-id -f -i /etc/ceph/ceph.pub zaza@ceph2
+</span></span><span style="display:flex;"><span>ssh-copy-id -f -i /etc/ceph/ceph.pub zaza@ceph3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加主机</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加成功后会创建以下服务(mgr总共置放了两个，所有ceph2和ceph3其中一个才有)：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph orch ps|grep ceph2</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># crash.ceph2 mgr.ceph2.dyhlvv mon.ceph2 node-exporter.ceph2</span>
+</span></span><span style="display:flex;"><span>ceph orch host add ceph2 172.0.26.190
+</span></span><span style="display:flex;"><span>ceph orch host add ceph3 172.0.26.191
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看主机</span>
+</span></span><span style="display:flex;"><span>ceph orch host ls
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看哪些设备可以用于添加OSD(Available为Yes，代表可以添加，NO代表添加完成)</span>
+</span></span><span style="display:flex;"><span>ceph orch device ls
+</span></span></code></pre></div><h2 id="添加osd">添加OSD</h2>
+<blockquote>
+<p>ceph底层服务器对象，必须添加（服务于Ceph 独一无二地在一个统一的系统中同时提供了<strong>对象、块、和文件存储功能</strong>。）</p>
+<p>OSD是负责物理存储的进程，一般配置成和磁盘一一对应，一块磁盘启动一个OSD进程。主要功能是存储数据、复制数据、平衡数据、恢复数据，以及与其它OSD间进行心跳检查，负责响应客户端请求返回具体数据的进程等；</p>
+</blockquote>
+<p>添加OSD需求满足以下所有条件：</p>
+<ul>
+<li>设备必须没有分区。</li>
+<li>设备不得具有任何LVM状态。</li>
+<li>不得安装设备。</li>
+<li>该设备不得包含文件系统。</li>
+<li>该设备不得包含Ceph BlueStore OSD。</li>
+<li>设备必须大于5 GB。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 为自动添加所有满足条件的OSD</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph orch apply osd --all-available-devices</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通过手工指定的方式添加OSD(添加进程：osd.x，一个硬盘对应一个)</span>
+</span></span><span style="display:flex;"><span>ceph orch daemon add osd ceph1:/dev/sdb
+</span></span><span style="display:flex;"><span>ceph orch daemon add osd ceph2:/dev/sdb
+</span></span><span style="display:flex;"><span>ceph orch daemon add osd ceph3:/dev/sdb
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看(Available为Yes，代表可以添加，NO代表添加完成)</span>
+</span></span><span style="display:flex;"><span>ceph orch device ls
+</span></span></code></pre></div><h2 id="查看服务类型">查看服务类型</h2>
+<p>https://127.0.0.1:8443/#/services/create</p>
+<h2 id="部署rgw">部署RGW</h2>
+<blockquote>
+<p>本次测试主要是文件系统，所以不需要部署：CEPH 对象存储 网关</p>
+</blockquote>
+<p>Ceph RGW基于librados，是为应用提供RESTful类型的对象存储接口。RGW提供两种类型的接口：</p>
+<ul>
+<li>S3：兼容Amazon S3RESTful API</li>
+<li>Swift：兼容OpenStack Swift API</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># placement为三个，也可以是所有或者匹配主机</span>
+</span></span><span style="display:flex;"><span>ceph orch apply rgw rgw --placement<span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看服务</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep rgw.rgw
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看进程</span>
+</span></span><span style="display:flex;"><span>ceph orch ps | grep rgw.rgw
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 集成到dashboard(查看access_key和secret_key分别保存到secret_key.txt和access_key.txt)</span>
+</span></span><span style="display:flex;"><span>radosgw-admin user create --uid<span style="color:#000;font-weight:bold">=</span>rgw --display-name<span style="color:#000;font-weight:bold">=</span>rgw --system
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 保存（后续版本可以不需要操作此步骤了）</span>
+</span></span><span style="display:flex;"><span>ceph dashboard set-rgw-api-access-key -i access_key.txt
+</span></span><span style="display:flex;"><span>ceph dashboard set-rgw-api-secret-key -i secret_key.txt
+</span></span></code></pre></div><h2 id="部署cephfs">部署Cephfs</h2>
+<blockquote>
+<p>本次测试重点：文件存储功能</p>
+<p>Ceph 文件系统（ CephFS ）是个与 POSIX 标准兼容的文件系统，它建立在 Ceph 的分布式对象存储 RADOS 之上。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ceph fs volume create cephfs --placement<span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep cephfs
+</span></span><span style="display:flex;"><span>ceph orch ps | grep cephfs
+</span></span></code></pre></div><h2 id="授权并挂载cephfs">授权并挂载Cephfs</h2>
+<blockquote>
+<p><a href="https://access.redhat.com/documentation/en-us/red_hat_ceph_storage/2/html/ceph_file_system_guide_technology_preview/mounting_and_unmounting_ceph_file_systems" target="_blank">授权示例</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic">######################管理节点######################</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看授权</span>
+</span></span><span style="display:flex;"><span>ceph auth ls
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 授权</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 可以创建文件，但是不能写入数据，因为mds元数据有w权限</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 问题：/test/目录下任然无法写入数据</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph auth get-or-create client.0 mon &#39;allow r&#39; mds &#39;allow r, allow rw path=/&#39; osd &#39;allow rw pool=cephfs.cephfs.data/test/&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 用户名可以是id也可以是name</span>
+</span></span><span style="display:flex;"><span>ceph auth get-or-create client.0 mon <span style="color:#d14">&#39;allow r&#39;</span> mds <span style="color:#d14">&#39;allow r, allow rw path=/&#39;</span> osd <span style="color:#d14">&#39;allow rw pool=cephfs.cephfs.data&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看keyring数据</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph auth get client.admin</span>
+</span></span><span style="display:flex;"><span>ceph auth get client.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######################客户端######################</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看mount支持的挂载类型</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># grep ceph /proc/filesystems</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 通过fuse挂载</span>
+</span></span><span style="display:flex;"><span>apt install -y ceph-fuse
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建配置文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 这里有个坑：xshell+ubuntu,下面的数据会变成：ceph.ckey这种类型的，因为前面的空格是tab键</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># root@ceph3:/etc/ceph# cat &gt; /etc/ceph/ceph.client.0.keyring &lt;&lt; &#39;EOF&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; [client.0]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; ceph.ckey = AQAJmyhho5xMHBAAVx68eqqaamMxZd2539y27Q==</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; ceph.ccaps mds = &#34;allow r, allow rw path=/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; ceph.ccaps mon = &#34;allow r&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; ceph.ccaps osd = &#34;allow rw pool=cephfs.cephfs.data&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># &gt; EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意：生成的数据需要将tab键改成空格键，或者是vim添加</span>
+</span></span><span style="display:flex;"><span>cat &gt; /etc/ceph/ceph.client.0.keyring &lt;&lt; <span style="color:#d14">&#34;EOF&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>client.0<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008080">key</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#008080">AQAJmyhho5xMHBAAVx68eqqaamMxZd2539y27Q</span><span style="color:#000;font-weight:bold">==</span>
+</span></span><span style="display:flex;"><span>    caps <span style="color:#008080">mds</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;allow r, allow rw path=/&#34;</span>
+</span></span><span style="display:flex;"><span>    caps <span style="color:#008080">mon</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;allow r&#34;</span>
+</span></span><span style="display:flex;"><span>    caps <span style="color:#008080">osd</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;allow rw pool=cephfs.cephfs.data&#34;</span>
+</span></span><span style="display:flex;"><span>EOF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 挂载</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># cephadm节点上面可以直接执行： ceph-fuse -m ceph1:6789,ceph2:6789,ceph3:6789 -r / /mnt/cephfs</span>
+</span></span><span style="display:flex;"><span>ceph-fuse -m ceph1:6789,ceph2:6789,ceph3:6789 -r / /mnt/cephfs --name<span style="color:#000;font-weight:bold">=</span>client.0
+</span></span></code></pre></div><h2 id="部署nfs">部署NFS</h2>
+<blockquote>
+<p>建议测试</p>
+<p>自从<code>Jewel</code>版本，<code>nfs-ganesha</code>开始支持<code>ceph</code>，并且把对接点选择了<code>rados</code>。<code>Ganesha</code>支持两种方式将<code>Ceph</code>导出为<code>NFS</code>，一种通过<code>RGW</code>，一种通过<code>CephFS</code>，通过<code>FSAL</code>模块 连接到<code>RGW</code>或者<code>CephFS</code>， 其中，<code>FSAL_RGW</code>调用<code>librgw2</code>将<code>NFS</code>协议转义为<code>S3</code>协议再通过<code>RGW</code>存入到<code>Ceph</code>中，<code>FSAL_CEPH</code> 调用<code>libcephfs1</code>将<code>NFS</code>转义为<code>Cephfs</code>协议再存入到<code>Ceph</code> 中。所以需要额外安装这两个包。</p>
+<p>伪版本（pseudo-version）</p>
+<p><a href="https://access.redhat.com/documentation/zh-cn/red_hat_ceph_storage/3/html/object_gateway_guide_for_red_hat_enterprise_linux/exporting-the-namespace-to-nfs-ganesha-rgw" target="_blank">Pseudo说明</a></p>
+<p><a href="https://www.cnblogs.com/BloodZero/p/4783578.html" target="_blank">squash说明</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建pool池的名称为：ganesha_data</span>
+</span></span><span style="display:flex;"><span>ceph osd pool create ganesha_data <span style="color:#099">32</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看资源池</span>
+</span></span><span style="display:flex;"><span>ceph osd pool ls
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 将资源池用于nfs app程序</span>
+</span></span><span style="display:flex;"><span>ceph osd pool application <span style="color:#0086b3">enable</span> ganesha_data nfs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 部署nfs Service，并将svc_id设置为nfs，ganesha_data为pool池的资源名称</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用web，更加直观的显示：https://127.0.0.1:8443/#/services/create</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ceph orch apply nfs &lt;svc_id&gt; [&lt;placement&gt;] [&lt;pool&gt;]</span>
+</span></span><span style="display:flex;"><span>ceph orch apply nfs nfs ganesha_data --placement<span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep nfs.nfs
+</span></span><span style="display:flex;"><span>ceph orch ps | grep nfs
+</span></span></code></pre></div><h2 id="将cephfs映射到nfs">将CephFS映射到nfs</h2>
+<blockquote>
+<p>通过web，将CephFS映射到nfs，当然也可以不用映射，直接使用NFS服务即可</p>
+<p>这里主要实现了将CephFS转换成nfs协议访问</p>
+<p>伪版本（pseudo-version）</p>
+</blockquote>
+<p>https://127.0.0.1:8443/#/nfs/create</p>
+<p>web关键配置信息：</p>
+<ul>
+<li>Daemons记得添加</li>
+<li>CephFS Path: /  源数据</li>
+<li>Pseudo: /cephfs nfs映射的目录</li>
+<li>Add clients 客户端权限控制</li>
+<li>此时：/mnt/cephfs数据和/mnt/nfs/cephfs是一致的了</li>
+</ul>
+<h2 id="挂载nfs">挂载NFS</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装依赖包</span>
+</span></span><span style="display:flex;"><span>apt install -y nfs-common
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 只支持单ip，所以需要nfs-ingress实现高可用</span>
+</span></span><span style="display:flex;"><span>mount ceph1:/ /mnt/nfs
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安装负载均衡器后，可以直接只要负载均衡器的ip</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 当前还有问题：mount.nfs: requested NFS version or transport protocol is not supported</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># mount -o port=2050 172.0.26.200:/nfs /mnt/nfs</span>
+</span></span></code></pre></div><h2 id="部署iscsi">部署iSCSi</h2>
+<blockquote>
+<p>CEPH 块设备，没有需求占时不测试</p>
+<ul>
+<li>对接
+<ul>
+<li><a href="http://localhost:17081/rbd/rbd-ko/" target="_blank">内核模块</a></li>
+<li><a href="http://localhost:17081/rbd/qemu-rbd/" target="_blank">QEMU</a></li>
+<li><a href="http://localhost:17081/rbd/libvirt/" target="_blank">libvirt</a></li>
+<li><a href="http://localhost:17081/rbd/rbd-kubernetes/" target="_blank">Kubernetes</a></li>
+<li><a href="http://localhost:17081/rbd/rbd-openstack/" target="_blank">OpenStack</a></li>
+<li><a href="http://localhost:17081/rbd/rbd-cloudstack/" target="_blank">CloudStack</a></li>
+<li><a href="http://localhost:17081/rbd/iscsi-overview/" target="_blank">LIO iSCSI Gateway</a></li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建iscsi所需求的池</span>
+</span></span><span style="display:flex;"><span>ceph osd pool create iscsi_pool <span style="color:#099">32</span> <span style="color:#099">32</span>
+</span></span><span style="display:flex;"><span>ceph osd pool application <span style="color:#0086b3">enable</span> iscsi_pool iscsi
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 应用配置文件(参数太多不方便)</span>
+</span></span><span style="display:flex;"><span>cat &gt; iscsi.yaml <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_type: iscsi
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_id: gw
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">placement:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  hosts:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    - ceph1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    - ceph2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">    - ceph3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  pool: iscsi_pool
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  trusted_ip_list: &#34;172.0.26.180,172.0.26.190,172.0.26.191&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  api_user: admin
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  api_password: admin
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  api_secure: false
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 应用</span>
+</span></span><span style="display:flex;"><span>ceph orch apply -i iscsi.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep iscsi
+</span></span><span style="display:flex;"><span>ceph orch ps | grep iscsi
+</span></span></code></pre></div><h2 id="部署rbd-mirror">部署rbd-mirror</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ceph orch apply rbd-mirror --placement<span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep rbd-mirror
+</span></span><span style="display:flex;"><span>ceph orch ps | grep rbd-mirror
+</span></span></code></pre></div><h2 id="部署cephfs-mirror">部署Cephfs-mirror</h2>
+<blockquote>
+<p>快照工具？</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ceph orch apply cephfs-mirror --placement<span style="color:#000;font-weight:bold">=</span><span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看状态</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep cephfs-mirror
+</span></span><span style="display:flex;"><span>ceph orch ps | grep cephfs-mirror
+</span></span></code></pre></div><h2 id="查看所有服务">查看所有服务</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ceph -s
+</span></span></code></pre></div><h2 id="添加rgw-ingress">添加rgw-ingress</h2>
+<p>在前几个步骤中我们添加了RGW和NFS，并且都部署了3个Deamon，但其实三个还是独立服务的，也就是前端没有负载均衡实现统一访问，在Cephadm中将haproxy和keepalived两个封装成了ingress服务</p>
+<blockquote>
+<p>注意这里的backend_service一定要通过ceph orch ls查看到实际的名称为准， frontend_port为VIP的端口，注意到这里有个 monitor_port这个的意思是haproxy 状态页端口。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件</span>
+</span></span><span style="display:flex;"><span>cat &gt; rgw-ingress.yaml <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_type: ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_id: rgw.rgw
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">placement:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  count: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  backend_service: rgw.rgw
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  virtual_ip: 172.0.26.200/24
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  frontend_port: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  monitor_port: 1967
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 应用</span>
+</span></span><span style="display:flex;"><span>ceph orch apply -i rgw-ingress.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep ingress.rgw.rgw
+</span></span><span style="display:flex;"><span>ceph orch ps | egrep <span style="color:#d14">&#39;haproxy.rgw.rgw|keepalived.rgw.rgw&#39;</span>
+</span></span></code></pre></div><h2 id="添加nfs-ingress">添加nfs-ingress</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 配置文件</span>
+</span></span><span style="display:flex;"><span>cat &gt; nfs-ingress.yaml <span style="color:#d14">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_type: ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">service_id: nfs.nfs
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">placement:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  count: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  backend_service: nfs.nfs
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  virtual_ip: 172.0.26.200/24
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  frontend_port: 2050
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">  monitor_port: 1968
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 应用</span>
+</span></span><span style="display:flex;"><span>ceph orch apply -i nfs-ingress.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看</span>
+</span></span><span style="display:flex;"><span>ceph orch ls | grep ingress.nfs.nfs
+</span></span><span style="display:flex;"><span>ceph orch ps | egrep <span style="color:#d14">&#39;haproxy.nfs.nfs|keepalived.nfs.nfs&#39;</span>
+</span></span></code></pre></div><h2 id="重置dashboard密码">重置dashboard密码</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 必须通过文件读取密码</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">echo</span> mnBgUHoDLeTMkQOMVaGD &gt; change_password
+</span></span><span style="display:flex;"><span>ceph dashboard ac-user-set-password admin -i change_password
+</span></span></code></pre></div><h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://github.com/drunkard/ceph-Chinese-doc" target="_blank">官方最新文档翻译</a></li>
+<li><a href="https://blog.51cto.com/renlixing/3134294" target="_blank">Cephadm全功能安装Ceph pacific-推荐此文档</a></li>
+<li><a href="https://www.iyunv.com/thread-670730-1-2.html" target="_blank">ceph（rbd、cephfs）磁盘挂载详解 - ceph - 运维网 - iyunv.com</a></li>
+<li><a href="https://www.cnblogs.com/liinux/p/10045365.html" target="_blank">分布式存储中HDFS与Ceph两者的区别是什么，各有什么优势？</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/08/25/ceph-getting-started.html">https://zazayaya.github.io/2021/08/25/ceph-getting-started.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2021/08/24/k8s-ingress-nginx.html">K8s-ingress-nginx测试</a></li>
+        
+        <li><a href="/2021/08/24/docker-hub-upload.html">K8s-自定义镜像并上传dockerhub</a></li>
+        
+        <li><a href="/2021/08/17/k8s-ingress.html">K8s-kubernetes Ingress控制器</a></li>
+        
+        <li><a href="/2021/06/08/containerd-getting-started.html">K8s-containerd基础学习</a></li>
+        
+        <li><a href="/2021/06/04/k8s-install-by-kubeadm.html">K8s-kubernetes基于kubeadm搭建</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/kubernetes'>kubernetes</a></li>
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+                <li><a href='/tags/ceph'>ceph</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

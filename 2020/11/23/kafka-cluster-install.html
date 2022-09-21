@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Kafka-集群安装文档 | zaza的博客</title>
+    <meta property="og:title" content="Kafka-集群安装文档 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-11-23T16:13:18&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-11-23T16:13:18&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="Kafka-集群安装文档">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一架构">一、架构</a></li>
+    <li><a href="#二安装">二、安装</a></li>
+    <li><a href="#三配置zookeeper集群">三、配置zookeeper集群</a></li>
+    <li><a href="#四配置broker">四、配置broker</a></li>
+    <li><a href="#五启动">五、启动</a></li>
+    <li><a href="#六常见分配">六、常见分配</a></li>
+    <li><a href="#七测试">七、测试</a></li>
+    <li><a href="#八zookeeper使用文档">八、zookeeper使用文档</a></li>
+    <li><a href="#九空间满了处理">九、空间满了处理</a>
+      <ul>
+        <li><a href="#1调整副本数量">1、调整副本数量</a>
+          <ul>
+            <li><a href="#a查看集群信息">a、查看集群信息</a></li>
+            <li><a href="#b准备配置文件">b、准备配置文件</a></li>
+            <li><a href="#c执行">c、执行</a></li>
+            <li><a href="#d验证">d、验证</a></li>
+          </ul>
+        </li>
+        <li><a href="#2调整数据删除策略">2、调整数据删除策略</a></li>
+      </ul>
+    </li>
+    <li><a href="#十其它">十、其它</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Kafka-集群安装文档</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年11月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kafka'>Kafka</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        
+        <div class="post-content">
+            <h1 id="kafka集群安装文档">kafka集群安装文档</h1>
+<h2 id="一架构">一、架构</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># zookeeper和kafka架构</span>
+</span></span><span style="display:flex;"><span>producer producer  producer
+</span></span><span style="display:flex;"><span>|        |         |
+</span></span><span style="display:flex;"><span>--------------------
+</span></span><span style="display:flex;"><span>|
+</span></span><span style="display:flex;"><span>zookeeper zookeeper zookeeper <span style="color:#000;font-weight:bold">(</span>zookeeper支持failover,至少需要三个zookeeper<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>|
+</span></span><span style="display:flex;"><span>--------------------
+</span></span><span style="display:flex;"><span>|        |         |
+</span></span><span style="display:flex;"><span>kafka  kafka    kafka<span style="color:#000;font-weight:bold">(</span>broker<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># kafka架构</span>
+</span></span><span style="display:flex;"><span>push       pull
+</span></span><span style="display:flex;"><span>producer----&gt;broker----&gt;consumer
+</span></span><span style="display:flex;"><span>flume         kafka     logstash--&gt;elasticsearch--&gt;kibana
+</span></span></code></pre></div><h2 id="二安装">二、安装</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>http://kafka.apache.org/downloads.html
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 192.168.5.60</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># localhost</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 192.168.5.62</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># wget https://archive.apache.org/dist/kafka/2.2.0/kafka_2.12-2.2.0.tgz</span>
+</span></span><span style="display:flex;"><span>yum -y install java-1.8.0-openjdk.x86_64
+</span></span><span style="display:flex;"><span>tar xzf kafka_2.12-2.2.0.tgz <span style="color:#000;font-weight:bold">&amp;&amp;</span> mv kafka_2.12-2.2.0 /usr/local/kafka <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">cd</span> /usr/local/kafka
+</span></span></code></pre></div><h2 id="三配置zookeeper集群">三、配置zookeeper集群</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># zk建议是单数</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># http://cailin.iteye.com/blog/2014486/</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># http://www.ibm.com/developerworks/cn/opensource/os-cn-zookeeper/</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># zookeeper集群解释(自动冗余broker的信息)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># zookeeper支持failover,至少需要三个（2n+1）zookeeper</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># server.zk服务器标识=IP或hostname:选举leader端口(zk之间的通讯):接收选举数据通信端口,还有一个客户端的端口2181,这三个端口不要混淆</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 注意下面的任意端口不要冲突</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## zookeeper1.properties ########</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">f</span><span style="color:#000;font-weight:bold">=</span>config/zookeeper1.properties
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f <span style="color:#008080">$f</span> <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> cat &gt; <span style="color:#008080">$f</span> <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">dataDir=/data/zookeeper-s1
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">clientPort=2181
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">maxClientCnxns=20
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># zookeeper集群配置信息
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">initLimit=5
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">syncLimit=2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.1=192.168.5.61:3181:3881
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.2=192.168.5.61:3182:3882
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.3=192.168.5.62:3183:3883
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## zookeeper2.properties ########</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">f</span><span style="color:#000;font-weight:bold">=</span>config/zookeeper2.properties
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f <span style="color:#008080">$f</span> <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> cat &gt; <span style="color:#008080">$f</span> <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">dataDir=/data/zookeeper-s2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">clientPort=2182
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">maxClientCnxns=20
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># zookeeper集群配置信息
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">initLimit=5
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">syncLimit=2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.1=192.168.5.61:3181:3881
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.2=192.168.5.61:3182:3882
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.3=192.168.5.62:3183:3883
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## zookeeper3.properties ########</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">f</span><span style="color:#000;font-weight:bold">=</span>config/zookeeper3.properties
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f <span style="color:#008080">$f</span> <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> cat &gt; <span style="color:#008080">$f</span> <span style="color:#d14">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">dataDir=/data/zookeeper-s3
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">clientPort=2183
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">maxClientCnxns=20
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"># zookeeper集群配置信息
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">initLimit=5
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">syncLimit=2
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.1=192.168.5.61:3181:3881
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.2=192.168.5.61:3182:3882
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">server.3=192.168.5.62:3183:3883
+</span></span></span><span style="display:flex;"><span><span style="color:#d14">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 对应的zookeeper的data目录下面声明自己的id(上面server.x中x即对应的id)</span>
+</span></span><span style="display:flex;"><span>mkdir /data/zookeeper-s1/ <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;1&#34;</span> &gt; /data/zookeeper-s1/myid
+</span></span><span style="display:flex;"><span>mkdir /data/zookeeper-s2/ <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;2&#34;</span> &gt; /data/zookeeper-s2/myid
+</span></span><span style="display:flex;"><span>mkdir /data/zookeeper-s3/ <span style="color:#000;font-weight:bold">&amp;&amp;</span> <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;3&#34;</span> &gt; /data/zookeeper-s3/myid
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rm -fr /data/kafka-logs-s* /data/zookeeper-s*</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 如何查看zookeeper为主呢</span>
+</span></span></code></pre></div><h2 id="四配置broker">四、配置broker</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># (Replication策略需要自己优化)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#advertised.listeners=PLAINTEXT://your.host.name:9092 这个值配置ip端口 主要用于返回给生产者和消费者</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## server1.properties ########</span>
+</span></span><span style="display:flex;"><span>broker.id<span style="color:#000;font-weight:bold">=</span><span style="color:#099">101</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># delete.topic.enable=true # 调试可以开启删除topic</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">listeners</span><span style="color:#000;font-weight:bold">=</span>PLAINTEXT://:9091
+</span></span><span style="display:flex;"><span>advertised.listeners<span style="color:#000;font-weight:bold">=</span>PLAINTEXT://192.168.5.61:9091
+</span></span><span style="display:flex;"><span>log.dirs<span style="color:#000;font-weight:bold">=</span>/data/kafka-logs-s1
+</span></span><span style="display:flex;"><span>zookeeper.connect<span style="color:#000;font-weight:bold">=</span>192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># log.retention.hours=168 消息默认保留7天</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 150G：16106127360;250G：268435456000;300G：322122547200</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单卡kafka超过此大小会自动清理</span>
+</span></span><span style="display:flex;"><span>log.retention.bytes<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16106127360</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## server2.properties ########</span>
+</span></span><span style="display:flex;"><span>broker.id<span style="color:#000;font-weight:bold">=</span><span style="color:#099">102</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">listeners</span><span style="color:#000;font-weight:bold">=</span>PLAINTEXT://:9092
+</span></span><span style="display:flex;"><span>advertised.listeners<span style="color:#000;font-weight:bold">=</span>PLAINTEXT://192.168.5.61:9092
+</span></span><span style="display:flex;"><span>log.dirs<span style="color:#000;font-weight:bold">=</span>/data/kafka-logs-s2
+</span></span><span style="display:flex;"><span>zookeeper.connect<span style="color:#000;font-weight:bold">=</span>192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># log.retention.hours=168 消息默认保留7天</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 150G：16106127360;250G：268435456000;300G：322122547200</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单卡kafka超过此大小会自动清理</span>
+</span></span><span style="display:flex;"><span>log.retention.bytes<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16106127360</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## server3.properties ########</span>
+</span></span><span style="display:flex;"><span>broker.id<span style="color:#000;font-weight:bold">=</span><span style="color:#099">103</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">listeners</span><span style="color:#000;font-weight:bold">=</span>PLAINTEXT://:9093
+</span></span><span style="display:flex;"><span>advertised.listeners<span style="color:#000;font-weight:bold">=</span>PLAINTEXT://192.168.5.62:9093
+</span></span><span style="display:flex;"><span>log.dirs<span style="color:#000;font-weight:bold">=</span>/data/kafka-logs-s3
+</span></span><span style="display:flex;"><span>zookeeper.connect<span style="color:#000;font-weight:bold">=</span>192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># log.retention.hours=168 消息默认保留7天</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 150G：16106127360;250G：268435456000;300G：322122547200</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单卡kafka超过此大小会自动清理</span>
+</span></span><span style="display:flex;"><span>log.retention.bytes<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16106127360</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">######## server4.properties ########</span>
+</span></span><span style="display:flex;"><span>broker.id<span style="color:#000;font-weight:bold">=</span><span style="color:#099">104</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">listeners</span><span style="color:#000;font-weight:bold">=</span>PLAINTEXT://:9094
+</span></span><span style="display:flex;"><span>advertised.listeners<span style="color:#000;font-weight:bold">=</span>PLAINTEXT://192.168.5.62:9094
+</span></span><span style="display:flex;"><span>log.dirs<span style="color:#000;font-weight:bold">=</span>/data/kafka-logs-s4
+</span></span><span style="display:flex;"><span>zookeeper.connect<span style="color:#000;font-weight:bold">=</span>192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># log.retention.hours=168 消息默认保留7天</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 150G：16106127360;250G：268435456000;300G：322122547200</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单卡kafka超过此大小会自动清理</span>
+</span></span><span style="display:flex;"><span>log.retention.bytes<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16106127360</span>
+</span></span></code></pre></div><h2 id="五启动">五、启动</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 先启动zookeeper(Kafka uses ZooKeeper so you need to first start a ZooKeeper server)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># bin/zookeeper-server-start.sh -daemon config/zookeeper.properties</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># bin/kafka-server-start.sh -daemon config/server.properties</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 前台打印日志调试(daemon参数用于后台)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动okeeper</span>
+</span></span><span style="display:flex;"><span>bin/zookeeper-server-start.sh -daemon config/zookeeper1.properties
+</span></span><span style="display:flex;"><span>bin/zookeeper-server-start.sh -daemon config/zookeeper2.properties
+</span></span><span style="display:flex;"><span>bin/zookeeper-server-start.sh -daemon config/zookeeper3.properties
+</span></span><span style="display:flex;"><span>bin/zookeeper-server-start.sh -daemon config/zookeeper4.properties
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看日志 tailf</span>
+</span></span><span style="display:flex;"><span>logs/zookeeper.out
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 当获取到Follower信息时，说明此zookeeper为leader</span>
+</span></span><span style="display:flex;"><span>INFO leader and follower are in sync, <span style="color:#008080">zxid</span><span style="color:#000;font-weight:bold">=</span>0x0
+</span></span><span style="display:flex;"><span>INFO Received NEWLEADER-ACK message from <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>INFO Received NEWLEADER-ACK message from <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>INFO Received NEWLEADER-ACK message from <span style="color:#099">4</span>
+</span></span><span style="display:flex;"><span>INFO Follower sid: <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>INFO Follower sid: <span style="color:#099">1</span>
+</span></span><span style="display:flex;"><span>INFO Follower sid: <span style="color:#099">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 非leader关键字</span>
+</span></span><span style="display:flex;"><span>INFO Getting a diff from the leader 0x0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># broker(调整内存)</span>
+</span></span><span style="display:flex;"><span>vim bin/kafka-server-start.sh
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">export</span> <span style="color:#008080">KAFKA_HEAP_OPTS</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;-Xmx256M -Xms128M&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 启动kafka</span>
+</span></span><span style="display:flex;"><span>bin/kafka-server-start.sh -daemon config/server1.properties
+</span></span><span style="display:flex;"><span>bin/kafka-server-start.sh -daemon config/server2.properties
+</span></span><span style="display:flex;"><span>bin/kafka-server-start.sh -daemon config/server3.properties
+</span></span><span style="display:flex;"><span>bin/kafka-server-start.sh -daemon config/server4.properties
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看日志</span>
+</span></span><span style="display:flex;"><span>tailf logs/server.log 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># </span>
+</span></span><span style="display:flex;"><span>INFO New leader is <span style="color:#099">101</span>  <span style="color:#998;font-style:italic"># 101上面的日志，说明此服为leader</span>
+</span></span></code></pre></div><h2 id="六常见分配">六、常见分配</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单机版（省成本），多分区，跟进项目需求来确定分区数量(broker)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 下面为统计系统，单个物理服务器，只需要3个分区做并发的效果</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建topic</span>
+</span></span><span style="display:flex;"><span>/usr/local/kafka/bin/kafka-topics.sh --create --zookeeper 192.168.101.135:2181,192.168.101.135:2182,192.168.101.135:2183 --replication-factor <span style="color:#099">1</span> --partitions <span style="color:#099">3</span> --topic zaza
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看</span>
+</span></span><span style="display:flex;"><span>/usr/local/kafka/bin/kafka-topics.sh --list --zookeeper 192.168.101.135:2181,192.168.101.135:2182,192.168.101.135:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 详细信息</span>
+</span></span><span style="display:flex;"><span>/usr/local/kafka/bin/kafka-topics.sh --describe --zookeeper 192.168.101.135:2181,192.168.101.135:2182,192.168.101.135:2183 zaza
+</span></span></code></pre></div><h2 id="七测试">七、测试</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic">#负载均衡和容错</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#Producer和broker之间没有负载均衡机制。</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#broker和consumer之间利用zookeeper进行负载均衡。所有broker和consumer都会在zookeeper中进行注册，且zookeeper会保存他们的一些元数据信息。如果某个broker和consumer发生了变化，所有其他的broker和consumer都会得到通知。</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">## 对于producer的broker是没有集群的概念，必须制定多个broker</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#bin/kafka-console-producer.sh --broker-list 192.168.5.60:9092,192.168.5.61:9092,192.168.5.62:9092 --topic my-replicated-topic</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 创建topic(nginx-access/mysql-slow-log/dldl-ios)：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># replication-factor表示副本的份数，不能超过broker总量(kafka)，一般副本建议两个？</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># partitions为分区数量,且每个分区的消息内容不会(提高性能)重复(分区可能在多个broker上面)如：/data/kafka-logs/test_topic-0 /data/kafka-logs/test_topic-1</span>
+</span></span><span style="display:flex;"><span>bin/kafka-topics.sh --create --zookeeper 192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183 --replication-factor <span style="color:#099">3</span> --partitions <span style="color:#099">3</span> --topic test_topic
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># bin/kafka-topics.sh --delete --zookeeper 192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183 --topic test_topic</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic test_topic</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看Topic：</span>
+</span></span><span style="display:flex;"><span>bin/kafka-topics.sh --list --zookeeper 192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 显示所有Topic</span>
+</span></span><span style="display:flex;"><span>bin/kafka-topics.sh --describe --zookeeper 192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">###############################################################</span>
+</span></span><span style="display:flex;"><span>Topic:test_topic      PartitionCount:3        ReplicationFactor:3     Configs:
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">0</span>    Leader: <span style="color:#099">103</span>     Replicas: 103,104,101   Isr: 103,104,101
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">1</span>    Leader: <span style="color:#099">104</span>     Replicas: 104,101,102   Isr: 104,101,102
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">2</span>    Leader: <span style="color:#099">101</span>     Replicas: 101,102,103   Isr: 101,102,103
+</span></span><span style="display:flex;"><span>Topic:test_topic      PartitionCount:3        ReplicationFactor:3     Configs:
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">0</span>    Leader: <span style="color:#099">103</span>     Replicas: 103,101,102   Isr: 103,101,102
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">1</span>    Leader: <span style="color:#099">104</span>     Replicas: 104,102,103   Isr: 104,102,103
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">2</span>    Leader: <span style="color:#099">101</span>     Replicas: 101,103,104   Isr: 101,103,104
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看指定topic节点信息</span>
+</span></span><span style="display:flex;"><span>bin/kafka-topics.sh --describe --zookeeper 192.168.5.61:2181,192.168.5.61:2182,192.168.5.62:2183 --topic test_topic
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">###############################################################</span>
+</span></span><span style="display:flex;"><span>Topic:test_topic      PartitionCount:3        ReplicationFactor:3     Configs:
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">0</span>    Leader: <span style="color:#099">103</span>     Replicas: 103,104,101   Isr: 103,104,101
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">1</span>    Leader: <span style="color:#099">104</span>     Replicas: 104,101,102   Isr: 104,101,102
+</span></span><span style="display:flex;"><span>Topic: test_topic     Partition: <span style="color:#099">2</span>    Leader: <span style="color:#099">101</span>     Replicas: 101,102,103   Isr: 101,102,103
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 发送消息(数据发送自己决策)：</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 最终一致性：client不论连接到哪个Server，展示给它都是同一个视图，这是zookeeper最重要的性能。</span>
+</span></span><span style="display:flex;"><span>bin/kafka-console-producer.sh --broker-list 192.168.5.61:9091,192.168.5.61:9092,192.168.5.62:9093,192.168.5.62:9094 --topic test_topic
+</span></span><span style="display:flex;"><span><span style="color:#099">23423</span>
+</span></span><span style="display:flex;"><span>^C
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 接收消息(查找数据)：</span>
+</span></span><span style="display:flex;"><span>bin/kafka-console-consumer.sh -- 192.168.5.61:9091,192.168.5.61:9092,192.168.5.62:9093,192.168.5.62:9094 --topic test_topic --from-beginning
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看topic条数</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 清除所有数据</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rm -fr /tmp/hsperfdata_root/ &amp;&amp; rm -fr /data/kafka-logs-s* /data/zookeeper-s* &amp;&amp; mkdir /data/zookeeper-s1/ &amp;&amp; echo &#34;1&#34; &gt; /data/zookeeper-s1/myid &amp;&amp; mkdir /data/zookeeper-s2/ &amp;&amp; echo &#34;2&#34; &gt; /data/zookeeper-s2/myid</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># </span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># rm -fr /tmp/hsperfdata_root/ &amp;&amp; rm -fr /data/kafka-logs-s* /data/zookeeper-s* &amp;&amp; mkdir /data/zookeeper-s3/ &amp;&amp; echo &#34;3&#34; &gt; /data/zookeeper-s3/myid &amp;&amp; mkdir /data/zookeeper-s4/ &amp;&amp; echo &#34;4&#34; &gt; /data/zookeeper-s4/myid</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># </span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># # kill java，对应的进程数据会保留</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># /tmp/hsperfdata_root/进程ID</span>
+</span></span></code></pre></div><h2 id="八zookeeper使用文档">八、zookeeper使用文档</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 连接服务器</span>
+</span></span><span style="display:flex;"><span>./bin/zookeeper-shell.sh 127.0.0.1:2281
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 命令帮助</span>
+</span></span><span style="display:flex;"><span>?
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看所有功能</span>
+</span></span><span style="display:flex;"><span>ls /
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启kafka之前(每个子目录都被称作为znode)</span>
+</span></span><span style="display:flex;"><span>ls /
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>cluster, controller_epoch, brokers, zookeeper, admin, isr_change_notification, consumers, config<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 开启kafka之后(znode可以是临时节点,如新增的controller)</span>
+</span></span><span style="display:flex;"><span>ls /
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span>cluster, controller, controller_epoch, brokers, zookeeper, admin, isr_change_notification, consumers, config<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Zookeeper不仅能够帮你维护当前的集群中机器的服务状态，而且能够帮你选出一个“总管”，让这个总管来管理集群，这就是Zookeeper的另一个功能 Leader Election。</span>
+</span></span></code></pre></div><h2 id="九空间满了处理">九、空间满了处理</h2>
+<h3 id="1调整副本数量">1、调整副本数量</h3>
+<h4 id="a查看集群信息">a、查看集群信息</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bin/kafka-topics.sh --describe --zookeeper 192.168.1.15:2181,192.168.1.15:2182,192.168.1.15:2183 --topic test_topic
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Topic:test_topic	PartitionCount:3	ReplicationFactor:3	Configs:
+</span></span><span style="display:flex;"><span>	Topic: test_topic	Partition: 0	Leader: 103	Replicas: 103,101,102	Isr: 102,103,101
+</span></span><span style="display:flex;"><span>	Topic: test_topic	Partition: 1	Leader: 101	Replicas: 101,102,103	Isr: 102,103,101
+</span></span><span style="display:flex;"><span>	Topic: test_topic	Partition: 2	Leader: 102	Replicas: 102,103,101	Isr: 102,101,103
+</span></span></code></pre></div><h4 id="b准备配置文件">b、准备配置文件</h4>
+<p>reassign.json，通过查看集群信息，replicas和Leader值相等即可</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{<span style="color:#000080">&#34;version&#34;</span>:<span style="color:#099">1</span>, <span style="color:#000080">&#34;partitions&#34;</span>:[
+</span></span><span style="display:flex;"><span>{<span style="color:#000080">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>, <span style="color:#000080">&#34;partition&#34;</span>:<span style="color:#099">0</span>, <span style="color:#000080">&#34;replicas&#34;</span>:[<span style="color:#099">103</span>]},
+</span></span><span style="display:flex;"><span>{<span style="color:#000080">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>, <span style="color:#000080">&#34;partition&#34;</span>:<span style="color:#099">1</span>, <span style="color:#000080">&#34;replicas&#34;</span>:[<span style="color:#099">101</span>]},
+</span></span><span style="display:flex;"><span>{<span style="color:#000080">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>, <span style="color:#000080">&#34;partition&#34;</span>:<span style="color:#099">2</span>, <span style="color:#000080">&#34;replicas&#34;</span>:[<span style="color:#099">102</span>]}
+</span></span><span style="display:flex;"><span>]}
+</span></span></code></pre></div><h4 id="c执行">c、执行</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bin/kafka-reassign-partitions.sh --zookeeper 192.168.1.15:2181,192.168.1.15:2182,192.168.1.15:2183 --reassignment-json-file reassign.json --execute
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 此时会打印默认配置文件，用于回滚操作</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">{</span><span style="color:#d14">&#34;version&#34;</span>:1,<span style="color:#d14">&#34;partitions&#34;</span>:<span style="color:#000;font-weight:bold">[{</span><span style="color:#d14">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>,<span style="color:#d14">&#34;partition&#34;</span>:2,<span style="color:#d14">&#34;replicas&#34;</span>:<span style="color:#000;font-weight:bold">[</span>102,103,101<span style="color:#000;font-weight:bold">]</span>,<span style="color:#d14">&#34;log_dirs&#34;</span>:<span style="color:#000;font-weight:bold">[</span><span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span><span style="color:#000;font-weight:bold">]}</span>,<span style="color:#000;font-weight:bold">{</span><span style="color:#d14">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>,<span style="color:#d14">&#34;partition&#34;</span>:1,<span style="color:#d14">&#34;replicas&#34;</span>:<span style="color:#000;font-weight:bold">[</span>101,102,103<span style="color:#000;font-weight:bold">]</span>,<span style="color:#d14">&#34;log_dirs&#34;</span>:<span style="color:#000;font-weight:bold">[</span><span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span><span style="color:#000;font-weight:bold">]}</span>,<span style="color:#000;font-weight:bold">{</span><span style="color:#d14">&#34;topic&#34;</span>:<span style="color:#d14">&#34;test_topic&#34;</span>,<span style="color:#d14">&#34;partition&#34;</span>:0,<span style="color:#d14">&#34;replicas&#34;</span>:<span style="color:#000;font-weight:bold">[</span>103,101,102<span style="color:#000;font-weight:bold">]</span>,<span style="color:#d14">&#34;log_dirs&#34;</span>:<span style="color:#000;font-weight:bold">[</span><span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span>,<span style="color:#d14">&#34;any&#34;</span><span style="color:#000;font-weight:bold">]}]}</span>
+</span></span></code></pre></div><h4 id="d验证">d、验证</h4>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bin/kafka-reassign-partitions.sh --zookeeper 192.168.1.15:2181,192.168.1.15:2182,192.168.1.15:2183 --reassignment-json-file reassign.json --verify
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 验证结果</span>
+</span></span><span style="display:flex;"><span>Status of partition reassignment: 
+</span></span><span style="display:flex;"><span>Reassignment of partition test_topic-0 completed successfully
+</span></span><span style="display:flex;"><span>Reassignment of partition test_topic-1 completed successfully
+</span></span><span style="display:flex;"><span>Reassignment of partition test_topic-2 completed successfully
+</span></span></code></pre></div><h3 id="2调整数据删除策略">2、调整数据删除策略</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># log.retention.hours=168 消息默认保留7天</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 150G：16106127360;250G：268435456000;300G：322122547200</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 单卡kafka超过此大小会自动清理（此参数需要重启server？）</span>
+</span></span><span style="display:flex;"><span>log.retention.bytes<span style="color:#000;font-weight:bold">=</span><span style="color:#099">16106127360</span>
+</span></span></code></pre></div><h2 id="十其它">十、其它</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 客户端工具</span>
+</span></span><span style="display:flex;"><span>http://www.kafkatool.com/download.html
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 查看kafka节点信息</span>
+</span></span><span style="display:flex;"><span>zookeeper-shell.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Kafka Consumer Group ID  区分不同的类型客户方接收数据
+</span></span><span style="display:flex;"><span>实际上，Kafka的设计理念之一就是同时提供离线处理和实时处理。根据这一特性，可以使用Storm这种实时流处理系统对消息进行实时在线处理，同时使用 Hadoop这种批处理系统进行离线处理，还可以同时将数据实时备份到另一个数据中心，只需要保证这三个操作所使用的Consumer在不同的Consumer Group即可。下图展示了Kafka在LinkedIn的一种简化部署模型。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 安全类</span>
+</span></span><span style="display:flex;"><span>http://www.36dsj.com/archives/29526
+</span></span><span style="display:flex;"><span>https://www.confluent.io/blog/apache-kafka-security-authorization-authentication-encryption/
+</span></span><span style="display:flex;"><span>http://docs.confluent.io/2.0.0/kafka/security.html
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 牛逼的文章 很详细</span>
+</span></span><span style="display:flex;"><span>http://www.jianshu.com/p/95f86466a2d4
+</span></span><span style="display:flex;"><span>http://www.jasongj.com/2015/03/10/KafkaColumn1/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 参考</span>
+</span></span><span style="display:flex;"><span>Zookeeper介绍
+</span></span><span style="display:flex;"><span>http://cailin.iteye.com/blog/2014486/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 不错，深入</span>
+</span></span><span style="display:flex;"><span>http://orchome.com/kafka/index
+</span></span><span style="display:flex;"><span>http://czj4451.iteye.com/blog/2041096
+</span></span><span style="display:flex;"><span>http://blog.csdn.net/strawbingo/article/details/45484139
+</span></span><span style="display:flex;"><span>http://www.cnblogs.com/itfly8/p/5155983.html
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 实时游戏实践</span>
+</span></span><span style="display:flex;"><span>http://www.ibm.com/developerworks/cn/opensource/os-cn-kafka/index.html
+</span></span><span style="display:flex;"><span>http://www.it165.net/admin/html/201604/7394.html
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 如何构建安全的Kafka集群</span>
+</span></span><span style="display:flex;"><span>http://www.36dsj.com/archives/29526
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>customer 顾客 （一般站在商家的立场上说的） 
+</span></span><span style="display:flex;"><span>consumer 消费者（官方，经济学家，统计学家的术语）
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># zk介绍</span>
+</span></span><span style="display:flex;"><span>http://blog.csdn.net/damacheng/article/details/42393837
+</span></span><span style="display:flex;"><span>http://www.cnblogs.com/davidwang456/p/4238536.html
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># broker实例</span>
+</span></span><span style="display:flex;"><span>http://www.tuicool.com/articles/RNbU32B
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># ELK+Kafka 企业日志收集平台</span>
+</span></span><span style="display:flex;"><span>http://blog.sctux.com/?p<span style="color:#000;font-weight:bold">=</span><span style="color:#099">445</span>
+</span></span><span style="display:flex;"><span>http://blog.sctux.com/?p<span style="color:#000;font-weight:bold">=</span><span style="color:#099">451</span>
+</span></span><span style="display:flex;"><span>http://jasonwilder.com/blog/2013/07/16/centralized-logging-architecture/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>问题排查思路
+</span></span><span style="display:flex;"><span>http://www.cnblogs.com/Jack47/p/issues-when-setup-kafka-backed-by-kubernetes-on-aws.html
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 常见错误</span>
+</span></span><span style="display:flex;"><span>报错：
+</span></span><span style="display:flex;"><span>ERROR Invalid config, exiting abnormally <span style="color:#000;font-weight:bold">(</span>org.apache.zookeeper.server.quorum.QuorumPeerMain<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>原因： 没有配置对应的id：echo <span style="color:#d14">&#34;2&#34;</span> &gt; /data/zookeeper-s2/myid
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Kafka设计解析</span>
+</span></span><span style="display:flex;"><span>http://www.infoq.com/cn/articles/kafka-analysis-part-1/
+</span></span><span style="display:flex;"><span>http://www.infoq.com/cn/articles/kafka-analysis-part-2/
+</span></span><span style="display:flex;"><span>http://www.infoq.com/cn/articles/kafka-analysis-part-3/
+</span></span><span style="display:flex;"><span>http://www.infoq.com/cn/articles/kafka-analysis-part-4/
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 作者</span>
+</span></span><span style="display:flex;"><span>http://www.jasongj.com/
+</span></span><span style="display:flex;"><span>http://www.jasongj.com/2015/03/10/KafkaColumn1/
+</span></span></code></pre></div><h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://www.cnblogs.com/wuzhenzhao/p/10143946.html" target="_blank">https://www.cnblogs.com/wuzhenzhao/p/10143946.html</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html">https://zazayaya.github.io/2020/11/23/kafka-cluster-install.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2020/10/20/kafka-nat.html">Kafka-代理(NAT)</a></li>
+        
+        <li><a href="/2020/08/20/kafka-one-instance-install.html">Kafka-单机版安装</a></li>
+        
+        <li><a href="/2020/03/11/kafka-install.html">Kafka-2.2.0-安装</a></li>
+        
+        <li><a href="/2020/11/10/axios-doc.html">Axios-学习文档</a></li>
+        
+        <li><a href="/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html">ECMAScript6-标准</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/kafka'>kafka</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

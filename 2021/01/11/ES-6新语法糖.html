@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>ES-6新语法糖 | zaza的博客</title>
+    <meta property="og:title" content="ES-6新语法糖 - zaza的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-01-11T17:15:30&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-01-11T17:15:30&#43;08:00'>
+        
+    <meta name="Keywords" content="程序员,软件开发,code,coding,shell,bash,python,go,java,axios,css,database,debug,mysql,javascript,linux,os,programmer,programming,sql,ubuntu,centos,web">
+    <meta name="description" content="ES-6新语法糖">
+        
+    <meta name="author" content="zaza">
+    <meta property="og:url" content="https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zazayaya.github.io/">
+                        zaza的博客
+                    </a>
+                
+                <p class="description">系统运维</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zazayaya.github.io/">首页</a>
+                    
+                    <a  href="https://zazayaya.github.io/archives.html" title="归档">归档</a>
+                    
+                    <a  href="https://zazayaya.github.io/about.html" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+         
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#class的语法">class的语法</a>
+      <ul>
+        <li>
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#class的继承">Class的继承</a></li>
+    <li><a href="#promise-对象">Promise 对象</a></li>
+    <li><a href="#axios链式请求">axios链式请求</a></li>
+    <li><a href="#将数组push到另外一个数组里面">将数组push到另外一个数组里面</a></li>
+    <li><a href="#防抖和节流">防抖和节流</a></li>
+    <li><a href="#事件循环">事件循环</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if (leftPos < 220) {
+                postToc.css({ "width": leftPos - 10, "margin-left": (0 - leftPos) })
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+
+        if ($("#TableOfContents").children().length < 1) {
+            $(".post-toc").remove();
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">ES-6新语法糖</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年1月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%89%8D%E7%AB%AF'>前端</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="class的语法">class的语法</h2>
+<h5 id="类的新申明方式">类的新申明方式</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> Point {
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// 静态属性，定义在类的最顶层
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  bar <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;hello&#39;</span>;
+</span></span><span style="display:flex;"><span>  baz <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;world&#39;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// 构造器，类似python的__init__
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  constructor(x, y) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">=</span> x;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">=</span> y;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  toString() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;(&#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.x <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;, &#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">this</span>.y <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;)&#39;</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> p <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> Point(<span style="color:#d14">&#39;zaza&#39;</span>, <span style="color:#d14">&#39;yaya&#39;</span>)
+</span></span><span style="display:flex;"><span>console.log(p.toString())
+</span></span></code></pre></div><h5 id="取值函数getter和存值函数setter">取值函数（getter）和存值函数（setter）</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> MyClass {
+</span></span><span style="display:flex;"><span>  constructor() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  }
+</span></span><span style="display:flex;"><span>  get prop() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;getter&#39;</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  set prop(value) {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#d14">&#39;setter: &#39;</span><span style="color:#000;font-weight:bold">+</span>value);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">let</span> inst <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> MyClass();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>inst.prop <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">123</span>;
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// setter: 123
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>inst.prop
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// &#39;getter&#39;
+</span></span></span></code></pre></div><h5 id="静态方法">静态方法</h5>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> Foo {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">static</span> classMethod() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#39;hello&#39;</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Foo.classMethod() <span style="color:#998;font-style:italic">// &#39;hello&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> foo <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> Foo();
+</span></span><span style="display:flex;"><span>foo.classMethod()
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// TypeError: foo.classMethod is not a function
+</span></span></span></code></pre></div><h2 id="class的继承">Class的继承</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> Point {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> ColorPoint <span style="color:#000;font-weight:bold">extends</span> Point {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> ColorPoint <span style="color:#000;font-weight:bold">extends</span> Point {
+</span></span><span style="display:flex;"><span>  constructor(x, y, color) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">super</span>(x, y); <span style="color:#998;font-style:italic">// 调用父类的constructor(x, y)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">this</span>.color <span style="color:#000;font-weight:bold">=</span> color;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  toString() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">this</span>.color <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39; &#39;</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#000;font-weight:bold">super</span>.toString(); <span style="color:#998;font-style:italic">// 调用父类的toString()
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="promise-对象">Promise 对象</h2>
+<p>// <code>then</code>方法返回的是一个新的<code>Promise</code>实例（注意，不是原来那个<code>Promise</code>实例）。因此可以采用链式写法，即<code>then</code>方法后面再调用另一个<code>then</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 链式调用（此方法为目前最优雅的调用方法）
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">new</span> <span style="color:#0086b3">Promise</span>((resolve, reject) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// 建议异步只处理一次网络请求，并返回相关数据传递给then继续做另外一次异步处理
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#998;font-style:italic">// 模拟异步操作
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  setTimeout(()=&gt;{
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 第一次调用必须使用resolve或者reject调用，return不行
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    resolve(<span style="color:#d14">&#39;OK&#39;</span>)
+</span></span><span style="display:flex;"><span>  },<span style="color:#099">5000</span>)
+</span></span><span style="display:flex;"><span>}).then(data =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// throw 和 Promise.reject来抛出异常数据,由最后的catch捕获，异常具有传递性
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#998;font-style:italic">// throw data + &#39;异常&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#998;font-style:italic">// return Promise.reject(data + &#39;异常&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#998;font-style:italic">// 正常数据返回
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#998;font-style:italic">// return Promise.resolve(data + &#39;111&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#000;font-weight:bold">return</span> data <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;111&#39;</span> <span style="color:#998;font-style:italic">// 是这个方法的简写： return Promise.resolve(data + &#39;111&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}).then(data =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> data <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;222&#39;</span>
+</span></span><span style="display:flex;"><span>}).then(data =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> <span style="color:#0086b3">Promise</span>.reject(data <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#39;异常&#39;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// return data + &#39;333&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}).then(data =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(data);
+</span></span><span style="display:flex;"><span>}).<span style="color:#000;font-weight:bold">catch</span>(data =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;异常捕获： &#39;</span> <span style="color:#000;font-weight:bold">+</span> data);
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><h2 id="axios链式请求">axios链式请求</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> axios <span style="color:#000;font-weight:bold">=</span> require(<span style="color:#d14">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 全局配置文件
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>axios.defaults.baseURL <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;https://httpbin.org&#39;</span>;
+</span></span><span style="display:flex;"><span>axios.defaults.timeout <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">100000</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#d14">&#39;第一次异步请求数据：/json&#39;</span>);
+</span></span><span style="display:flex;"><span>axios.get(<span style="color:#d14">&#39;/json&#39;</span>).then(response =&gt;{
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">const</span> author <span style="color:#000;font-weight:bold">=</span> response.data.slideshow.author
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;第一次异步请求返回的数据：&#39;</span> <span style="color:#000;font-weight:bold">+</span> author);
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">const</span> authorBase64 <span style="color:#000;font-weight:bold">=</span> Buffer.from(author).toString(<span style="color:#d14">&#39;base64&#39;</span>);
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;第二次异步请求数据：&#39;</span> <span style="color:#000;font-weight:bold">+</span> author<span style="color:#000;font-weight:bold">+</span><span style="color:#d14">&#39;: &#39;</span><span style="color:#000;font-weight:bold">+</span> authorBase64 );
+</span></span><span style="display:flex;"><span>  <span style="color:#998;font-style:italic">// 通过异步获取到的数据请求其它数据
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#000;font-weight:bold">return</span> axios.get(<span style="color:#d14">&#34;/base64/&#34;</span> <span style="color:#000;font-weight:bold">+</span> authorBase64)
+</span></span><span style="display:flex;"><span>}).then(response =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;第二次异步请求返回的数据：&#39;</span> <span style="color:#000;font-weight:bold">+</span> response.data);
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;第三次异步请求数据：/delay/1&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> axios.get(<span style="color:#d14">&#34;/delay/1&#34;</span>)
+</span></span><span style="display:flex;"><span>}).then(response =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;第三次异步请求返回的数据：&#39;</span> <span style="color:#000;font-weight:bold">+</span> response.data.url);
+</span></span><span style="display:flex;"><span>}).<span style="color:#000;font-weight:bold">catch</span>(err =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;异常数据：&#39;</span> <span style="color:#000;font-weight:bold">+</span> err);
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><h2 id="将数组push到另外一个数组里面">将数组push到另外一个数组里面</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">let</span> totalNums <span style="color:#000;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> num1 <span style="color:#000;font-weight:bold">=</span> [<span style="color:#099">1</span>, <span style="color:#099">2</span>, <span style="color:#099">3</span>]
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> num2 <span style="color:#000;font-weight:bold">=</span> [<span style="color:#099">4</span>, <span style="color:#099">5</span>, <span style="color:#099">6</span>]
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ...为可变参数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>totalNums.push(...num1)
+</span></span><span style="display:flex;"><span>totalNums.push(...num2)
+</span></span><span style="display:flex;"><span>console.log(totalNums);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$ node.exe array_push_array.js
+</span></span><span style="display:flex;"><span>[ <span style="color:#099">1</span>, <span style="color:#099">2</span>, <span style="color:#099">3</span>, <span style="color:#099">4</span>, <span style="color:#099">5</span>, <span style="color:#099">6</span> ]
+</span></span></code></pre></div><h2 id="防抖和节流">防抖和节流</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// https://www.cnblogs.com/cc-freiheit/p/10827372.html
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 合成版
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#998;font-style:italic">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">   * @desc 函数防抖
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">   * @param func 目标函数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">   * @param wait 延迟执行毫秒数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">   * @param immediate true - 立即执行， false - 延迟执行
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">   */</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> debounce(func, wait, immediate) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">let</span> timer;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">let</span> context <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">this</span>,
+</span></span><span style="display:flex;"><span>          args <span style="color:#000;font-weight:bold">=</span> arguments;
+</span></span><span style="display:flex;"><span>           
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (timer) clearTimeout(timer);
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (immediate) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">let</span> callNow <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">!</span>timer;
+</span></span><span style="display:flex;"><span>        timer <span style="color:#000;font-weight:bold">=</span> setTimeout(() =&gt; {
+</span></span><span style="display:flex;"><span>          timer <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span>;
+</span></span><span style="display:flex;"><span>        }, wait);
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> (callNow) func.apply(context, args);
+</span></span><span style="display:flex;"><span>      } <span style="color:#000;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span>        timer  <span style="color:#000;font-weight:bold">=</span> setTimeout(() =&gt; {
+</span></span><span style="display:flex;"><span>          func.apply
+</span></span><span style="display:flex;"><span>        }, wait)
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * @desc 函数节流
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * @param func 函数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * @param wait 延迟执行毫秒数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> * @param type 1 表时间戳版，2 表定时器版
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">function</span> throttle(func, wait, type) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">if</span> (type <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">let</span> previous <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>;
+</span></span><span style="display:flex;"><span>  } <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span> (type <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">2</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">let</span> timeout;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">function</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">let</span> context <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">this</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">let</span> args <span style="color:#000;font-weight:bold">=</span> arguments;
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">if</span> (type <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">let</span> now <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">Date</span>.now();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">if</span> (now <span style="color:#000;font-weight:bold">-</span> previous <span style="color:#000;font-weight:bold">&gt;</span> wait) {
+</span></span><span style="display:flex;"><span>          func.apply(context, args);
+</span></span><span style="display:flex;"><span>          previous <span style="color:#000;font-weight:bold">=</span> now;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span> (type <span style="color:#000;font-weight:bold">===</span> <span style="color:#099">2</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#000;font-weight:bold">if</span> (<span style="color:#000;font-weight:bold">!</span>timeout) {
+</span></span><span style="display:flex;"><span>        timeout <span style="color:#000;font-weight:bold">=</span> setTimeout(() =&gt; {
+</span></span><span style="display:flex;"><span>          timeout <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span>;
+</span></span><span style="display:flex;"><span>          func.apply(context, args)
+</span></span><span style="display:flex;"><span>        }, wait)
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// vue 讲师版本
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">function</span> debounce(func, delay) {
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">let</span> timer <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">if</span> (timer) clearTimeout(timer)
+</span></span><span style="display:flex;"><span>  timer <span style="color:#000;font-weight:bold">=</span> setTimeout(()=&gt;{
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 函数.apply(对象，函数需要的参数列表是一个数组)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// fun.apply(thisArg,[argsArray])
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    func.apply(<span style="color:#000;font-weight:bold">this</span>, args)
+</span></span><span style="display:flex;"><span>  },delay)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="事件循环">事件循环</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#d14">&#39;aaa&#39;</span>);
+</span></span><span style="display:flex;"><span>setTimeout(()=&gt;{
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#d14">&#39;bbb&#39;</span>);
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#d14">&#39;ccc&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> 尽管setTimeout没有写时间<span style="color:#a61717;background-color:#e3d2d2">，</span>但是打印顺序任然是<span style="color:#a61717;background-color:#e3d2d2">：</span>aaa <span style="color:#000;font-weight:bold">&gt;</span> ccc <span style="color:#000;font-weight:bold">&gt;</span> bbb
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">#</span> 因为异步操作永远是事件循环的最后才执行的
+</span></span></code></pre></div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://zazayaya.github.io/">zaza</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html">https://zazayaya.github.io/2021/01/11/ES-6%E6%96%B0%E8%AF%AD%E6%B3%95%E7%B3%96.html</a></li>
+        <li><strong>说明：</strong>转载本站文章请标明出处，部分资源来源于网络，如有侵权请及时与我联系!</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2020/12/08/node-npm-getting-started.html">Node-npm入门教程</a></li>
+        
+        <li><a href="/2020/10/27/ECMAScript6-%E6%A0%87%E5%87%86.html">ECMAScript6-标准</a></li>
+        
+        <li><a href="/2020/04/24/node-ecmascript.html">Ecmascript-入门教程</a></li>
+        
+        <li><a href="/2019/12/19/node-install.html">Node-安装</a></li>
+        
+        <li><a href="/2021/01/07/linux-fdisk.html">Linux-硬盘操作</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%89%8D%E7%AB%AF'>前端</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zazayaya/comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://zazayaya.github.io/">zaza的博客 By zaza</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHQH8V8672"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-VHQH8V8672', { 'anonymize_ip': false });
+}
+</script>
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zazayaya.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zazayaya.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/06/20/windows-visual-studio-install.html" title="Visual-Studio安装配置">Visual-Studio安装配置</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/04/01/python-storage-by-abs.html" title="Python-通过抽象基类实现存储抽象化">Python-通过抽象基类实现存储抽象化</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/03/15/java-shiro-started.html" title="Java-Shiro入门学习">Java-Shiro入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html" title="Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境">Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/12/31/java-getting-started.html" title="Java-入门学习">Java-入门学习</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/08/elk-insert-nginx-log.html" title="ELK-nginx数据录入">ELK-nginx数据录入</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/11/03/docker-build-ubuntu-sshd-mysql-image.html" title="K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像">K8s-构建ubuntu&#43;sshd&#43;mysql-Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/12/elk-6.0.0-upgrade-to-7.15.0.html" title="ELK-6.0.0升级到7.15.0">ELK-6.0.0升级到7.15.0</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/10/09/python-3.8-install-on-centos6.x-doc.html" title="Python-3.8安装文档">Python-3.8安装文档</a>
+    </li>
+    
+    <li>
+        <a href="https://zazayaya.github.io/2021/09/27/elk-install-by-docker.html" title="ELK-基于docker安装">ELK-基于docker安装</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zazayaya.github.io/categories/Ansible.html">Ansible (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Flask.html">Flask (3)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Git.html">Git (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Java.html">Java (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kafka.html">Kafka (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Python.html">Python (11)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/RabbitMQ.html">RabbitMQ (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/Windows.html">Windows (1)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%89%8D%E7%AB%AF.html">前端 (8)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE.html">大数据 (4)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
+    
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zazayaya.github.io/tags/Visual-Studio.html">Visual Studio</a>
+    
+    <a href="https://zazayaya.github.io/tags/ansible.html">ansible</a>
+    
+    <a href="https://zazayaya.github.io/tags/axios.html">axios</a>
+    
+    <a href="https://zazayaya.github.io/tags/buildkit.html">buildkit</a>
+    
+    <a href="https://zazayaya.github.io/tags/celery.html">celery</a>
+    
+    <a href="https://zazayaya.github.io/tags/ceph.html">ceph</a>
+    
+    <a href="https://zazayaya.github.io/tags/ci/cd.html">ci/cd</a>
+    
+    <a href="https://zazayaya.github.io/tags/containerd.html">containerd</a>
+    
+    <a href="https://zazayaya.github.io/tags/crontab.html">crontab</a>
+    
+    <a href="https://zazayaya.github.io/tags/crypto.html">crypto</a>
+    
+    <a href="https://zazayaya.github.io/tags/date.html">date</a>
+    
+    <a href="https://zazayaya.github.io/tags/disk.html">disk</a>
+    
+    <a href="https://zazayaya.github.io/tags/docker.html">docker</a>
+    
+    <a href="https://zazayaya.github.io/tags/dockerfile.html">dockerfile</a>
+    
+    <a href="https://zazayaya.github.io/tags/elk.html">elk</a>
+    
+    <a href="https://zazayaya.github.io/tags/etcd.html">etcd</a>
+    
+    <a href="https://zazayaya.github.io/tags/flask.html">flask</a>
+    
+    <a href="https://zazayaya.github.io/tags/ftp.html">ftp</a>
+    
+    <a href="https://zazayaya.github.io/tags/git.html">git</a>
+    
+    <a href="https://zazayaya.github.io/tags/iproute.html">iproute</a>
+    
+    <a href="https://zazayaya.github.io/tags/iptables.html">iptables</a>
+    
+    <a href="https://zazayaya.github.io/tags/iredmail.html">iredmail</a>
+    
+    <a href="https://zazayaya.github.io/tags/java.html">java</a>
+    
+    <a href="https://zazayaya.github.io/tags/jumpserver.html">jumpserver</a>
+    
+    <a href="https://zazayaya.github.io/tags/k3s.html">k3s</a>
+    
+    <a href="https://zazayaya.github.io/tags/k8s.html">k8s</a>
+    
+    <a href="https://zazayaya.github.io/tags/kafka.html">kafka</a>
+    
+    <a href="https://zazayaya.github.io/tags/keepalive.html">keepalive</a>
+    
+    <a href="https://zazayaya.github.io/tags/knocking.html">knocking</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubeadm.html">kubeadm</a>
+    
+    <a href="https://zazayaya.github.io/tags/kubernetes.html">kubernetes</a>
+    
+    <a href="https://zazayaya.github.io/tags/logging.html">logging</a>
+    
+    <a href="https://zazayaya.github.io/tags/lvs.html">lvs</a>
+    
+    <a href="https://zazayaya.github.io/tags/mail.html">mail</a>
+    
+    <a href="https://zazayaya.github.io/tags/mysql.html">mysql</a>
+    
+    <a href="https://zazayaya.github.io/tags/nat.html">nat</a>
+    
+    <a href="https://zazayaya.github.io/tags/net-tools.html">net-tools</a>
+    
+    <a href="https://zazayaya.github.io/tags/network.html">network</a>
+    
+    <a href="https://zazayaya.github.io/tags/nginx.html">nginx</a>
+    
+    <a href="https://zazayaya.github.io/tags/openldap.html">openldap</a>
+    
+    <a href="https://zazayaya.github.io/tags/openresty.html">openresty</a>
+    
+    <a href="https://zazayaya.github.io/tags/pureftpd.html">pureftpd</a>
+    
+    <a href="https://zazayaya.github.io/tags/python.html">python</a>
+    
+    <a href="https://zazayaya.github.io/tags/rabbitmq.html">rabbitmq</a>
+    
+    <a href="https://zazayaya.github.io/tags/rancher.html">rancher</a>
+    
+    <a href="https://zazayaya.github.io/tags/raspbian.html">raspbian</a>
+    
+    <a href="https://zazayaya.github.io/tags/repos.html">repos</a>
+    
+    <a href="https://zazayaya.github.io/tags/rsync.html">rsync</a>
+    
+    <a href="https://zazayaya.github.io/tags/samba.html">samba</a>
+    
+    <a href="https://zazayaya.github.io/tags/shell.html">shell</a>
+    
+    <a href="https://zazayaya.github.io/tags/supervisord.html">supervisord</a>
+    
+    <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
+    
+    <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
+    
+    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
+    
+    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%88%86%E5%8C%BA.html">分区</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF.html">前端</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7.html">前端工具</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0.html">加密实现</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%8E%8B%E6%B5%8B.html">压测</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B.html">多线程</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派</a>
+    
+    <a href="https://zazayaya.github.io/tags/%E8%BF%9B%E5%BA%A6%E6%9D%A1.html">进度条</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://xstarcd.github.io/" title="XStar&#39;s Wiki">XStar&#39;s Wiki</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://coolshell.cn/" title="coolshell">酷壳</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://imysql.cn/" title="iMySQL | 老叶茶馆">iMySQL | 老叶茶馆</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zazayaya.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on zaza的博客</title>
+    <link>https://zazayaya.github.io/categories/Git.html</link>
+    <description>Recent content in Git on zaza的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 18 Jan 2022 15:33:16 +0800</lastBuildDate><atom:link href="https://zazayaya.github.io/categories/Git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git-基于Jenkins&#43;Maven&#43;Gitea&#43;Nexus搭建CICD环境</title>
+      <link>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</link>
+      <pubDate>Tue, 18 Jan 2022 15:33:16 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2022/01/18/git-Jenkins-Maven-Gitea-Nexus-for-cicd.html</guid>
+      <description>安装 Jenkins SCM, 全称Source Coce Management, 主要作用是监视&amp;quot;版本控制系统&amp;quot;(比如gitlab). Blue Ocean 重新思考Jenkins的用户</description>
+    </item>
+    
+    <item>
+      <title>Git-常见操作</title>
+      <link>https://zazayaya.github.io/2020/06/03/git-doc.html</link>
+      <pubDate>Wed, 03 Jun 2020 14:04:49 +0800</pubDate>
+      
+      <guid>https://zazayaya.github.io/2020/06/03/git-doc.html</guid>
+      <description>版本回退 # 本地回退 # git reset --hard &amp;lt;commit_id&amp;gt; git reset --hard HEAD^ # 强制回退远程仓库代码 git push -f 版本合并 # 将 dev 的版本合并到 master git checkout master git merge dev # 这个命令把分支dev(&amp;#</description>
+    </item>
+    
+  </channel>
+</rss>
