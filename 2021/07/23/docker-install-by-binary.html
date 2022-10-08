@@ -235,6 +235,7 @@
 </span></span></code></pre></div><h2 id="防火墙选择">防火墙选择</h2>
 <blockquote>
 <p><a href="https://docs.docker.com/network/iptables/" target="_blank">集成Firewalld</a></p>
+<p>建议使用 firewalld 管理防火墙规则，firewalld 最主要的特性是动态添加规则</p>
 </blockquote>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认使用 iptables 管理，如果安装了 firewalld ，则通过 firewalld 管理</span>
 </span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># firewalld 的 INPUT_ZONES 会添加 IN_docker 链</span>
@@ -247,7 +248,8 @@
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">[</span> -f /usr/bin/docker <span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">||</span> <span style="color:#000;font-weight:bold">(</span>tar xzf docker-20.10.6.tgz <span style="color:#000;font-weight:bold">&amp;&amp;</span> cp -v docker/* /usr/bin/ <span style="color:#000;font-weight:bold">&amp;&amp;</span> rm -fr docker<span style="color:#000;font-weight:bold">)</span>
 </span></span></code></pre></div><h3 id="input-权限脚本">INPUT 权限脚本</h3>
 <blockquote>
-<p>iptables管理添加此脚本</p>
+<p><del>iptables管理添加此脚本</del></p>
+<p>建议使用 firewalld 管理防火墙规则，firewalld 最主要的特性是动态添加规则</p>
 </blockquote>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 添加 INPUT 权限</span>
 </span></span><span style="display:flex;"><span>cat &gt; /etc/iptables_add_input.sh <span style="color:#d14">&lt;&lt; EOF
