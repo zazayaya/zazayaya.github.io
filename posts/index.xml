@@ -224,15 +224,6 @@
     </item>
     
     <item>
-      <title>Linux-wireguard安装文档</title>
-      <link>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</link>
-      <pubDate>Mon, 12 Jul 2021 10:22:29 +0800</pubDate>
-      
-      <guid>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</guid>
-      <description>架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务</description>
-    </item>
-    
-    <item>
       <title>Linux-rsync基础配置</title>
       <link>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</link>
       <pubDate>Fri, 18 Jun 2021 11:15:49 +0800</pubDate>
@@ -770,6 +761,24 @@
       
       <guid>https://zazayaya.github.io/2015/12/11/linux-high-availability-of-lvs-with-keepalived.html</guid>
       <description>基于Centos5.7测试通过 一、下载 # 建议安装稳定版本1.2.1 wget http://www.keepalived.org/software/keepalived-1.2.1.tar.gz 二、安装LVS管理工具 yum -y install ipvsadm 三、编译安装 # 依赖包 yum -y install popt-devel openssl-devel libnl-devel</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://zazayaya.github.io/1/01/01.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zazayaya.github.io/1/01/01.html</guid>
+      <description>flask源码分析 学习WSGI规范 WSGI规范(PEP 3333) WSGI 的全称是：Web Server Gateway Interface，介于 web server 和应用 server 之间的接口规范。当</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://zazayaya.github.io/1/01/01.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zazayaya.github.io/1/01/01.html</guid>
+      <description>kafka 3.2.3安装文档 基于 ubuntu 22.04 下载 https://kafka.apache.org/downloads 依赖包 # java 大于 java 8 # apt install -y openjdk-11-jre 包含头文件较大 apt update &amp;amp;&amp;amp; apt install -y openjdk-11-jre-headless kraft说明 目前不建议在线上使用：It is</description>
     </item>
     
   </channel>

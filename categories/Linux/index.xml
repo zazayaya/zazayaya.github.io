@@ -26,15 +26,6 @@
     </item>
     
     <item>
-      <title>Linux-wireguard安装文档</title>
-      <link>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</link>
-      <pubDate>Mon, 12 Jul 2021 10:22:29 +0800</pubDate>
-      
-      <guid>https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html</guid>
-      <description>架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务</description>
-    </item>
-    
-    <item>
       <title>Linux-rsync基础配置</title>
       <link>https://zazayaya.github.io/2021/06/18/linux-rsync-template.html</link>
       <pubDate>Fri, 18 Jun 2021 11:15:49 +0800</pubDate>

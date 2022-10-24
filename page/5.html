@@ -72,31 +72,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html" title="Linux-wireguard安装文档">Linux-wireguard安装文档</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2021年7月12日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
-            
-            <span class="meta-category"><a href='/categories/%E7%BD%91%E7%BB%9C'>网络</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            架构 默认架构 典型应用：实现两台服务器之间互相访问：https://www.wireguard.com/quickstart/ 两台服务……
-        </div>
-        <p class="readmore"><a href="https://zazayaya.github.io/2021/07/12/linux-wireguard-install.html">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://zazayaya.github.io/2021/06/18/linux-rsync-template.html" title="Linux-rsync基础配置">Linux-rsync基础配置</a>
             </h1>
         </header>
@@ -207,6 +182,29 @@
             安装依赖 mysql 5.6 版本 cd /usr/local/src/ &amp;&amp; rz -b yum -y install gcc gcc-c++ cmake bison ncurses-devel 编译 tar xzf mysql-5.6.38.tar.gz &amp;&amp; cd mysql-5.6.38 cmake . \ -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \ -DMYSQL_DATADIR=/usr/local/mysql/data/ \ -DDEFAULT_CHARSET=utf8 \ -DWITH_INNOBASE_STORAGE_ENGINE=1 \ -DDEFAULT_COLLATION=utf8_general_ci \ -DEXTRA_CHARSETS=big5,ascii,gb2312,gbk,utf8,latin1 make &amp;&amp; make install 添加环境路径 echo &#39;PATH=/usr/local/mysql/bin:$PATH:$HOME/bin&#39; &gt;&gt; /etc/profile echo &#34;export PATH&#34; &gt;&gt; /etc/profile source /etc/profile 创建……
         </div>
         <p class="readmore"><a href="https://zazayaya.github.io/2021/06/09/mysql-5.6-install-on-centos7.html">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2021/06/08/containerd-getting-started.html" title="K8s教程-containerd基础学习">K8s教程-containerd基础学习</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年6月8日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Kubernetes'>Kubernetes</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            测试环境：Ubuntu20.04 环境准备 # 基础包 apt-get install -y net-tools lrzsz # 安装和配置的先决条件 cat &gt; /etc/modules-load.d/containerd.conf &lt;&lt; EOF overlay br_netfilter EOF # 加载 modprobe overlay modprobe br_netfilter # 设置必需的 sysctl 参数，这……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2021/06/08/containerd-getting-started.html">阅读全文</a></p>
     </article>
     
     
@@ -422,7 +420,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (18)</a></li>
     
     <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
     
@@ -438,7 +436,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (2)</a></li>
     
 </ul>
     </section>
@@ -552,10 +550,6 @@ if (!doNotTrack) {
     <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
     
     <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
-    
-    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
-    
-    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
     
     <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
     

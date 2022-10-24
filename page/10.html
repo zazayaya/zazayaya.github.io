@@ -72,29 +72,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zazayaya.github.io/2021/01/27/disk-io-test.html" title="Linux-硬盘io测试">Linux-硬盘io测试</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2021年1月27日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            硬盘io测试 高IO写测试 # 64k写 mkdir /data1/disk-io fio -name iops -rw=write -bs=64k -runtime=60 -iodepth 32 -filename /data1/disk-io/test.bin -ioengine libaio -direct=1 -size=1g # 查看结果 iostat -x 1 Device: rrqm/s wrqm/s r/s w/s rsec/s wsec/s avgrq-sz avgqu-sz await r_await w_await svctm %util nvme1n1 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00……
-        </div>
-        <p class="readmore"><a href="https://zazayaya.github.io/2021/01/27/disk-io-test.html">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://zazayaya.github.io/2021/01/15/iredmail-install-tutorial.html" title="Iredmail-安装指南">Iredmail-安装指南</a>
             </h1>
         </header>
@@ -205,6 +182,29 @@
             依赖环境 # 依赖libuuid-devel而不是uuid-devel(如果安装了uuid-devel，则需要卸载) yum -y install gcc gcc-c++ openssl-devel readline-devel bzip2-devel \ sqlite-devel……
         </div>
         <p class="readmore"><a href="https://zazayaya.github.io/2020/12/11/python-3.7-install-doc.html">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html" title="Python-2.7安装文档">Python-2.7安装文档</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年12月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Python'>Python</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            测试环境：Centos6.x 安装 #依赖包 yum -y install gcc gcc-c++ openssl-devel bzip2-devel sqlite-devel libffi-devel # python2.7最新版本自带pip cd /usr/local/src wget https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tgz tar xzf Python-2.7.17.tgz &amp;&amp; cd Python-2.7.17 ./configure --with-ensurepip --enable-shared make &amp;&amp; make install #……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2020/12/11/python-2.7-install-doc.html">阅读全文</a></p>
     </article>
     
     
@@ -420,7 +420,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (18)</a></li>
     
     <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
     
@@ -436,7 +436,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (2)</a></li>
     
 </ul>
     </section>
@@ -550,10 +550,6 @@ if (!doNotTrack) {
     <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
     
     <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
-    
-    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
-    
-    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
     
     <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
     

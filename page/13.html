@@ -72,29 +72,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zazayaya.github.io/2020/09/23/iptables-nat.html" title="Iptables-nat">Iptables-nat</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2020年9月23日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Linux'>Linux</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            架构图 开启转发 # 存在第一条net.ipv4.ip_forward=0，ansible会删除net.ipv4.ip_forward = 1……
-        </div>
-        <p class="readmore"><a href="https://zazayaya.github.io/2020/09/23/iptables-nat.html">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://zazayaya.github.io/2020/08/24/network-tools.html" title="Network-网络测试工具">Network-网络测试工具</a>
             </h1>
         </header>
@@ -205,6 +182,29 @@
             轮询一次和轮询三次 # This will run debug three times since the list is flattened- debug:msg:&#34;{{ item }}&#34;vars:nested_list:- - one- two- threewith_items:&#34;{{ nested_list }}&#34;# This will run debug once with the three items- debug:msg:&#34;{{ item }}&#34;vars:nested_list:- - one- two- threewith_items:- &#34;{{ nested_list }}&#34;变量生成 - name:动……
         </div>
         <p class="readmore"><a href="https://zazayaya.github.io/2020/07/06/ansible-suggest.html">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zazayaya.github.io/2020/06/03/git-doc.html" title="Git-常见操作">Git-常见操作</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年6月3日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Git'>Git</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            版本回退 # 本地回退 # git reset --hard &lt;commit_id&gt; git reset --hard HEAD^ # 强制回退远程仓库代码 git push -f 版本合并 # 将 dev 的版本合并到 master git checkout master git merge dev # 这个命令把分支dev(&#……
+        </div>
+        <p class="readmore"><a href="https://zazayaya.github.io/2020/06/03/git-doc.html">阅读全文</a></p>
     </article>
     
     
@@ -407,7 +407,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/Kubernetes.html">Kubernetes (18)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (19)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/Linux.html">Linux (18)</a></li>
     
     <li><a href="https://zazayaya.github.io/categories/Mysql.html">Mysql (5)</a></li>
     
@@ -423,7 +423,7 @@ if (!doNotTrack) {
     
     <li><a href="https://zazayaya.github.io/categories/%E6%A0%91%E8%8E%93%E6%B4%BE.html">树莓派 (2)</a></li>
     
-    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (3)</a></li>
+    <li><a href="https://zazayaya.github.io/categories/%E7%BD%91%E7%BB%9C.html">网络 (2)</a></li>
     
 </ul>
     </section>
@@ -537,10 +537,6 @@ if (!doNotTrack) {
     <a href="https://zazayaya.github.io/tags/tcpping.html">tcpping</a>
     
     <a href="https://zazayaya.github.io/tags/threading.html">threading</a>
-    
-    <a href="https://zazayaya.github.io/tags/vpn.html">vpn</a>
-    
-    <a href="https://zazayaya.github.io/tags/wireguard.html">wireguard</a>
     
     <a href="https://zazayaya.github.io/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83.html">代码规范</a>
     
